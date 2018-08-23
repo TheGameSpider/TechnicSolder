@@ -49,8 +49,24 @@ Now we can test whether our web server can correctly display content generated b
 curl http://icanhazip.com
 ```
 Open in your web browser: http://your_server_IP_address
+This page basically gives you information about your server from the perspective of PHP. It is useful for debugging and to ensure that your settings are being applied correctly.
+
+If this was successful, then your PHP is working as expected.
+
+You probably want to remove this file after this test because it could actually give information about your server to unauthorized users. To do this, you can type this:
 ```bash
-$ git clone https://github.com/TheGameSpider/TechnicSolder.git
+rm /var/www/html/index.php
 ```
+**5.Clone TechnicSolder repository**
+```bash
+$ cd /var/www/
+$ git clone https://github.com/TheGameSpider/TechnicSolder.git
+$ nano /etc/apache2/sites-enabled/000-default.conf
+```
+Change DocumentRoot to /var/www/TechnicSolder
+```bash
+$ service apache2 restart
+```
+That's it. Installation is complete. Now you need to confige TechnicSolder before using it.
 # TechnicSolder Configuration
 TODO
