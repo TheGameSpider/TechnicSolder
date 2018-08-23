@@ -3,11 +3,11 @@
 **2. Login to Ubuntu with credentials you set.** <br />
 **3. Become root**
 ```bash
-$ sudo passwd root
+sudo passwd root
 ```
 Write you current password, then set new root password
 ```bash
-$ exit
+exit
 ```
 Login as root <br />
 **4. Install LAMP pack**<br />
@@ -28,7 +28,7 @@ nano /etc/apache2/mods-enabled/dir.conf
 We want to move the PHP index file to the first position after the DirectoryIndex specification: <br />
 **DirectoryIndex index.html index.cgi index.pl index.php index.xhtml index.htm** -> **DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm**<br />
 Configuration will look like this:
-```bash
+```html
 <IfModule mod_dir.c>
     DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
 </IfModule>
@@ -39,7 +39,7 @@ service apache2 restart
 nano /var/www/html/index.php.php
 ```
 This will open a blank file. We want to put the following text, which is valid PHP code, inside the file:
-```bash
+```php
 <?php
 phpinfo();
 ```
