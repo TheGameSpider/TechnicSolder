@@ -1,6 +1,6 @@
 # Installation
-***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 5***
-***NOTE: If your server hosting provider does not support SSH access. you can just simply upload master branch to root directory***
+***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 5***<br />
+***NOTE: If your server hosting provider does not support SSH access. you can just simply upload master branch to root directory*** <br />
 **1. Install Ubuntu Server 18.04 (https://www.ubuntu.com/download/server)** <br />
 **2. Login to Ubuntu with credentials you set.** <br />
 **3. Become root**
