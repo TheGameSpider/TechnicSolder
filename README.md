@@ -20,7 +20,7 @@ mysql_secure_installation
 ```
 You will be asked if you want to configure the VALIDATE PASSWORD PLUGIN. Answer **y**<br />
 Then you'll be asked to select a level of password validation. Answer **0** and set your mysql password.<br />
-You'll be asked for a few more thing, answer **y** to all.
+You'll be asked for a few more things, answer **y** to all.
 ```bash
 apt install php libapache2-mod-php php-mysql
 nano /etc/apache2/mods-enabled/dir.conf
