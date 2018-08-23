@@ -36,7 +36,7 @@ Configuration will look like this:
 When you are finished, save and close the file by pressing Ctrl-X. You'll have to confirm the save by typing Y and then hit Enter to confirm the file save location.
 ```bash
 service apache2 restart
-nano /var/www/html/index.php.php
+nano /var/www/html/index.php
 ```
 This will open a blank file. We want to put the following text, which is valid PHP code, inside the file:
 ```php
