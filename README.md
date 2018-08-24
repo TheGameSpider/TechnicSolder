@@ -69,6 +69,33 @@ Change DocumentRoot to /var/www/TechnicSolder
 ```bash
 service apache2 restart
 ```
-That's it. Installation is complete. Now you need to confige TechnicSolder before using it.
+Installation is complete. Now you need to confige TechnicSolder before using it.
 # TechnicSolder Configuration
-TODO
+**1. Configure MySQL**
+```bash
+mysql -p -u root
+```
+Login with your password you set earlier.
+```MYSQL
+CREATE DATABASE solder;
+exit
+```
+Open your TechnicSolder configuration.
+```bash
+nano /var/www/TechnicSolder/config.php
+```
+Change **db-user** to **root**<br />
+Change **db-pass** to *password you set*<br />
+**2. Configure login credentials**<br />
+There is only one thing to say: *Do not use the password that you are using to login to your email.*<br />
+**3. Link TechnicSolder with your https://technicpack.net account**<br />
+First, go to your profile and click *Edit Profile*<br />
+Then click *Solder Configuration* and copy your API Key<br />
+In your config.php file set api_key to key you copied.<br />
+Now, you can save the config by pressing Ctrl-X. You'll have to confirm the save by typing Y and then hit Enter to confirm.<br />
+The final step is to set your Solder URL in Solder Configuration (In your https://technicpack.net profile)
+```http
+http://your_server_IP_address/api/
+```
+Click **Link solder**<br />
+That's it. You have successfully installed and configured TechnicSolder. It's ready to use!
