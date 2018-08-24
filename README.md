@@ -66,6 +66,7 @@ git clone https://github.com/TheGameSpider/TechnicSolder.git
 nano /etc/apache2/sites-enabled/000-default.conf
 ```
 Change DocumentRoot to /var/www/TechnicSolder<br />
+**6. Enable RewriteEngine**
 Add this before &lt;/VirtualHost&gt; close tag:
 ```html
 <Directory /var/www/TechnicSolder>
@@ -74,7 +75,7 @@ Add this before &lt;/VirtualHost&gt; close tag:
         Require all granted
     </Directory>
 ```
-Enable RewriteEngine
+
 ```bash
 a2enmod rewrite
 service apache2 restart
