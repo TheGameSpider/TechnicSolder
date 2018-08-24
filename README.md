@@ -60,6 +60,9 @@ You probably want to remove this file after this test because it could actually 
 rm /var/www/html/index.php
 ```
 **5. Enable RewriteEngine**<br />
+```bash
+nano /etc/apache2/sites-enabled/000-default.conf
+```
 Add this before &lt;/VirtualHost&gt; close tag:
 ```html
 <Directory /var/www/TechnicSolder>
@@ -68,6 +71,10 @@ Add this before &lt;/VirtualHost&gt; close tag:
         Require all granted
     </Directory>
 ```
+Save and close the file
+```bash
+a2enmod rewrite
+```
 **6.Clone TechnicSolder repository** 
 ```bash
 cd /var/www/
@@ -75,10 +82,8 @@ git clone https://github.com/TheGameSpider/TechnicSolder.git
 nano /etc/apache2/sites-enabled/000-default.conf
 ```
 Change DocumentRoot to /var/www/TechnicSolder<br />
-
-
+Restart apache
 ```bash
-a2enmod rewrite
 service apache2 restart
 ```
 Installation is complete. Now you need to confige TechnicSolder before using it.
@@ -111,7 +116,7 @@ There is only one thing to say: *Do not use the password that you are using to l
 First, go to your profile and click *Edit Profile*<br />
 Then click *Solder Configuration* and copy your API Key<br />
 In your config.php file set api_key to key you copied.<br />
-Now, you can save the config by pressing Ctrl-X. You'll have to confirm the save by typing Y and then hit Enter to confirm.<br />
+Now, you can save the config.<br />
 The final step is to set your Solder URL in Solder Configuration (In your https://technicpack.net profile)
 ```http
 http://your_server_IP_address/api/
