@@ -1,5 +1,5 @@
 # Installation
-***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 5***<br />
+***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 6***<br />
 ***NOTE: If your server hosting provider already installed Apache Web server and does not support SSH access. you can just simply upload the master branch to root directory*** <br />
 **1. Install Ubuntu Server 18.04 (https://www.ubuntu.com/download/server)** <br />
 **2. Login to Ubuntu with credentials you set.** <br />
@@ -59,14 +59,7 @@ You probably want to remove this file after this test because it could actually 
 ```bash
 rm /var/www/html/index.php
 ```
-**5.Clone TechnicSolder repository** 
-```bash
-cd /var/www/
-git clone https://github.com/TheGameSpider/TechnicSolder.git
-nano /etc/apache2/sites-enabled/000-default.conf
-```
-Change DocumentRoot to /var/www/TechnicSolder<br />
-**6. Enable RewriteEngine**
+**5. Enable RewriteEngine**<br />
 Add this before &lt;/VirtualHost&gt; close tag:
 ```html
 <Directory /var/www/TechnicSolder>
@@ -75,6 +68,14 @@ Add this before &lt;/VirtualHost&gt; close tag:
         Require all granted
     </Directory>
 ```
+**6.Clone TechnicSolder repository** 
+```bash
+cd /var/www/
+git clone https://github.com/TheGameSpider/TechnicSolder.git
+nano /etc/apache2/sites-enabled/000-default.conf
+```
+Change DocumentRoot to /var/www/TechnicSolder<br />
+
 
 ```bash
 a2enmod rewrite
