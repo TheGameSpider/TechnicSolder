@@ -66,7 +66,7 @@ git clone https://github.com/TheGameSpider/TechnicSolder.git
 nano /etc/apache2/sites-enabled/000-default.conf
 ```
 Change DocumentRoot to /var/www/TechnicSolder<br />
-Add this before <xmp></VirtualHost></xmp> close tag:
+Add this before &lt;/VirtualHost&gt; close tag:
 ```html
 <Directory /var/www/TechnicSolder>
         Options Indexes FollowSymLinks MultiViews
