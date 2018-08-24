@@ -65,8 +65,10 @@ cd /var/www/
 git clone https://github.com/TheGameSpider/TechnicSolder.git
 nano /etc/apache2/sites-enabled/000-default.conf
 ```
-Change DocumentRoot to /var/www/TechnicSolder
+Change DocumentRoot to /var/www/TechnicSolder<br />
+Enable RewriteEngine
 ```bash
+a2enmod rewrite
 service apache2 restart
 ```
 Installation is complete. Now you need to confige TechnicSolder before using it.
