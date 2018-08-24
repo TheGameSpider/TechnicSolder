@@ -5,7 +5,7 @@ return array(
 	"pass" => "secret",
 
 	//database
-	"db-host" => "loaclhost",
+	"db-host" => "127.0.0.1",
 	"db-user" => "solder",
 	"db-pass" => "secret",
 	"db-name" => "solder",
