@@ -75,17 +75,24 @@ Installation is complete. Now you need to confige TechnicSolder before using it.
 ```bash
 mysql -p -u root
 ```
-Login with your password you set earlier.
+Login with your password you set earlier. <br />
+Create new user
+```MYSQL
+CREATE USER 'solder'@'localhost' IDENTIFIED BY 'secret';
+```
+**NOTE: By writing *IDENTIFIED BY 'secret'* you set your password. Dont use *secret***<br />
+Create database solder and grant user *solder* access to it.
 ```MYSQL
 CREATE DATABASE solder;
+GRANT ALL ON solder.* TO 'solder'@'localhost';
 exit
 ```
 Open your TechnicSolder configuration.
 ```bash
 nano /var/www/TechnicSolder/config.php
 ```
-Change **db-user** to **root**<br />
-Change **db-pass** to *password you set*<br />
+Change **db-user** to **solder**<br />
+Change **db-pass** to password you set for user *solder*<br />
 **2. Configure login credentials**<br />
 There is only one thing to say: *Do not use the password that you are using to login to your email.*<br />
 **3. Link TechnicSolder with your https://technicpack.net account**<br />
