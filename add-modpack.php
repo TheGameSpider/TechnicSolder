@@ -5,8 +5,10 @@ $dbcon = require("dbconnect.php");
 if(!$_SESSION['user']||$_SESSION['user']=="") {
 	die("Must be logged in!");
 }
+if(isset($_POST['name'])){
 if (!file_exists($config['mirror_location'].$_POST['name'])) {
     mkdir($config['mirror_location'].$_POST['name'], 0777, true);
+}
 }
 if(!empty($_POST['name'])){
 $config = require("config.php");
@@ -85,12 +87,12 @@ header("Location: index.php?succ=Modpack ".$_POST['display_name']." successfuly 
 <div class="newmod popup">
 	<h1>Add Modpack</h1>
 	<form autocomplete="off" enctype="multipart/form-data"  method="POST" action="add-modpack.php">
-		<input name="name" type="text" required placeholder="Modpack slug name (a-z)" value="<?php echo $mod['pretty_name']?>" />
-		<input name="display_name" type="text" required placeholder="Modpack dispaly name" value="<?php echo $mod['pretty_name']?>" />
+		<input name="name" type="text" required placeholder="Modpack slug name (a-z)" />
+		<input name="display_name" type="text" required placeholder="Modpack dispaly name" />
 		<hr>
-		<h3>Modpack icon (Should be 50x50):<h3><input accept=".png" required type="file" name="icon" id="icon"><input name="icon_md5" type="text" placeholder="MD5" required />
-		<h3>Modpack logo (Should be 370x220):</h3><input accept=".png" required type="file" name="logo" id="logo"><input name="logo_md5" type="text" placeholder="MD5" required />
-		<h3>Modpack Background (Should be 900x600):</h3><input accept=".png" required type="file" name="background" id="backgroud"><input name="background_md5" type="text" placeholder="MD5" required />
+		<h3>Modpack icon (must be 50x50):<h3><input accept=".png" required type="file" name="icon" id="icon"><input name="icon_md5" type="text" placeholder="MD5" required />
+		<h3>Modpack logo (must be 370x220):</h3><input accept=".png" required type="file" name="logo" id="logo"><input name="logo_md5" type="text" placeholder="MD5" required />
+		<h3>Modpack Background (must be 900x600):</h3><input accept=".png" required type="file" name="background" id="backgroud"><input name="background_md5" type="text" placeholder="MD5" required />
 		<hr>
 		<input class="animate" style="font-size: 1.5em;padding:10px;margin:10px" type="submit" value="Add Modpack" />
 	</form>

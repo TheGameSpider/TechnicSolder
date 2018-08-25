@@ -5,11 +5,12 @@ $dbcon = require("dbconnect.php");
 if(!$_SESSION['user']||$_SESSION['user']=="") {
 	die("Must be logged in!");
 }
-if($_GET['logout']==true){
-	session_destroy();
-	header("Refresh:0; url=index.php");
+if(isset($_GET['logout'])){
+	if($_GET['logout']==true){
+		session_destroy();
+		header("Refresh:0; url=index.php");
+	}
 }
-
 if(empty($_GET['build'])){
 	header("Location: index.php");
 }

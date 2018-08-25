@@ -34,8 +34,7 @@ if(isset($_POST['submit'])){
 	</script>
 <?php }?>
 <?php
-if(!$_SESSION['user']||$_SESSION['user']=="") {
-
+if(!isset($_SESSION['user'])) {
 ?>
 <?php if(isset($_GET['ic'])){?><div class="danger">Invalid credentials!</div><?php }?>
 <div class="login">
