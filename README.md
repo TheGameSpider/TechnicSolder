@@ -1,5 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Version: 0.0.1.0](https://img.shields.io/badge/Version-0.0.1.0-blue.svg)
+![Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=version&colorB=blue)
+![Stream](https://img.shields.io/badge/dynamic/json.svg?label=Stream&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=stream&colorB=yellow)
 # Installation
 ***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 6***<br />
 ***NOTE: If your server hosting provider already installed Apache Web server and does not support SSH access. you can just simply upload the master branch to root directory*** <br />
