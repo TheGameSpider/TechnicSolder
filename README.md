@@ -1,3 +1,14 @@
+# TechnicSolder
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=version&colorB=blue)
+![Stream](https://img.shields.io/badge/dynamic/json.svg?label=Stream&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=stream&colorB=yellow)
+
+TechnicSolder is an API that sits between a modpack repository and the Technic Launcher. It allows you to easily manage multiple modpacks in one single location.
+
+Using Solder also means your packs will download each mod individually. This means the launcher can check MD5's against each version of a mod and if it hasn't changed, use the cached version of the mod instead. What does this mean? Small incremental updates to your modpack doesn't mean redownloading the whole thing every time!
+
+Solder also interfaces with the Technic Platform using an API key you can generate through your account there. When Solder has this key it can directly interact with your Platform account. When creating new modpacks you will be able to import any packs you have registered in your Solder install. It will also create detailed mod lists on your Platform page! (assuming you have the respective data filled out in Solder) Neat huh?
+
 # Installation
 ***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 6***<br />
 ***NOTE: If your server hosting provider already installed Apache Web server and does not support SSH access. you can just simply upload the master branch to root directory*** <br />
@@ -75,7 +86,7 @@ Save and close the file
 ```bash
 a2enmod rewrite
 ```
-**6.Clone TechnicSolder repository** 
+**6. Clone TechnicSolder repository** 
 ```bash
 cd /var/www/
 git clone https://github.com/TheGameSpider/TechnicSolder.git
@@ -87,7 +98,7 @@ Restart apache
 service apache2 restart
 ```
 Installation is complete. Now you need to confige TechnicSolder before using it.
-# TechnicSolder Configuration
+# Configuration
 **1. Configure MySQL**
 ```bash
 mysql -p -u root
