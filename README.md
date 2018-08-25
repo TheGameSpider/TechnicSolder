@@ -10,8 +10,9 @@ Using Solder also means your packs will download each mod individually. This mea
 Solder also interfaces with the Technic Platform using an API key you can generate through your account there. When Solder has this key it can directly interact with your Platform account. When creating new modpacks you will be able to import any packs you have registered in your Solder install. It will also create detailed mod lists on your Platform page! (assuming you have the respective data filled out in Solder) Neat huh?
 
 # Installation
-***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 6***<br />
-***NOTE: If your server hosting provider already installed Apache Web server and does not support SSH access. you can just simply upload the master branch to root directory*** <br />
+> ***NOTE: If your server hosting provider already installed Apache Web server, you can*** [skip to step 6](https://github.com/TheGameSpider/TechnicSolder/blob/master/README.md#cloning-technicsolder-repository) <br />
+> ***NOTE: If your server hosting provider already installed Apache Web server and does not support SSH access. you can just simply upload the master branch to root directory*** <br />
+## Ubuntu server installation
 **1. Install Ubuntu Server 18.04 (https://www.ubuntu.com/download/server)** <br />
 **2. Login to Ubuntu with credentials you set.** <br />
 **3. Become root**
@@ -23,6 +24,7 @@ Write you current password, then set new root password
 exit
 ```
 Login as root <br />
+## Web server installation and configuration
 **4. Install LAMP pack**<br />
 Note: apt will tell you which packages it plans to install and how much extra disk space they'll take up. Press Y and hit Enter to continue, and the installation will proceed.
 ```bash
@@ -39,11 +41,11 @@ apt install php libapache2-mod-php php-mysql
 nano /etc/apache2/mods-enabled/dir.conf
 ```
 We want to move the PHP index file to the first position after the DirectoryIndex specification: <br />
-**DirectoryIndex index.html index.cgi index.pl index.php index.xhtml index.htm** -> **DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm**<br />
+**DirectoryIndex index.html index.cgi index.pl index.php index.xhtml index.htm** -> **DirectoryIndex index.php**<br />
 Configuration will look like this:
-```html
+```
 <IfModule mod_dir.c>
-    DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
+    DirectoryIndex index.php
 </IfModule>
 ```
 When you are finished, save and close the file by pressing Ctrl-X. You'll have to confirm the save by typing Y and then hit Enter to confirm the file save location.
@@ -75,7 +77,7 @@ rm /var/www/html/index.php
 nano /etc/apache2/sites-enabled/000-default.conf
 ```
 Add this before &lt;/VirtualHost&gt; close tag:
-```html
+```
 <Directory /var/www/TechnicSolder>
         Options Indexes FollowSymLinks MultiViews
         AllowOverride All
@@ -86,6 +88,7 @@ Save and close the file
 ```bash
 a2enmod rewrite
 ```
+## Cloning TechnicSolder repository
 **6. Clone TechnicSolder repository** 
 ```bash
 cd /var/www/
@@ -108,7 +111,7 @@ Create new user
 ```MYSQL
 CREATE USER 'solder'@'localhost' IDENTIFIED BY 'secret';
 ```
-**NOTE: By writing *IDENTIFIED BY 'secret'* you set your password. Dont use *secret***<br />
+> **NOTE: By writing *IDENTIFIED BY 'secret'* you set your password. Dont use *secret***<br />
 Create database solder and grant user *solder* access to it.
 ```MYSQL
 CREATE DATABASE solder;
@@ -129,7 +132,7 @@ Then click *Solder Configuration* and copy your API Key<br />
 In your config.php file set api_key to key you copied.<br />
 Now, you can save the config.<br />
 The final step is to set your Solder URL in Solder Configuration (In your https://technicpack.net profile)
-```http
+```
 http://your_server_IP_address/api/
 ```
 Click **Link solder**<br />
