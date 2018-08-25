@@ -2,6 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=version&colorB=blue)
 ![Stream](https://img.shields.io/badge/dynamic/json.svg?label=Stream&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=stream&colorB=yellow)
+
 TechnicSolder is an API that sits between a modpack repository and the Technic Launcher. It allows you to easily manage multiple modpacks in one single location.
 
 Using Solder also means your packs will download each mod individually. This means the launcher can check MD5's against each version of a mod and if it hasn't changed, use the cached version of the mod instead. What does this mean? Small incremental updates to your modpack doesn't mean redownloading the whole thing every time!
