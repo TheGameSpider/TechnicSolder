@@ -21,7 +21,7 @@ function uri($url, $uri) {
     return (substr($url, -$length) === $uri);
 }
 if(uri($url,"api/")){
-	print '{"api":"TechnicSolder","version":"v0.0.1.1","stream":"ALPHA"}';
+	print '{"api":"TechnicSolder","version":"v0.0.1.2","stream":"ALPHA"}';
 	exit();
 } 
 if(uri($url,"api/verify")){
@@ -57,7 +57,7 @@ if(uri($url,"api/modpack")){
 					"logo_md5" => $modpack['logo_md5'],
 					"background" => $modpack['background'],
 					"background_md5" => $modpack['background_md5'],
-					"recommented" => $modpack['recommented'],
+					"recommended" => $modpack['recommented'],
 					"latest" => $modpack['latest'],
 					"builds" => $builds
 				);
@@ -114,7 +114,7 @@ if(uri($url,"api/modpack/".substr($url, strrpos($url, '/') + 1))){
 				"logo_md5" => $modpack['logo_md5'],
 				"background" => $modpack['background'],
 				"background_md5" => $modpack['background_md5'],
-				"recommented" => $modpack['recommented'],
+				"recommended" => $modpack['recommented'],
 				"latest" => $modpack['latest'],
 				"builds" => $builds
 			);
