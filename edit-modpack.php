@@ -111,7 +111,7 @@ if(isset($_POST['submit'])){
 				</div>";
 			}
 			?>
-			<?phpwhile($build = mysqli_fetch_array($buildsq)){
+			<?php while($build = mysqli_fetch_array($buildsq)){
 				?>
 				<div class="popup" id="deletebuild-<?php echo $build['id']?>" style="display:none;width:20em;height:13em">
 					<h2>Detele Build?</h2>

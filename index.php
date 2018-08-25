@@ -2,10 +2,11 @@
 session_start();
 $config = require("config.php");
 $dbcon = require("dbconnect.php");
-if($_GET['logout']==true){
-	session_destroy();
-	header("Refresh:0; url=index.php");
-	
+if(isset($_GET['logout'])){
+	if($_GET['logout']==true){
+		session_destroy();
+		header("Refresh:0; url=index.php");
+	}
 }
 if(isset($_POST['submit'])){
 	if($_POST['mail']==$config['mail'] & $_POST['pass']==$config['pass']) {

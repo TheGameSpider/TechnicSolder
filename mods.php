@@ -2,9 +2,11 @@
 session_start();
 $config = require("config.php");
 $dbcon = require("dbconnect.php");
-if($_GET['logout']==true){
-	session_destroy();
-	header("Refresh:0; url=index.php");
+if(isset($_GET['logout'])){
+	if($_GET['logout']==true){
+		session_destroy();
+		header("Refresh:0; url=index.php");
+	}
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {
 	die("You need to be logged in!");
@@ -27,7 +29,7 @@ function generateSlugFrom($string)
 	<script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>
 </head>
 <body>
-<?phpif(!empty($_GET['succ'])){?>
+<?php if(!empty($_GET['succ'])){?>
 	<div id="alert" style="position:fixed;bottom:1em;z-index:4;left:20%" class="success"><?php echo $_GET['succ']?></div>
 	<script>
 		$(document).ready(function(){
@@ -36,7 +38,7 @@ function generateSlugFrom($string)
 			},5000)
 		});
 	</script>
-<?php}?>
+<?php }?>
 	<div class="main">
 		<div class="head">
 			<img id="logo" style="float:left" src="https://www.technicpack.net/assets/images/logo_small.png"></img>
@@ -135,18 +137,13 @@ function generateSlugFrom($string)
 					</form>
 					<button onclick="$('#editmod-<?php echo $mod['id']?>').hide();" class="animate" style="font-size: 1.5em;padding:10px;margin:10px" >Cancel</button>
 				</div>
-				<?php}}?>
-				<script>
-				
-// File upload progress code from https://codepen.io/PerfectIsShit/pen/zogMXP
-				
+				<?php }}?>
+				<script>		
 function _(el) {
   return document.getElementById(el);
 }
-
 function uploadFile() {
   file = _("file1").files[0];
-  //alert(file.name+" | "+file.size+" | "+file.type);
   var formdata = new FormData();
   formdata.append("file1", file);
   var ajax = new XMLHttpRequest();
@@ -159,24 +156,18 @@ function uploadFile() {
   $('#file1').prop('disabled', true);
   $('#file1').hide();
 }
-
 function progressHandler(event) {
-  //_("loaded_n_total").innerHTML = "Uploaded " + event.loaded + " bytes of " + event.total;
   var percent = (event.loaded / event.total) * 100;
   _("progressBar").value = Math.round(percent);
   _("status").innerHTML = "Uploading: " + Math.round(percent) + "%";
 }
-
 function completeHandler(event) {
   _("status").innerHTML = event.target.responseText;
   $("#url").attr("value","<?php echo $config['mirror_url']?>" + file.name);
-  //_("progressBar").value = 0; 
 }
-
 function errorHandler(event) {
   _("status").innerHTML = "Upload Failed";
 }
-
 function abortHandler(event) {
   _("status").innerHTML = "Upload Aborted";
 }
