@@ -8,36 +8,6 @@ if(!$_SESSION['user']||$_SESSION['user']=="") {
 if (!file_exists($config['mirror_location'].$_POST['name'])) {
     mkdir($config['mirror_location'].$_POST['name'], 0777, true);
 }
-?>
-<link rel="stylesheet" href="css/style.css"></link>	
-<div class="popup" style="width:25em;height:12em;top:0em;">
-<center>
-<h1>Whoops!</h1>
-<h2>There have been an error:</h2>
-<?php
-if(!empty($_FILES)){
-$icon_imageSize = getimagesize($_FILES["icon"]["tmp_name"]);
-$logo_imageSize = getimagesize($_FILES["logo"]["tmp_name"]);
-$background_imageSize = getimagesize($_FILES["background"]["tmp_name"]);
-$width = $icon_imageSize[0];
-$height = $icon_imageSize[1];
-if ($width !== 50 || $height !== 50) {
-	echo 'ERROR: Icon is not 50x50<br>';
-	exit();
-}
-$width = $logo_imageSize[0];
-$height = $logo_imageSize[1];
-if ($width !== 370 || $height !== 220) {
-	echo 'ERROR: Logo is not 370x220<br>';
-	exit();
-}
-$width  = $background_imageSize[0];
-$height = $background_imageSize[1];
-if ($width !== 900 || $height !== 600) {
-	echo 'ERROR: Background is not 900x600<br>';
-	exit();
-}
-}
 if(!empty($_POST['name'])){
 $config = require("config.php");
 $icon_fileName = $_FILES["icon"]["name"]; 
@@ -118,9 +88,9 @@ header("Location: index.php?succ=Modpack ".$_POST['display_name']." successfuly 
 		<input name="name" type="text" required placeholder="Modpack slug name (a-z)" value="<?php echo $mod['pretty_name']?>" />
 		<input name="display_name" type="text" required placeholder="Modpack dispaly name" value="<?php echo $mod['pretty_name']?>" />
 		<hr>
-		<h3>Modpack icon (must be 50x50):<h3><input accept=".png" required type="file" name="icon" id="icon"><input name="icon_md5" type="text" placeholder="MD5" required />
-		<h3>Modpack logo (must be 370x220):</h3><input accept=".png" required type="file" name="logo" id="logo"><input name="logo_md5" type="text" placeholder="MD5" required />
-		<h3>Modpack Background (must be 900x600):</h3><input accept=".png" required type="file" name="background" id="backgroud"><input name="background_md5" type="text" placeholder="MD5" required />
+		<h3>Modpack icon (Should be 50x50):<h3><input accept=".png" required type="file" name="icon" id="icon"><input name="icon_md5" type="text" placeholder="MD5" required />
+		<h3>Modpack logo (Should be 370x220):</h3><input accept=".png" required type="file" name="logo" id="logo"><input name="logo_md5" type="text" placeholder="MD5" required />
+		<h3>Modpack Background (Should be 900x600):</h3><input accept=".png" required type="file" name="background" id="backgroud"><input name="background_md5" type="text" placeholder="MD5" required />
 		<hr>
 		<input class="animate" style="font-size: 1.5em;padding:10px;margin:10px" type="submit" value="Add Modpack" />
 	</form>
