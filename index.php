@@ -22,7 +22,7 @@ if(isset($_POST['submit'])){
 	<script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>
 </head>
 <body>
-<?phpif(!empty($_GET['succ'])){?>
+<?php if(!empty($_GET['succ'])){?>
 	<div id="alert" style="position:fixed;bottom:1em;z-index:4;left:20%" class="success"><?php echo $_GET['succ']?></div>
 	<script>
 		$(document).ready(function(){
@@ -31,12 +31,12 @@ if(isset($_POST['submit'])){
 			},5000)
 		});
 	</script>
-<?php}?>
+<?php }?>
 <?php
 if(!$_SESSION['user']||$_SESSION['user']=="") {
 
 ?>
-<?phpif(isset($_GET['ic'])){?><div class="danger">Invalid credentials!</div><?php}?>
+<?php if(isset($_GET['ic'])){?><div class="danger">Invalid credentials!</div><?php }?>
 <div class="login">
 	<center style="margin-top:8em">
 		<img src="http://wiki.technicpack.net/skins/common/images/wiki.png"></img>
@@ -196,7 +196,7 @@ function generateSlugFrom($string)
 					});
 				}
 			</script>
-<?phpif(!empty($_GET['pack'])){?>
+<?php if(!empty($_GET['pack'])){?>
 	<script>
 	$(document).ready(function(){
 		$('#logo').hide();
@@ -209,7 +209,7 @@ function generateSlugFrom($string)
 		});
 	});
 	</script>
-<?php}?>
+<?php }?>
 			<div class="modpack" onclick="nm()">
 				<img height="32px" style="margin:15px;float:left" src="http://cdn.onlinewebfonts.com/svg/img_27750.png"></img>
 				<h4>Add modpack</h4>
