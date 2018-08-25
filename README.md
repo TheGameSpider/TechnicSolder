@@ -1,3 +1,5 @@
+[![License: MIT]
+[![Version: 0.0.1.0]
 # Installation
 ***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 6***<br />
 ***NOTE: If your server hosting provider already installed Apache Web server and does not support SSH access. you can just simply upload the master branch to root directory*** <br />
