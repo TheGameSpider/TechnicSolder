@@ -1,7 +1,5 @@
 RewriteEngine on
-#if requested resource isn't a file
-# and isn't a directory
-# then serve local error script 
+
 RewriteCond %{REQUEST_FILENAME} !-f  
 RewriteCond %{REQUEST_FILENAME} !-d  
 RewriteRule .* index.php [L] 
