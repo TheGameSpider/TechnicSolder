@@ -127,7 +127,13 @@ if(isset($_POST['submit'])){
 			<div class="container" style="cursor:pointer;" onclick="$('#newbuild').show();">
 				<i class="fas fa-plus-circle"></i> New build
 			</div>
-			<button class="animate red" style="font-size:2em;padding:10px;margin:20px">Remove modpack</button>
+			<div class="popup" id="rmp" style="display:none;width:20em;height:13em">
+					<h2>Detele Modpack?</h2>
+					<p>Are you sure you want to delete this modpack and all it's builds? <?php echo $modpack['pretty_name']?></p>
+					<button style="padding:10px" onclick="$('#rmp').hide()" class="animate"><span style="font-size:2em">No</span></button>
+					<a href="rmp.php?modpack=<?php echo $modpack['id']?>"><button style="padding:10px" class="animate red"><span style="font-size:2em">Yes</span></button></a>
+				</div>
+			<button onclick="$('#rmp').show();" class="animate red" style="font-size:2em;padding:10px;margin:20px">Remove modpack</button>
 		</center>
 	<?php
 }
