@@ -10,7 +10,7 @@ Using Solder also means your packs will download each mod individually. This mea
 Solder also interfaces with the Technic Platform using an API key you can generate through your account there. When Solder has this key it can directly interact with your Platform account. When creating new modpacks you will be able to import any packs you have registered in your Solder install. It will also create detailed mod lists on your Platform page! (assuming you have the respective data filled out in Solder) Neat huh?
 
 # Installation
-***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 6***<br />
+***NOTE: If your server hosting provider already installed Apache Web server, you can*** [skip to step 6](https://github.com/TheGameSpider/TechnicSolder/blob/master/README.md#cloning-technicsolder-repository) <br />
 ***NOTE: If your server hosting provider already installed Apache Web server and does not support SSH access. you can just simply upload the master branch to root directory*** <br />
 ## Ubuntu server installation
 **1. Install Ubuntu Server 18.04 (https://www.ubuntu.com/download/server)** <br />
