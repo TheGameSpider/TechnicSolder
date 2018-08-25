@@ -12,6 +12,7 @@ Solder also interfaces with the Technic Platform using an API key you can genera
 # Installation
 ***NOTE: If your server hosting provider already installed Apache Web server, you can skip to step 6***<br />
 ***NOTE: If your server hosting provider already installed Apache Web server and does not support SSH access. you can just simply upload the master branch to root directory*** <br />
+## Ubuntu server installation
 **1. Install Ubuntu Server 18.04 (https://www.ubuntu.com/download/server)** <br />
 **2. Login to Ubuntu with credentials you set.** <br />
 **3. Become root**
@@ -23,6 +24,7 @@ Write you current password, then set new root password
 exit
 ```
 Login as root <br />
+## Web server installation and configuration
 **4. Install LAMP pack**<br />
 Note: apt will tell you which packages it plans to install and how much extra disk space they'll take up. Press Y and hit Enter to continue, and the installation will proceed.
 ```bash
@@ -86,6 +88,7 @@ Save and close the file
 ```bash
 a2enmod rewrite
 ```
+## Cloning TechnicSolder repository
 **6. Clone TechnicSolder repository** 
 ```bash
 cd /var/www/
