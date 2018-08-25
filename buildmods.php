@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE);
 session_start();
 header('Content-Type: application/json');
 $dbcon = require("dbconnect.php");
@@ -22,7 +23,7 @@ $modslist= explode(',', $build['mods']);
 $modnumber = 0;
 foreach($modslist as $mod){
 	$modres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` =".$mod);
-	if($modres>0) {
+	if($modres) {
 	$modinfo=mysqli_fetch_array($modres);
 	$mods[$modnumber] = array(
 						"id" => $modinfo['id'],
