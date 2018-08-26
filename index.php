@@ -15,6 +15,13 @@ if(isset($_POST['submit'])){
 		header("Refresh:0; url=?ic");
 	}
 }
+if(isset($_GET['pack']) & isset($_GET['pretty_name'])) {
+	$rename = mysqli_query($conn, "UPDATE `modpacks` SET `pretty_name` = '".$_GET['pretty_name']."' WHERE `name` = '".$_GET['pack']."'");
+	if($rename) {
+		header("Location: index.php?pack=".$_GET['pack']."&succ=Modpack ".$_GET['pretty_name']." successfully updated!");
+	}
+}
+
 ?><html>
 
 <head>
