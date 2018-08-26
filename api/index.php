@@ -21,7 +21,7 @@ function uri($url, $uri) {
     return (substr($url, -$length) === $uri);
 }
 if(uri($url,"api/")){
-	print '{"api":"TechnicSolder","version":"v0.0.1.3","stream":"ALPHA"}';
+	print '{"api":"TechnicSolder","version":"v0.0.1.4","stream":"ALPHA"}';
 	exit();
 } 
 if(uri($url,"api/verify")){
@@ -127,10 +127,6 @@ if(uri($url,"api/modpack/".substr($url, strrpos($url, '/') + 1))){
 }
 $result = mysqli_query($conn, "SELECT * FROM `modpacks`");
 while($modpack=mysqli_fetch_array($result)){
-	if (strpos($url, $modpack['name']) == false) {
-		print '{"error":"Modpack does not exist"}';
-		exit();
-	}
 	if(uri($url,"api/modpack/".$modpack['name']."/".substr($url, strrpos($url, '/') + 1))) {
 		$buildsres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".$modpack['id']);
 		while($build=mysqli_fetch_array($buildsres)){
