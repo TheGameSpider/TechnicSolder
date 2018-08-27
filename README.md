@@ -1,8 +1,9 @@
 # TechnicSolder
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=version&colorB=blue)
-![Stream](https://img.shields.io/badge/dynamic/json.svg?label=Stream&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=stream&colorB=red)
-![Stable Version](https://img.shields.io/badge/Stable%20Version-v0.0.1.3-brightgreen.svg)
+![Latest Stable](https://img.shields.io/badge/Stable%20Version-v0.0.1.4-brightgreen.svg)
+![Latest Dev](https://img.shields.io/badge/dynamic/json.svg?label=Version&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=version&colorB=blue)
+![Stable Stream](https://img.shields.io/badge/dynamic/json.svg?label=Stream&url=http%3A%2F%2Ftgsapi.8u.cz%2Fapi%2F&query=stream&colorB=red)
+
 [![GitHub issues](https://img.shields.io/github/issues-raw/TheGameSpider/TechnicSolder.svg)](https://github.com/TheGameSpider/TechnicSolder/issues)
 
 TechnicSolder is an API that sits between a modpack repository and the Technic Launcher. It allows you to easily manage multiple modpacks in one single location.
