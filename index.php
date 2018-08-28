@@ -226,7 +226,7 @@ function generateSlugFrom($string)
 			<center>
 				<h1>Welcome to Technic Solder!</h1>
 				<div class="container">
-					f
+					Start by adding mods
 				</div>
 			</center>
 		</div>
