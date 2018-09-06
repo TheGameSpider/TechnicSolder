@@ -11,8 +11,8 @@ if(substr($url,-1)=="/" & substr($url,-4)!=="api/") {
 		header("Location: " . rtrim($url,'/'));
 	}
 }
-$config = require("../config.php");
-$dbcon = require("../dbconnect.php");
+$config = require("../functions/config.php");
+$dbcon = require("../functions/dbconnect.php");
 function uri($url, $uri) {
     $length = strlen($uri);
     if ($length == 0) {
@@ -21,7 +21,7 @@ function uri($url, $uri) {
     return (substr($url, -$length) === $uri);
 }
 if(uri($url,"api/")){
-	print '{"api":"TechnicSolder","version":"v0.0.1.4","stream":"ALPHA"}';
+	print '{"api":"TechnicSolder","version":"v0.0.2.1","stream":"Beta"}';
 	exit();
 } 
 if(uri($url,"api/verify")){
@@ -49,7 +49,7 @@ if(uri($url,"api/modpack")){
 				}
 				$modpacks[$modpack['name']] = array(
 					"name" => $modpack['name'],
-					"display_name" => $modpack['pretty_name'],
+					"display_name" => $modpack['display_name'],
 					"url" => $modpack['url'],
 					"icon" => $modpack['icon'],
 					"icon_md5" => $modpack['icon_md5'],
@@ -57,7 +57,7 @@ if(uri($url,"api/modpack")){
 					"logo_md5" => $modpack['logo_md5'],
 					"background" => $modpack['background'],
 					"background_md5" => $modpack['background_md5'],
-					"recommended" => $modpack['recommented'],
+					"recommended" => $modpack['recommended'],
 					"latest" => $modpack['latest'],
 					"builds" => $builds
 				);
@@ -71,7 +71,7 @@ if(uri($url,"api/modpack")){
 			$result = mysqli_query($conn, "SELECT * FROM `modpacks`");
 			while($modpack=mysqli_fetch_array($result)){
 				$mn = $modpack['name'];
-				$mpn = $modpack['pretty_name'];
+				$mpn = $modpack['display_name'];
 				$modpacks[$mn] = $mpn;
 			}
 			$response = array(
@@ -84,7 +84,7 @@ if(uri($url,"api/modpack")){
 		$result = mysqli_query($conn, "SELECT * FROM `modpacks`");
 		while($modpack=mysqli_fetch_array($result)){
 			$mn = $modpack['name'];
-			$mpn = $modpack['pretty_name'];
+			$mpn = $modpack['display_name'];
 			$modpacks[$mn] = $mpn;
 		}
 		$response = array(
@@ -106,7 +106,7 @@ if(uri($url,"api/modpack/".substr($url, strrpos($url, '/') + 1))){
 			}
 			$response = array(
 				"name" => $modpack['name'],
-				"display_name" => $modpack['pretty_name'],
+				"display_name" => $modpack['display_name'],
 				"url" => $modpack['url'],
 				"icon" => $modpack['icon'],
 				"icon_md5" => $modpack['icon_md5'],
@@ -114,7 +114,7 @@ if(uri($url,"api/modpack/".substr($url, strrpos($url, '/') + 1))){
 				"logo_md5" => $modpack['logo_md5'],
 				"background" => $modpack['background'],
 				"background_md5" => $modpack['background_md5'],
-				"recommended" => $modpack['recommented'],
+				"recommended" => $modpack['recommended'],
 				"latest" => $modpack['latest'],
 				"builds" => $builds
 			);
@@ -180,9 +180,9 @@ while($modpack=mysqli_fetch_array($result)){
 				print(json_encode($response));
 				exit();
 			}
-			print '{"error":"Build does not exist"}';
-			exit();
 		}
+		print '{"error":"Build does not exist"}';
+		exit();
 	}
 }
 print '{"status":404,"error":"Not Found"}';
