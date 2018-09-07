@@ -25,7 +25,24 @@ Login as root <br />
 **4. Install WEB Server**<br />
 ```bash
 apt update
-apt install apache2 php libapache2-mod-php mysql-server php-mysql php-curl
+apt install apache2 php libapache2-mod-php mysql-server php-mysql php-curl php-dev zlib1g-dev
+```
+The above command can take a while to complete. Now, you need to install PHP ZIP extension.<br />
+```bash
+cd /
+wget http://fr.archive.ubuntu.com/ubuntu/pool/universe/libz/libzip/libzip4_1.1.2-1.1_amd64.deb
+wget http://fr.archive.ubuntu.com/ubuntu/pool/universe/libz/libzip/libzip-dev_1.1.2-1.1_amd64.deb
+dpkg -i libzip4_1.1.2-1.1_amd64.deb
+dpkg -i libzip-dev_1.1.2-1.1_amd64.deb
+pecl install zip
+nano /etc/php/7.2/apache2/php.ini
+```
+add `extension=zip.so` to the file.
+```bash
+service apache2 restart
+```
+Configure MySQL: 
+```bash
 mysql_secure_installation
 ```
 You will be asked if you want to configure the VALIDATE PASSWORD PLUGIN. Answer **y**<br />

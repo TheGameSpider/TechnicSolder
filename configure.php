@@ -122,7 +122,7 @@ if(!isset($_GET['reconfig'])) {
 					</div>
 					<div class="form-group">
 						<label for="email">Almost done...</label>
-						<input required name="host" type="text" class="form-control" placeholder="Webserver public IP or domain name." value="<?php print_r(file_get_contents('http://icanhazip.com')); ?>"><br />
+						<input required name="host" type="text" class="form-control" placeholder="Webserver public IP or domain name. (your IP is <?php print_r(file_get_contents('http://icanhazip.com')); ?>)"><br />
 						<input required name="api_key" type="text" class="form-control" placeholder="API Key">
 						<small class="form-text text-muted">You can find you API Key in your profile at <a target="_blank" href="https://technicpack.net">technicpack.net</a></small>
 					</div>		
