@@ -109,8 +109,8 @@ CREATE DATABASE solder;
 GRANT ALL ON solder.* TO 'solder'@'localhost';
 exit
 ```
-**Configure TechnicSolder**
-Go to `http://your_server_IP_address` and fill up the form. If you followed these instructions, database name and username `is solder`
+**Configure TechnicSolder** <br />
+Go to `http://your_server_IP_address` and fill up the form. If you followed these instructions, database name and username is `solder` <br />
 The final step is to set your Solder URL in Solder Configuration (In your https://technicpack.net profile)
 ```
 http://your_server_IP_address/api/
