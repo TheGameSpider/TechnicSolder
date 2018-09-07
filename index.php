@@ -1,6 +1,5 @@
 <?php
 session_start();
-error_reporting(E_ALL);
 $config = include("./functions/config.php");
 if($config['configured']!==true) {
 	header("Location: /configure.php");
@@ -520,7 +519,7 @@ if(isset($_GET['logout'])){
 		}
 		if(uri('/build')) {
 			if(isset($_POST['versions']) & isset($_POST['java']) & isset($_POST['memory'])) {
-				mysqli_query($conn, "UPDATE `builds` SET `mods` = '".$_POST['versions']."'");
+				mysqli_query($conn, "UPDATE `builds` SET `mods` = '".$_POST['versions']."' WHERE `id` = ".$_GET['id']);
 				$minecraft = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".$_POST['versions']));
 				mysqli_query($conn, "UPDATE `builds` SET `minecraft` = '".$minecraft['mcversion']."', `java` = '".$_POST['java']."', `memory` = '".$_POST['memory']."' WHERE `id` = ".$_GET['id']);
 			}
@@ -585,10 +584,10 @@ if(isset($_GET['logout'])){
 									$modq = mysqli_query($conn,"SELECT * FROM `mods` WHERE `id` = ".$bmod);
 									$moda = mysqli_fetch_array($modq);
 									?>
-								<tr id="mod-<?php echo $moda['id'] ?>">
+								<tr id="mod-<?php echo $bmod ?>">
 									<td scope="row"><?php echo $moda['pretty_name'] ?></td>
 									<td><?php echo $moda['version'] ?></td>
-									<td><?php if($moda['name'] !== "forge"){ ?><button onclick="remove_mod(<?php echo $moda['id'] ?>)" class="btn btn-danger"><i class="fas fa-times"></i></button><?php } ?></td>
+									<td><?php if($moda['name'] !== "forge"){ ?><button onclick="remove_mod(<?php echo $bmod ?>)" class="btn btn-danger"><i class="fas fa-times"></i></button><?php } ?></td>
 								</tr>
 								<?php } ?>
 							</tbody>

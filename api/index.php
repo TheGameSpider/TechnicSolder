@@ -63,7 +63,7 @@ if(uri($url,"api/modpack")){
 				);
 				$response = array(
 					"modpacks" => $modpacks,
-					"mirror_url" => $config['mirror_url']
+					"mirror_url" => "http://".$config['host']."/mods"
 				);
 			}
 		} else {
@@ -76,7 +76,7 @@ if(uri($url,"api/modpack")){
 			}
 			$response = array(
 				"modpacks" => $modpacks,
-				"mirror_url" => $config['mirror_url']
+				"mirror_url" => "http://".$config['host']."/mods"
 			);
 		}
 	} else {
@@ -89,7 +89,7 @@ if(uri($url,"api/modpack")){
 		}
 		$response = array(
 			"modpacks" => $modpacks,
-			"mirror_url" => $config['mirror_url']
+			"mirror_url" => "http://".$config['host']."/mods"
 		);
 	}
 	print(json_encode($response));
@@ -173,7 +173,7 @@ while($modpack=mysqli_fetch_array($result)){
 				$response = array(
 					"minecraft" => $build['minecraft'],
 					"java" => $build['java'],
-					"memory" => $build['java'],
+					"memory" => $build['memory'],
 					"forge" => null,
 					"mods" => $mods,
 				);

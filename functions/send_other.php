@@ -29,7 +29,6 @@ if(move_uploaded_file($fileTmpLoc, "../others/".$fileName)){
 	$pretty_name = mysqli_real_escape_string($conn, $fileName);
 	$name = slugify($pretty_name);
 	$author = $config['author'];
-	$md5 = md5_file("../others/".$fileName);
 	$url = "http://".$config['host']."/others/".$fileName.".zip";
 	$zip = new ZipArchive();
 	if ($zip->open("../others/".$fileName.".zip", ZIPARCHIVE::CREATE) !== TRUE) {
@@ -41,6 +40,7 @@ if(move_uploaded_file($fileTmpLoc, "../others/".$fileName)){
 	}
 	$zip->close();
 	unlink("../others/".$fileName);
+	$md5 = md5_file("../others/".$fileName.".zip");
 	$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`author`,`description`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','".$url."','".$author."','Custom file by ".$author."','".$fileName.".zip','other')");
 	if($res) {
 			echo '{"status":"succ","message":"File has been saved."}';
