@@ -69,7 +69,7 @@ rm /var/www/html/index.php
 a2enmod rewrite
 nano /etc/apache2/sites-enabled/000-default.conf
 ```
-Add this before `&lt;/VirtualHost&gt;` close tag:
+Add this before `</VirtualHost>` close tag:
 ```
     <Directory /var/www/TechnicSolder>
         Options Indexes FollowSymLinks MultiViews
