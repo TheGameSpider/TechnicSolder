@@ -33,4 +33,7 @@ if($mod['description']!==$_POST['description']){
 if($mod['mcversion']!==$_POST['version']){
 	mysqli_query($conn, "UPDATE `mods` SET `mcversion` = '".$_POST['mcversion']."' WHERE `id` = ".$_GET['id']);
 }
+if($mod['url']!==$_POST['url']){
+	mysqli_query($conn, "UPDATE `mods` SET `url` = '".$_POST['url']."' WHERE `id` = ".$_GET['id']);
+}
 header("Location: /mod?id=".$_GET['id']);

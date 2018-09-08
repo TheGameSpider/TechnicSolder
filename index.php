@@ -1305,7 +1305,10 @@ if(isset($_GET['logout'])){
 						<input class="form-control" type="text" name="author" placeholder="Mod Author" value="<?php echo $mod['author'] ?>"><br />
 						<input class="form-control" type="url" name="link" placeholder="Mod Website" value="<?php echo $mod['link'] ?>"><br />
 						<input class="form-control" type="url" name="donlink" placeholder="Author's Website" value="<?php echo $mod['donlink'] ?>"><br />
+						<input class="form-control" type="url" name="url" placeholder="File URL" value="<?php echo $mod['url'] ?>"><br />
 						<input class="form-control" required type="text" name="mcversion" placeholder="Minecraft Version" value="<?php echo $mod['mcversion'] ?>"><br />
+
+						<textarea class="form-control" required type="text" name="description" placeholder="Mod description"><?php echo $mod['description'] ?></textarea><br />
 						<input type="submit" value="Save" class="btn btn-success">
 				</form>
 			</div>
