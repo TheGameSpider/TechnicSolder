@@ -387,7 +387,7 @@ if(isset($_GET['logout'])){
 					<h2>New Build</h2>
 					<form action="/functions/new-build.php" method="">
 						<input hidden type="text" name="id" value="<?php echo $_GET['id'] ?>">
-						<input autocomplete="off" class="form-control" type="text" name="name" placeholder="Build name (e.g. 1.0)" />
+						<input required autocomplete="off" class="form-control" type="text" name="name" placeholder="Build name (e.g. 1.0)" />
 						<br />
 						<button type="submit" name="type" value="new" class="btn btn-primary">Create Empty Build</button>
 						<button type="submit" name="type" value="update" class="btn btn-primary">Update latest version</button>
