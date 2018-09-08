@@ -266,6 +266,9 @@ if(isset($_GET['logout'])){
 					<a href="/about"><div class="modpack">
 						<p><i class="fas fa-info-circle fa-lg"></i> <span style="margin-left:inherit;">About TechnicSolder</span></p>
 					</div></a>
+					<a href="/update"><div class="modpack">
+						<p><i class="fas fa-arrow-alt-circle-up fa-lg"></i> <span style="margin-left:inherit;">Upadte</span></p>
+					</div></a>
 				</div>
 			</div>	
 		</div>
@@ -1354,6 +1357,30 @@ if(isset($_GET['logout'])){
 				});
 			</script>
 			<?php
+		}
+		if(uri("/update")) {
+			$version = json_decode(file_get_contents("http://".$_SERVER['HTTP_HOST']."/api"),true)['version'];
+			$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
+		?>
+			<div class="main">
+				<div class="card">
+					<h2>Technic Solder Updater</h2>
+					<br />
+					<div class="alert <?php if($version==$newversion['version']) { echo "alert-success";} else { echo "alert-info"; } ?>" role="alert">
+						<h4 class="alert-heading"><?php if($version==$newversion['version']){echo "No updates";} else { echo "New update available - ".$newversion['version']; } ?></h4>
+						<hr>
+						<p class="mb-0"><?php if($version==$newversion['version']){ echo $newversion['changelog']; } else { echo $newversion['changelog']; } ?></p>
+					</div>
+
+					<?php if($version!==$newversion['version']) { ?> <a href="/functions/update.php"><button class="btn btn-success">Update</button></a> <?php } ?>
+				</div>
+			</div>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$("#nav-settings").trigger('click');
+				});
+			</script>
+		<?php			
 		}
 	}
 	?>
