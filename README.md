@@ -24,7 +24,7 @@ Login as root <br />
 **4. Install WEB Server**<br />
 ```bash
 apt update
-apt install apache2 php libapache2-mod-php mysql-server php-mysql php-curl php-dev zlib1g-dev
+apt -y install apache2 php libapache2-mod-php mysql-server php-mysql php-curl php-dev zlib1g-dev
 ```
 The above command can take a while to complete. Now, you need to install PHP ZIP extension.<br />
 ```bash
