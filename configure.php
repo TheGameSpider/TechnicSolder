@@ -33,7 +33,6 @@ if(!isset($_GET['reconfig'])) {
 					echo "<a href='/dashboard'><button class='btn btn-secondary'>Cancel</button></a>";
 				}
 				if(isset($_POST['host'])) {
-
 					$cf = '<?php return array( "configured" => true, ';
 
 					foreach ($_POST as $key => $value) {
@@ -114,11 +113,11 @@ if(!isset($_GET['reconfig'])) {
 					</div>
 					<div class="form-group">
 						<label for="email">Database</label>
-						<input required name="db-host" type="text" class="form-control" placeholder="Database IP" value="127.0.0.1"><br />
-						<input required name="db-user" type="text" class="form-control" placeholder="Database username"><br />
-						<input required name="db-name" type="text" class="form-control" placeholder="Database name"><br />
-						<input required name="db-pass" type="password" class="form-control" name="db-pass" placeholder="Database password">
-						<small class="form-text text-muted">Three tables will be created.</small>
+						<input required name="db-host" type="text" class="form-control" id="db-host" placeholder="Database IP" value="127.0.0.1"><br />
+						<input required name="db-user" type="text" class="form-control" id="db-user" placeholder="Database username"><br />
+						<input required name="db-name" type="text" class="form-control" id="db-name" placeholder="Database name"><br />
+						<input required name="db-pass" type="password" class="form-control" id="db-pass" placeholder="Database password">
+						<small id="errtext" class="form-text text-muted">Three tables will be created.</small>
 					</div>
 					<div class="form-group">
 						<label for="email">Almost done...</label>
@@ -141,6 +140,28 @@ if(!isset($_GET['reconfig'])) {
 							$("#save").attr("disabled", true);
 						}
 					});
+					$("#db-pass").on("keyup", function() {
+						var http = new XMLHttpRequest();
+						var params = 'db-pass='+ $("#db-pass").val() +'&db-name='+ $("#db-name").val() +'&db-user='+ $("#db-user").val() +'&db-host='+ $("#db-host").val() ;
+						http.open('POST', './functions/conntest.php');
+						http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+						http.onreadystatechange = function() {//Call a function when the state changes.
+							if(http.readyState == 4 && http.status == 200) {
+								if(http.responseText == "error") {
+									$("#errtext").text("Can't connect to database");
+									$("#errtext").removeClass("text-muted text-success");
+									$("#errtext").addClass("text-danger");
+									$("#save").attr("disabled", true);
+								} else {
+									$("#errtext").text("Connected to database");
+									$("#errtext").removeClass("text-muted text-danger");
+									$("#errtext").addClass("text-success");
+									$("#save").attr("disabled", false);
+								}
+							}
+						}
+						http.send(params);
+					});					
 				</script>		
 			</div>
 		</div>
