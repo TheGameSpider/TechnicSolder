@@ -5,6 +5,9 @@ require("dbconnect.php");
 $link = $_GET['link'];
 $version = $_GET['version'];
 $mcversion = $_GET['mcversion'];
+if($mcversion == "1.7.10-1.7.10") {
+	$mcversion = "1.7.10";
+}
 if(!file_exists("../forges/modpack-".$version)) {
 	mkdir("../forges/modpack-".$version);
 } else {
