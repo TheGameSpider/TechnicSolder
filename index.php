@@ -1333,7 +1333,7 @@ if(isset($_GET['logout'])){
 					</blockquote>
 					<hr>
 					<p>TechnicSolder was originaly developed by <a href="https://github.com/TechnicPack">Technic</a> using the Laravel Framework. However, the application is difficult to install and use. <a href="https://github.com/TheGameSpider/TechnicSolder">TechnicSolder</a> by <a href="https://github.com/TheGameSpider">TheGameSpider</a> runs on pure PHP with zip and curl extensions and it's very easy to use. To install, you just need to install zip and curl and extract TechnicSolder to your root folder. And the usage is even easier! Just Drag n' Drop your mods.</p>
-					<p>This version of TechnicSolder have 2112 lines of code.</p>
+					<p>This version of TechnicSolder have 2145 lines of code.</p>
 					<p>Read the licence before redistributing.</p>
 					<div class="card text-white bg-info mb3" style="padding:0">
 						<div class="card-header">License</div>
