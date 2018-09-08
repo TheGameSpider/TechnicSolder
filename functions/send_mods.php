@@ -69,7 +69,11 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 		if(!$mcmod['modid']) {
 			$name = slugify($pretty_name);
 		} else {
-			$name = $mcmod['modid'];
+			if(preg_match("^[a-z0-9]+(?:-[a-z0-9]+)*$", $mcmod['modid'])) {
+				$name = $mcmod['modid'];
+			} else {
+				$name = slugify($mcmod['modid']);
+			}
 		}
 		$link = $mcmod['url'];
 		$author = mysqli_real_escape_string($conn, implode(', ', $mcmod['authorList']));
