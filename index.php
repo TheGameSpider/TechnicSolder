@@ -281,7 +281,7 @@ if(isset($_GET['logout'])){
 						<h5>1. Upload your mods.</h5>
 						<p>On the side panel, click the book icon <i class="fas fa-book"></i> and click Mods Library. Then, just Drag n' Drop your mods to the upload box.</p>
 						<h5>2. Select Forge version.</h5>
-						<p>Under the Mods Library, click Forge Versions. Click the blu button Fetch Forge Versions and wait until Versions are loaded. Then spimply add to database versions you want.</p>
+						<p>Under the Mods Library, click Forge Versions. Click the blue button Fetch Forge Versions and wait until Versions are loaded. Then spimply add to database versions you want.</p>
 						<h5>3. Save your modpack.</h5>
 						<p>On the side panel, click the packs icon <i class="fas fa-boxes"></i> and click Add Modpack.</p>
 						<p>Rename your modpack and click Save.</p>
