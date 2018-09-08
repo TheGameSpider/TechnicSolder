@@ -1372,7 +1372,21 @@ if(isset($_GET['logout'])){
 						<p class="mb-0"><?php if($version==$newversion['version']){ echo $newversion['changelog']; } else { echo $newversion['changelog']; } ?></p>
 					</div>
 
-					<?php if($version!==$newversion['version']) { ?> <a href="/functions/update.php"><button class="btn btn-success">Update</button></a> <?php } ?>
+					<?php if($version!==$newversion['version']) { ?>
+						<div class="card text-white bg-info mb3" style="padding: 0px">
+							<div class="card-header">How to update?</div>
+							<div class="card-body">
+								<p class="card-text">
+									1. Open SSH client and connect to <?php echo $_SERVER['HTTP_HOST'] ?>. <br />
+									2. login with your credentials <br />
+									3. write <i>cd <?php echo dirname(dirname(get_included_files()[0])); ?> </i><br />
+									4. write <i>git clone https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate</i> <br />
+									5. write <i>cp -rf SolderUpdate TechnicSolder</i> <br>
+									6. write <i>rm -rf SolderUpdate</i>
+								</p>
+							</div>
+						</div>
+					<?php } ?>
 				</div>
 			</div>
 			<script type="text/javascript">
