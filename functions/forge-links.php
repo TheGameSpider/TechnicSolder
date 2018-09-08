@@ -36,4 +36,10 @@ foreach(json_decode($forge_data, true)['promos'] as $forge => $ff) {
 		}
 	}
 }
+$forges['1.7.10'] = array(
+	"id" => 99,
+	"mc" => "1.7.10",
+	"name" => "10.13.4.1614",
+	"link" => "https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.4.1614-1.7.10/forge-1.7.10-10.13.4.1614-1.7.10-universal.jar"
+);
 print_r(json_encode($forges, JSON_PRETTY_PRINT));
