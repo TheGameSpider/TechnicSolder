@@ -1,1 +1,1 @@
-{"version":"v0.0.2.4"}
+{"version":"v0.0.2.4","changelog":"* Mod IDs are now validated<br />+ You can now edit mod description<br />+ You can now update Technic Solder using this updater<br />* Mod files are now being slugified<br />+ Manually added latest version of Forge for 1.7.10"}
