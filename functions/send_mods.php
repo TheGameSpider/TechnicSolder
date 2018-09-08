@@ -8,12 +8,6 @@ if (!$fileTmpLoc) {
     echo '{"status":"error","message":"File is too big! Check your post_max_size (current value '.ini_get('post_max_size').') andupload_max_filesize (current value '.ini_get('upload_max_filesize').') values in '.php_ini_loaded_file().'"}';
     exit();
 }
-if(!file_exists("../mods/mods-".$fileName)) {
-	mkdir("../mods/mods-".$fileName);
-} else {
-	echo '{"status":"error","message":"Folder mods-'.$fileName.' already exists!"}';
-	exit();
-}
 function slugify($text) {
   $text = preg_replace('~[^\pL\d]+~u', '-', $text);
   $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
@@ -26,6 +20,14 @@ function slugify($text) {
   }
   return $text;
 }
+$fileName = slugify($fileName);
+if(!file_exists("../mods/mods-".$fileName)) {
+	mkdir("../mods/mods-".$fileName);
+} else {
+	echo '{"status":"error","message":"Folder mods-'.$fileName.' already exists!"}';
+	exit();
+}
+
 if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 	$fileInfo = pathinfo("../mods/mods-".$fileName."/".$fileName);
 	if(file_exists("../mods/".$fileInfo['filename'].".zip")) {
