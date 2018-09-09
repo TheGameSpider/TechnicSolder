@@ -62,15 +62,6 @@ if(isset($_GET['logout'])){
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 		<script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>
-		<!-- Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-77751067-6"></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-				gtag('js', new Date());
-
-			gtag('config', 'UA-77751067-6');
-		</script>
 
 		<style type="text/css">
 
@@ -267,7 +258,7 @@ if(isset($_GET['logout'])){
 						<p><i class="fas fa-info-circle fa-lg"></i> <span style="margin-left:inherit;">About TechnicSolder</span></p>
 					</div></a>
 					<a href="/update"><div class="modpack">
-						<p><i class="fas fa-arrow-alt-circle-up fa-lg"></i> <span style="margin-left:inherit;">Upadte</span></p>
+						<p><i class="fas fa-arrow-alt-circle-up fa-lg"></i> <span style="margin-left:inherit;">Update</span></p>
 					</div></a>
 				</div>
 			</div>	
@@ -1341,7 +1332,6 @@ if(isset($_GET['logout'])){
 					</blockquote>
 					<hr>
 					<p>TechnicSolder was originaly developed by <a href="https://github.com/TechnicPack">Technic</a> using the Laravel Framework. However, the application is difficult to install and use. <a href="https://github.com/TheGameSpider/TechnicSolder">TechnicSolder</a> by <a href="https://github.com/TheGameSpider">TheGameSpider</a> runs on pure PHP with zip and curl extensions and it's very easy to use. To install, you just need to install zip and curl and extract TechnicSolder to your root folder. And the usage is even easier! Just Drag n' Drop your mods.</p>
-					<p>This version of TechnicSolder have 2145 lines of code.</p>
 					<p>Read the licence before redistributing.</p>
 					<div class="card text-white bg-info mb3" style="padding:0">
 						<div class="card-header">License</div>
