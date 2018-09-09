@@ -1382,7 +1382,7 @@ if(isset($_GET['logout'])){
 									3. write <i>cd <?php echo dirname(dirname(get_included_files()[0])); ?> </i><br />
 									4. write <i>git clone https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate</i> <br />
 									5. write <i>cp -a SolderUpdate/. TechnicSolder/</i> <br>
-									6. write <i>rm -rf SolderUpdate</i>
+									6. write <i>rm -rf SolderUpdate</i> <br>
 									7. write <i>chown -R www-data TechnicSolder</i>
 								</p>
 							</div>
