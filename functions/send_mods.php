@@ -101,6 +101,6 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 		}
 	}
 } else {
-    echo '{"status":"error","message":"File upload failed!"}';
+    echo '{"status":"error","message":"Permission denied! Open SSH and run chown -R www-data '.dirname(dirname(get_included_files()[0])).'"}';
 }
 ?>
