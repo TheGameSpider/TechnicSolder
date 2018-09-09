@@ -1,1 +1,1 @@
-{"version":"v0.0.2.6","changelog":"* Fixed typo: Upadte -> Update"}
+{"version":"v0.0.2.7","changelog":"+ You can now upload your custom modpack.jar<br />* Fixed issue from previous version: .jar extension were renamed to -jar"}

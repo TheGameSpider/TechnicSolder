@@ -20,7 +20,7 @@ function slugify($text) {
   }
   return $text;
 }
-$fileName = slugify($fileName);
+$fileName = slugify($fileName).".jar";
 if(!file_exists("../mods/mods-".$fileName)) {
 	mkdir("../mods/mods-".$fileName);
 } else {

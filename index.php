@@ -529,6 +529,9 @@ if(isset($_GET['logout'])){
 				mysqli_query($conn, "UPDATE `builds` SET `mods` = '".$_POST['versions']."' WHERE `id` = ".$_GET['id']);
 				$minecraft = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".$_POST['versions']));
 				mysqli_query($conn, "UPDATE `builds` SET `minecraft` = '".$minecraft['mcversion']."', `java` = '".$_POST['java']."', `memory` = '".$_POST['memory']."' WHERE `id` = ".$_GET['id']);
+				if(!isset($_POST['iforge'])) {
+					mysqli_query($conn, "UPDATE `builds` SET `mods` = null WHERE `id` = ".$_GET['id']);
+				}
 			}
 			$bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".$_GET['id']);
 			if($bres) {
@@ -554,6 +557,10 @@ if(isset($_GET['logout'])){
 								echo "<div style='display:block' class='invalid-feedback'>There are no versions available. Please fetch versions in <a href='/lib-forges'>Forge Versions Library</a></div>";
 							}
 							?>
+						<div class="custom-control custom-checkbox mr-sm-2">
+							<input type="checkbox" class="custom-control-input" name="iforge" value="true" checked id="iforge">
+							<label class="custom-control-label" for="iforge">Install Forge (Uncheck if you want to use your own modpack.jar)</label>
+						</div>
 						<br />
 						<label for="java">Select java version</label>
 						<select name="java" class="form-control">
@@ -588,6 +595,7 @@ if(isset($_GET['logout'])){
 							</thead>
 							<tbody>
 								<?php foreach($modslist as $bmod) {
+									if($bmod) {
 									$modq = mysqli_query($conn,"SELECT * FROM `mods` WHERE `id` = ".$bmod);
 									$moda = mysqli_fetch_array($modq);
 									?>
@@ -596,7 +604,9 @@ if(isset($_GET['logout'])){
 									<td><?php echo $moda['version'] ?></td>
 									<td><?php if($moda['name'] !== "forge"){ ?><button onclick="remove_mod(<?php echo $bmod ?>)" class="btn btn-danger"><i class="fas fa-times"></i></button><?php } ?></td>
 								</tr>
-								<?php } ?>
+								<?php										
+									}
+ 								} ?>
 							</tbody>
 						</table>
 					</div>
