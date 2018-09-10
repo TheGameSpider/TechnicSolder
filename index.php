@@ -525,11 +525,21 @@ if(isset($_GET['logout'])){
 			}
 		}
 		if(uri('/build')) {
+			$bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".$_GET['id']);
+			if($bres) {
+				$build = mysqli_fetch_array($bres);
+			}
 			if(isset($_POST['versions']) & isset($_POST['java']) & isset($_POST['memory'])) {
-				mysqli_query($conn, "UPDATE `builds` SET `mods` = '".$_POST['versions']."' WHERE `id` = ".$_GET['id']);
+				$modslist= explode(',', $build['mods']);
+				if(intval($_POST['versions'])!==intval($build['mods'][0])) {
+					if(isset($_POST['iforge'])) {
+						mysqli_query($conn, "UPDATE `builds` SET `mods` = '".$_POST['versions']."' WHERE `id` = ".$_GET['id']);
+					}
+					$wipe = false;
+				}
 				$minecraft = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".$_POST['versions']));
 				mysqli_query($conn, "UPDATE `builds` SET `minecraft` = '".$minecraft['mcversion']."', `java` = '".$_POST['java']."', `memory` = '".$_POST['memory']."' WHERE `id` = ".$_GET['id']);
-				if(!isset($_POST['iforge'])) {
+				if(!isset($_POST['iforge'])&$wipe!==false) {
 					mysqli_query($conn, "UPDATE `builds` SET `mods` = null WHERE `id` = ".$_GET['id']);
 				}
 			}
