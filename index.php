@@ -194,9 +194,10 @@ if(isset($_GET['logout'])){
 		</div>
 		<?php
 		} else {
+			$filecontents = file_get_contents('./api/version.json');
 		?>
 		<nav class="navbar navbar-light sticky-top bg-white">
-  			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text">by TheGameSpider <?php echo(json_decode(file_get_contents('http://localhost/api'),true)['version'])." ".json_decode(file_get_contents('http://localhost/api'),true)['stream']; ?></span></span>
+  			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text">by TheGameSpider <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
   			<span class="navbar-text"><?php echo $_SESSION['user'] ?> <a href="?logout=true"><button class="btn btn-outline-primary btn-sm">Log Out</button></a></span>
 		</nav>
 		<div class="text-white" style="width:20em;height: 100%;position:fixed;background-color: #3E4956">
@@ -302,9 +303,10 @@ if(isset($_GET['logout'])){
 					<a class="nav-link" href="/dashboard"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $modpack['display_name'] ?></a>
 				</li>
 				<?php
-				
-				$packapi = 'http://localhost/api/modpack/'.$modpack['name'];
-				$packdata = json_decode(file_get_contents($packapi),true);
+				$link = dirname(__FILE__).'/api/mp.php';
+				$_GET['name'] = $modpack['name'];
+				$packapi = include($link);
+				$packdata = json_decode($packapi,true);
 				$latest=false;
 				$latestres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".$_GET['id']." AND `name` = '".$packdata['latest']."'");
 				if(mysqli_num_rows($latestres)!==0) {
@@ -1369,7 +1371,7 @@ if(isset($_GET['logout'])){
 			<?php
 		}
 		if(uri("/update")) {
-			$version = json_decode(file_get_contents("http://localhost/api/version.json"),true)['version'];
+			$version = json_decode(file_get_contents("./api/version.json"),true)['version'];
 			$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
 		?>
 			<div class="main">
