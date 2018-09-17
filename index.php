@@ -1314,7 +1314,7 @@ if(isset($_GET['logout'])){
 							return str;
 						}
 					</script>
-						<input id="pn" required class="form-control" type="text" name="display_name" placeholder="Mod name" value="<?php echo $mod['pretty_name'] ?>" />
+						<input id="pn" required class="form-control" type="text" name="pretty_name" placeholder="Mod name" value="<?php echo $mod['pretty_name'] ?>" />
 						<br />
 						<input id="slug" required pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" class="form-control" type="text" name="name" placeholder="Mod slug" value="<?php echo $mod['name'] ?>" /><br />
 						<input class="form-control" type="text" name="version" placeholder="Mod Version" value="<?php echo $mod['version'] ?>"><br />
