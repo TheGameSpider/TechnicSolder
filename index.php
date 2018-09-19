@@ -196,6 +196,19 @@ if(isset($_GET['logout'])){
 		} else {
 			$filecontents = file_get_contents('./api/version.json');
 		?>
+		<!--Start of Tawk.to Script-->
+		<script type="text/javascript">
+		var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+		(function(){
+		var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+		s1.async=true;
+		s1.src='https://embed.tawk.to/5ba262e0c666d426648ae9ee/default';
+		s1.charset='UTF-8';
+		s1.setAttribute('crossorigin','*');
+		s0.parentNode.insertBefore(s1,s0);
+		})();
+		</script>
+		<!--End of Tawk.to Script-->
 		<nav class="navbar navbar-light sticky-top bg-white">
   			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text">by TheGameSpider <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
   			<span class="navbar-text"><?php echo $_SESSION['user'] ?> <a href="?logout=true"><button class="btn btn-outline-primary btn-sm">Log Out</button></a></span>
@@ -267,6 +280,7 @@ if(isset($_GET['logout'])){
 		<?php
 		if(uri("/dashboard")){
 			?>
+			<script>document.title = 'Technic Solder - Dashboard - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<center>
@@ -298,6 +312,7 @@ if(isset($_GET['logout'])){
 			if($mpres) {
 			$modpack = mysqli_fetch_array($mpres);
 			?>
+			<script>document.title = 'Technic Solder - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<ul class="nav justify-content-end info-versions">
 				<li class="nav-item">
 					<a class="nav-link" href="/dashboard"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $modpack['display_name'] ?></a>
@@ -551,6 +566,7 @@ if(isset($_GET['logout'])){
 			}
 			$modslist= explode(',', $build['mods']);
 			?>
+			<script>document.title = 'Technic Solder - Build - <?php echo addslashes($build['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<h2>Build <?php echo $build['name'] ?></h2>
@@ -731,6 +747,7 @@ if(isset($_GET['logout'])){
 		}
 		if(uri('/lib-mods')) {
 		?>
+		<script>document.title = 'Technic Solder - Mod Library - <?php echo addslashes($config['author']) ?>';</script>
 		<div class="main">
 		<script type="text/javascript">
 				function remove_box(id,name) {
@@ -944,6 +961,7 @@ if(isset($_GET['logout'])){
 		}
 		if(uri('/lib-forges')) {
 		?>
+		<script>document.title = 'Technic Solder - Forge Versions - <?php echo addslashes($config['author']) ?>';</script>
 		<div class="main">
 			<script type="text/javascript">
 				function remove_box(id,name) {
@@ -1076,6 +1094,7 @@ if(isset($_GET['logout'])){
 		}
 		if(uri('/lib-other')) {
 		?>
+		<script>document.title = 'Technic Solder - Other Files - <?php echo addslashes($config['author']) ?>';</script>
 		<div class="main">
 		<script type="text/javascript">
 				function remove_box(id,name) {
@@ -1290,6 +1309,7 @@ if(isset($_GET['logout'])){
 				$mod = mysqli_fetch_array($mres);
 			}
 			?>
+			<script>document.title = 'Technic Solder - Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="card">
 				<button onclick="window.location = '/lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
 				<form method="POST" action="./functions/edit-mod.php?id=<?php echo $_GET['id'] ?>">
@@ -1338,6 +1358,7 @@ if(isset($_GET['logout'])){
 		}
 		if(uri("/about")) {
 			?>
+			<script>document.title = 'Technic Solder - About - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<center>
@@ -1374,6 +1395,7 @@ if(isset($_GET['logout'])){
 			$version = json_decode(file_get_contents("./api/version.json"),true)['version'];
 			$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
 		?>
+		<script>document.title = 'Technic Solder - Update Checker - <?php echo $version ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<h2>Technic Solder Updater</h2>
