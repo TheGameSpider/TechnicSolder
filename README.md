@@ -122,7 +122,8 @@ Create new user
 ```MYSQL
 CREATE USER 'solder'@'localhost' IDENTIFIED BY 'secret';
 ```
-> **NOTE: By writing *IDENTIFIED BY 'secret'* you set your password. Dont use *secret***<br />
+> **NOTE: By writing *IDENTIFIED BY 'secret'* you set your password. Dont use *secret***
+<br />
 Create database solder and grant user *solder* access to it.
 ```MYSQL
 CREATE DATABASE solder;
