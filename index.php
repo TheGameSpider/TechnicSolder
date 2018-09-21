@@ -210,7 +210,7 @@ if(isset($_GET['logout'])){
 		</script>
 		<!--End of Tawk.to Script-->
 		<nav class="navbar navbar-light sticky-top bg-white">
-  			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text">by TheGameSpider <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
+  			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" href="https://solder.cf">Solder.cf</a> by TheGameSpider <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
   			<span class="navbar-text"><?php echo $_SESSION['user'] ?> <a href="?logout=true"><button class="btn btn-outline-primary btn-sm">Log Out</button></a></span>
 		</nav>
 		<div class="text-white" style="width:20em;height: 100%;position:fixed;background-color: #3E4956">
@@ -269,7 +269,7 @@ if(isset($_GET['logout'])){
 						<p><i class="fas fa-cogs fa-lg"></i> <span style="margin-left:inherit;">Solder Configuration</span></p>
 					</div></a>
 					<a href="/about"><div class="modpack">
-						<p><i class="fas fa-info-circle fa-lg"></i> <span style="margin-left:inherit;">About TechnicSolder</span></p>
+						<p><i class="fas fa-info-circle fa-lg"></i> <span style="margin-left:inherit;">About Solder.cf</span></p>
 					</div></a>
 					<a href="/update"><div class="modpack">
 						<p><i class="fas fa-arrow-alt-circle-up fa-lg"></i> <span style="margin-left:inherit;">Update</span></p>
@@ -280,16 +280,26 @@ if(isset($_GET['logout'])){
 		<?php
 		if(uri("/dashboard")){
 			?>
-			<script>document.title = 'Technic Solder - Dashboard - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - Dashboard - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
+				<?php
+				$version = json_decode(file_get_contents("./api/version.json"),true);
+				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
+				if($version['version']!==$newversion['version']) {
+				?>
+				<div class="card alert-info">
+					<p>Version <b><?php echo $newversion['version'] ?></b> is now available!</p>
+					<p><?php echo $newversion['ltcl']; ?></p>
+				</div>
+			<?php } ?>
 				<div class="card">
 					<center>
-						<p style="font-size: 4rem" class="display-3">Welcome to TechnicSolder</p>
+						<p style="font-size: 4rem" class="display-3">Welcome to Solder<span class="text-muted">.cf</span></p>
 						<p style="font-size: 2rem" class="display-4">The best Application to create and manage your modpacks.</p>
 					</center>
 					<hr />
 					<h2>How to create a modpack?</h2>
-					<p>With TechnicSolder, you can create a modpack in three simple steps:</p>
+					<p>With Solder.cf, you can create a modpack in three simple steps:</p>
 					<div style="margin-left: 25px">
 						<h5>1. Upload your mods.</h5>
 						<p>On the side panel, click the book icon <i class="fas fa-book"></i> and click Mods Library. Then, just Drag n' Drop your mods to the upload box.</p>
@@ -312,7 +322,7 @@ if(isset($_GET['logout'])){
 			if($mpres) {
 			$modpack = mysqli_fetch_array($mpres);
 			?>
-			<script>document.title = 'Technic Solder - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<ul class="nav justify-content-end info-versions">
 				<li class="nav-item">
 					<a class="nav-link" href="/dashboard"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $modpack['display_name'] ?></a>
@@ -566,7 +576,7 @@ if(isset($_GET['logout'])){
 			}
 			$modslist= explode(',', $build['mods']);
 			?>
-			<script>document.title = 'Technic Solder - Build - <?php echo addslashes($build['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - Build - <?php echo addslashes($build['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<h2>Build <?php echo $build['name'] ?></h2>
@@ -747,7 +757,7 @@ if(isset($_GET['logout'])){
 		}
 		if(uri('/lib-mods')) {
 		?>
-		<script>document.title = 'Technic Solder - Mod Library - <?php echo addslashes($config['author']) ?>';</script>
+		<script>document.title = 'Solder.cf - Mod Library - <?php echo addslashes($config['author']) ?>';</script>
 		<div class="main">
 		<script type="text/javascript">
 				function remove_box(id,name) {
@@ -764,6 +774,7 @@ if(isset($_GET['logout'])){
 					request.send();
 				}
 			</script>
+			<div class="card alert-warning"><p><b>Warning!</b> If you are using Journey Map, you have to change it's file URL to <i>https://media.forgecdn.net/files/2498/313/%5bsolder%5djourneymap-1.12.2-5.5.2.zip</i> (for Minecraft 1.12.2). If you need more information, check <a href="http://journeymap.info/Technic">http://journeymap.info/Technic</a> or <a href="https://tawk.to/chat/5ba3d4c8c666d426648af4bc/default" target="_blank">contact a human</a>.</p></div>
 			<div id="upload-card" class="card">
 				<h2>Upload mods</h2>
 				<div class="card-img-bottom">
@@ -961,7 +972,7 @@ if(isset($_GET['logout'])){
 		}
 		if(uri('/lib-forges')) {
 		?>
-		<script>document.title = 'Technic Solder - Forge Versions - <?php echo addslashes($config['author']) ?>';</script>
+		<script>document.title = 'Solder.cf - Forge Versions - <?php echo addslashes($config['author']) ?>';</script>
 		<div class="main">
 			<script type="text/javascript">
 				function remove_box(id,name) {
@@ -1094,7 +1105,7 @@ if(isset($_GET['logout'])){
 		}
 		if(uri('/lib-other')) {
 		?>
-		<script>document.title = 'Technic Solder - Other Files - <?php echo addslashes($config['author']) ?>';</script>
+		<script>document.title = 'Solder.cf - Other Files - <?php echo addslashes($config['author']) ?>';</script>
 		<div class="main">
 		<script type="text/javascript">
 				function remove_box(id,name) {
@@ -1309,7 +1320,7 @@ if(isset($_GET['logout'])){
 				$mod = mysqli_fetch_array($mres);
 			}
 			?>
-			<script>document.title = 'Technic Solder - Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="card">
 				<button onclick="window.location = '/lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
 				<form method="POST" action="./functions/edit-mod.php?id=<?php echo $_GET['id'] ?>">
@@ -1358,11 +1369,11 @@ if(isset($_GET['logout'])){
 		}
 		if(uri("/about")) {
 			?>
-			<script>document.title = 'Technic Solder - About - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - About - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<center>
-						<h1 class="display-4">About TechnicSolder</h1>
+						<h1 class="display-4">About Solder<span class="text-muted">.cf</span></h1>
 					</center>
 					<hr>
 					<blockquote class="blockquote">
@@ -1374,7 +1385,7 @@ if(isset($_GET['logout'])){
 						<footer class="blockquote-footer"><a href="https://github.com/TechnicPack/TechnicSolder">Technic</a></footer>					
 					</blockquote>
 					<hr>
-					<p>TechnicSolder was originaly developed by <a href="https://github.com/TechnicPack">Technic</a> using the Laravel Framework. However, the application is difficult to install and use. <a href="https://github.com/TheGameSpider/TechnicSolder">TechnicSolder</a> by <a href="https://github.com/TheGameSpider">TheGameSpider</a> runs on pure PHP with zip and curl extensions and it's very easy to use. To install, you just need to install zip and curl and extract TechnicSolder to your root folder. And the usage is even easier! Just Drag n' Drop your mods.</p>
+					<p>TechnicSolder was originaly developed by <a href="https://github.com/TechnicPack">Technic</a> using the Laravel Framework. However, the application is difficult to install and use. <a href="https://github.com/TheGameSpider/TechnicSolder">Technic Solder - Solder.cf</a> by <a href="https://github.com/TheGameSpider">TheGameSpider</a> runs on pure PHP with zip, curl and MySQL extensions and it's very easy to use. To install, you just need to install zip, curl and MySQL and extract Solder to your root folder. And the usage is even easier! Just Drag n' Drop your mods.</p>
 					<p>Read the licence before redistributing.</p>
 					<div class="card text-white bg-info mb3" style="padding:0">
 						<div class="card-header">License</div>
@@ -1395,10 +1406,10 @@ if(isset($_GET['logout'])){
 			$version = json_decode(file_get_contents("./api/version.json"),true)['version'];
 			$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
 		?>
-		<script>document.title = 'Technic Solder - Update Checker - <?php echo $version ?> - <?php echo addslashes($config['author']) ?>';</script>
+		<script>document.title = 'Solder.cf - Update Checker - <?php echo $version ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
 				<div class="card">
-					<h2>Technic Solder Updater</h2>
+					<h2>Solder<span class="text-muted">.cf</span> Updater</h2>
 					<br />
 					<div class="alert <?php if($version==$newversion['version']) { echo "alert-success";} else { echo "alert-info"; } ?>" role="alert">
 						<h4 class="alert-heading"><?php if($version==$newversion['version']){echo "No updates";} else { echo "New update available - ".$newversion['version']; } ?></h4>
