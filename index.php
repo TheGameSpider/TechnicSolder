@@ -210,8 +210,8 @@ if(isset($_GET['logout'])){
 		</script>
 		<!--End of Tawk.to Script-->
 		<nav class="navbar navbar-light sticky-top bg-white">
-  			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" href="https://solder.cf">Solder.cf</a> by TheGameSpider <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
-  			<span class="navbar-text"><?php echo $_SESSION['user'] ?> <a href="?logout=true"><button class="btn btn-outline-primary btn-sm">Log Out</button></a></span>
+  			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
+  			<span class="navbar-text"><?php echo $config['author'] ?> <a href="?logout=true"><button class="btn btn-outline-primary btn-sm">Log Out</button></a></span>
 		</nav>
 		<div class="text-white" style="width:20em;height: 100%;position:fixed;background-color: #3E4956">
 			<ul class="nav nav-tabs" style="height:100%">
@@ -312,6 +312,11 @@ if(isset($_GET['logout'])){
 						<p>Select minecraft versions and click green button Save and Refresh.</p>
 						<p>Now, you can add mods to your modpack.</p>
 						<p>The final step is to go back to your modpack and in builds table click green button Set reccommended.</p>
+						<hr />
+						<h5>4. (Optional)</h5>
+						<p>The author will be happy if you add this Markdown code to your platform page:</p>
+						<pre>[![](http://<?php echo $config['host'] ?>/resources/solderBanner.png)](https://solder.cf)</pre>
+						<img src="resources/solderBanner.png">
 					</div>
 				</div>
 			</div>

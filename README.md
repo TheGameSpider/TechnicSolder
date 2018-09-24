@@ -1,6 +1,6 @@
 # TechnicSolder
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Latest Version: v0.0.2.15](https://img.shields.io/badge/Latest%20Version-v0.0.2.15-brightgreen.svg)
+![Latest Version: v0.0.2.16](https://img.shields.io/badge/Latest%20Version-v0.0.2.16-brightgreen.svg)
 
 TechnicSolder is an API that sits between a modpack repository and the Technic Launcher. It allows you to easily manage multiple modpacks in one single location.
 
@@ -40,7 +40,8 @@ dpkg -i libzip-dev_1.1.2-1.1_amd64.deb
 pecl install zip
 nano /etc/php/7.2/apache2/php.ini
 ```
-add `extension=zip.so` to the file.
+add `extension=zip.so` to the second line.
+When you are finished, save and close the file by pressing Ctrl-X. You'll have to confirm the save by typing Y and then hit Enter to confirm the file save location.
 ```bash
 service apache2 restart
 ```
@@ -62,7 +63,7 @@ Configuration will look like this:
     DirectoryIndex index.php index.html
 </IfModule>
 ```
-When you are finished, save and close the file by pressing Ctrl-X. You'll have to confirm the save by typing Y and then hit Enter to confirm the file save location.
+When you are finished, save and close the file.
 ```bash
 service apache2 restart
 nano /var/www/html/index.php
@@ -123,6 +124,7 @@ Create new user
 CREATE USER 'solder'@'localhost' IDENTIFIED BY 'secret';
 ```
 > **NOTE: By writing *IDENTIFIED BY 'secret'* you set your password. Dont use *secret***
+
 <br />
 Create database solder and grant user *solder* access to it.
 ```MYSQL
