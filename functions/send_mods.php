@@ -1,5 +1,9 @@
 <?php
 header('Content-Type: application/json');
+session_start();
+if(!$_SESSION['user']||$_SESSION['user']=="") {
+	die('{"status":"error","message":"Unathorized request or login session has expired."}');
+}
 $config = require("config.php");
 require("dbconnect.php");
 $fileName = $_FILES["fiels"]["name"];
