@@ -126,20 +126,29 @@ CREATE USER 'solder'@'localhost' IDENTIFIED BY 'secret';
 > **NOTE: By writing *IDENTIFIED BY 'secret'* you set your password. Dont use *secret***
 
 <br />
+
 Create database solder and grant user *solder* access to it.
+
 ```MYSQL
 CREATE DATABASE solder;
 GRANT ALL ON solder.* TO 'solder'@'localhost';
 exit
 ```
+
 **Configure TechnicSolder** <br />
+
 ```bash
 chown -R www-data TechnicSolder
 ```
+
 Go to `http://your_server_IP_address` and fill up the form. If you followed these instructions, database name and username is `solder` <br />
+
 The final step is to set your Solder URL in Solder Configuration (In your https://technicpack.net profile)
+
 ```
 http://your_server_IP_address/api/
 ```
+
 Click **Link solder**<br />
+
 That's it. You have successfully installed and configured TechnicSolder. It's ready to use!
