@@ -9,6 +9,9 @@ if(!isset($_GET['reconfig'])) {
 	if(!isset($_SESSION['user'])) {
 		die("You need to be logged in!");
 	}
+	if($_SESSION['user']!==$config['mail']) {
+		die("insufficient permission!");
+	}
 }
 ?>
 <html>
@@ -58,6 +61,18 @@ if(!isset($_GET['reconfig'])) {
 					background_md5 VARCHAR(512),
 					latest VARCHAR(512),
 					recommended VARCHAR(512),
+					UNIQUE (name)
+					);
+					";
+					mysqli_query($conn, $sql);
+					$sql = "
+					CREATE TABLE users (
+					id int(64) AUTO_INCREMENT PRIMARY KEY,
+					name VARCHAR(128),
+					display_name VARCHAR(128),
+					pass VARCHAR(128),
+					perms VARCHAR(512),
+					icon LONGTEXT,
 					UNIQUE (name)
 					);
 					";

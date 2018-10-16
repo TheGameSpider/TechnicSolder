@@ -26,8 +26,19 @@ if(isset($_GET['logout'])){
 if(isset($_POST['email']) & isset($_POST['password'])){
 	if($_POST['email']==$config['mail'] & $_POST['password']==$config['pass']){
 		$_SESSION['user'] = $_POST['email'];
+		$_SESSION['name'] = $config['author'];
+		$_SESSION['perms'] = "111111";
 	} else {
-		header("Location: login?ic");
+		$user = mysqli_query($conn, "SELECT * FROM `users` WHERE `name` = '". addslashes($_POST['email']) ."'");
+		$user = mysqli_fetch_array($user);
+		if($user['pass']==$_POST['password']) {
+			$_SESSION['user'] = $_POST['email'];
+			$_SESSION['name'] = $user['display_name'];
+			$_SESSION['perms'] = $user['perms'];
+		} else {
+			header("Location: login?ic");
+		}
+		
 	}
 }
 function uri($uri) {
@@ -211,7 +222,22 @@ if(isset($_GET['logout'])){
 		<!--End of Tawk.to Script-->
 		<nav class="navbar navbar-light sticky-top bg-white">
   			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
-  			<span class="navbar-text"><?php echo $config['author'] ?> <a href="?logout=true"><button class="btn btn-outline-primary btn-sm">Log Out</button></a></span>
+  			<span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  			<?php if($_SESSION['user']!==$config['mail']) { ?>
+  			<img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php 
+					$sql = mysqli_query($conn,"SELECT `icon` FROM `users` WHERE `name` = '".$_SESSION['user']."'");
+					$icon = mysqli_fetch_array($sql);
+					echo $icon['icon'];
+					 ?>">
+					<?php } ?>
+			<span class="navbar-text"><?php echo $_SESSION['name'] ?> </span>
+			<div style="left: unset;right: 2px;" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+				<a class="dropdown-item" href="?logout=true" onclick="window.location = window.location+'?logout=true'">Log Out</a>
+				<?php if($_SESSION['user']!==$config['mail']) { ?>
+				<a class="dropdown-item" href="/user" onclick="window.location = '/user'">My account</a>
+				<?php } ?>
+			</div>
+					 </span>
 		</nav>
 		<div class="text-white" style="width:20em;height: 100%;position:fixed;background-color: #3E4956">
 			<ul class="nav nav-tabs" style="height:100%">
@@ -246,9 +272,11 @@ if(isset($_GET['logout'])){
 							}
 						}
 						?>
+						<?php if(substr($_SESSION['perms'],0,1)=="1") { ?>
 						<a href="functions/new-modpack.php"><div class="modpack">
 							<p><i style="height:25px" class="d-inline-block align-top fas fa-plus-circle"></i> Add Modpack</p>
 						</div></a>
+					<?php } ?>
 					</div>
 				</div>
 				<div class="tab-pane" id="mods" role="tabpanel">
@@ -265,9 +293,18 @@ if(isset($_GET['logout'])){
 				</div>
 				<div class="tab-pane" id="settings" role="tabpanel">
 					<p class="text-muted">SETTINGS</p>
+					<?php if($_SESSION['user']==$config['mail']) { ?>
 					<a href="/configure.php?reconfig"><div class="modpack">
 						<p><i class="fas fa-cogs fa-lg"></i> <span style="margin-left:inherit;">Solder Configuration</span></p>
 					</div></a>
+					<a href="/admin"><div class="modpack">
+						<p><i class="fas fa-user-tie fa-lg"></i> <span style="margin-left:inherit;">Admin</span></p>
+					</div></a>
+				<?php } else { ?>
+					<a href="/user"><div class="modpack">
+						<p><i class="fas fa-user fa-lg"></i> <span style="margin-left:inherit;">My Account</span></p>
+					</div></a>
+				<?php } ?>
 					<a href="/about"><div class="modpack">
 						<p><i class="fas fa-info-circle fa-lg"></i> <span style="margin-left:inherit;">About Solder.cf</span></p>
 					</div></a>
@@ -285,6 +322,7 @@ if(isset($_GET['logout'])){
 				<?php
 				$version = json_decode(file_get_contents("./api/version.json"),true);
 				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
+				echo $newversion['warns'];
 				if($version['version']!==$newversion['version']) {
 				?>
 				<div class="card alert-info">
@@ -341,14 +379,14 @@ if(isset($_GET['logout'])){
 				$latestres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".$_GET['id']." AND `name` = '".$packdata['latest']."'");
 				if(mysqli_num_rows($latestres)!==0) {
 					$latest=true;
-					$build = mysqli_fetch_array($latestres);
+					$user = mysqli_fetch_array($latestres);
 				}
 				?>
 				<li <?php if($latest==false){ echo "style='display:none'"; } ?> id="latest-v-li" class="nav-item">
-					<span class="navbar-text"><i style="color:#2E74B2" class="fas fa-exclamation"></i> Latest: <b id="latest-name"><?php echo $build['name'] ?></b></span>
+					<span class="navbar-text"><i style="color:#2E74B2" class="fas fa-exclamation"></i> Latest: <b id="latest-name"><?php echo $user['name'] ?></b></span>
 				</li>
 				<li <?php if($latest==false){ echo "style='display:none'"; } ?> id="latest-mc-li" class="nav-item">
-					<span class="navbar-text">MC: <b id="latest-mc"><?php echo $build['minecraft'] ?></b></span>
+					<span class="navbar-text">MC: <b id="latest-mc"><?php echo $user['minecraft'] ?></b></span>
 				</li>
 				<div style="width:30px"></div>
 					<?php
@@ -356,18 +394,19 @@ if(isset($_GET['logout'])){
 				$recres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".$_GET['id']." AND `name` = '".$packdata['recommended']."'");
 				if(mysqli_num_rows($recres)!==0) {
 					$rec=true;
-					$build = mysqli_fetch_array($recres);
+					$user = mysqli_fetch_array($recres);
 				}
 				?>
 				<li <?php if($rec==false){ echo "style='display:none'"; } ?> id="rec-v-li" class="nav-item">
-					<span class="navbar-text"><i style="color:#329C4E" class="fas fa-check"></i> Recommended: <b id="rec-name"><?php echo $build['name'] ?></b></span>
+					<span class="navbar-text"><i style="color:#329C4E" class="fas fa-check"></i> Recommended: <b id="rec-name"><?php echo $user['name'] ?></b></span>
 				</li>
 				<li <?php if($rec==false){ echo "style='display:none'"; } ?> id="rec-mc-li" class="nav-item">
-					<span class="navbar-text">MC: <b id="rec-mc"><?php echo $build['minecraft'] ?></b></span>
+					<span class="navbar-text">MC: <b id="rec-mc"><?php echo $user['minecraft'] ?></b></span>
 				</li>
 				<div style="width:30px"></div>
 			</ul>
 			<div class="main">
+				<?php if(substr($_SESSION['perms'],0,1)=="1") { ?>
 				<div class="card">
 					<h2>Edit Modpack</h2>
 					<form action="/functions/edit-modpack.php" method="">
@@ -422,6 +461,7 @@ if(isset($_GET['logout'])){
 						}
 					</script>					
 				</div>
+			<?php } if(substr($_SESSION['perms'],1,1)=="1") { ?>
 				<div class="card">
 					<h2>New Build</h2>
 					<form action="/functions/new-build.php" method="">
@@ -432,6 +472,7 @@ if(isset($_GET['logout'])){
 						<button type="submit" name="type" value="update" class="btn btn-primary">Update latest version</button>
 					</form>
 				</div>
+			<?php } ?>
 				<div class="card">
 					<h2>Builds</h2>
 					<table class="table table-striped">
@@ -446,22 +487,22 @@ if(isset($_GET['logout'])){
 						</thead>
 						<tbody id="table-builds">
 							<?php
-							$builds = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".$_GET['id']." ORDER BY `id` DESC");
-							while($build = mysqli_fetch_array($builds)) {
+							$users = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".$_GET['id']." ORDER BY `id` DESC");
+							while($user = mysqli_fetch_array($users)) {
 							?>
-							<tr rec="<?php if($packdata['recommended']==$build['name']){ echo "true"; } else { echo "false"; } ?>" id="b-<?php echo $build['id'] ?>">
-								<td scope="row"><?php echo $build['name'] ?></td>
-								<td><?php echo $build['minecraft'] ?></td>
-								<td><?php echo $build['java'] ?></td>
+							<tr rec="<?php if($packdata['recommended']==$user['name']){ echo "true"; } else { echo "false"; } ?>" id="b-<?php echo $user['id'] ?>">
+								<td scope="row"><?php echo $user['name'] ?></td>
+								<td><?php echo $user['minecraft'] ?></td>
+								<td><?php echo $user['java'] ?></td>
 								<td>
 									<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-										<button onclick="edit(<?php echo $build['id'] ?>)" class="btn btn-primary">Edit</button>
-										<button onclick="remove_box(<?php echo $build['id'] ?>,'<?php echo $build['name'] ?>')" data-toggle="modal" data-target="#removeModal" class="btn btn-danger">Remove</button>
-										<button bid="<?php echo $build['id'] ?>" id="rec-<?php if($packdata['recommended']==$build['name']){ ?>disabled<?php } else echo $build['id'] ?>" <?php if($packdata['recommended']==$build['name']){ ?>disabled<?php } ?> onclick="set_recommended(<?php echo $build['id'] ?>)" class="btn btn-success">Set recommended </button>
+										<?php if(substr($_SESSION['perms'],1,1)=="1") { ?> <button onclick="edit(<?php echo $user['id'] ?>)" class="btn btn-primary">Edit</button>
+										<button onclick="remove_box(<?php echo $user['id'] ?>,'<?php echo $user['name'] ?>')" data-toggle="modal" data-target="#removeModal" class="btn btn-danger">Remove</button> <?php } if(substr($_SESSION['perms'],2,1)=="1") {?>
+										<button bid="<?php echo $user['id'] ?>" id="rec-<?php if($packdata['recommended']==$user['name']){ ?>disabled<?php } else echo $user['id'] ?>" <?php if($packdata['recommended']==$user['name']){ ?>disabled<?php } ?> onclick="set_recommended(<?php echo $user['id'] ?>)" class="btn btn-success">Set recommended </button><?php } ?>
 									</div>
 								</td>
 								<td>
-									<i id="cog-<?php echo $build['id'] ?>" style="display:none;margin-top: 0.5rem" class="fas fa-cog fa-lg fa-spin"></i>
+									<i id="cog-<?php echo $user['id'] ?>" style="display:none;margin-top: 0.5rem" class="fas fa-cog fa-lg fa-spin"></i>
 								</td>
 							<?php } ?>
 							</tr>
@@ -559,11 +600,11 @@ if(isset($_GET['logout'])){
 		if(uri('/build')) {
 			$bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".$_GET['id']);
 			if($bres) {
-				$build = mysqli_fetch_array($bres);
+				$user = mysqli_fetch_array($bres);
 			}
 			if(isset($_POST['versions']) & isset($_POST['java']) & isset($_POST['memory'])) {
-				$modslist= explode(',', $build['mods']);
-				if(intval($_POST['versions'])!==intval($build['mods'][0])) {
+				$modslist= explode(',', $user['mods']);
+				if(intval($_POST['versions'])!==intval($user['mods'][0])) {
 					if(isset($_POST['iforge'])) {
 						mysqli_query($conn, "UPDATE `builds` SET `mods` = '".$_POST['versions']."' WHERE `id` = ".$_GET['id']);
 					}
@@ -577,14 +618,15 @@ if(isset($_GET['logout'])){
 			}
 			$bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".$_GET['id']);
 			if($bres) {
-				$build = mysqli_fetch_array($bres);
+				$user = mysqli_fetch_array($bres);
 			}
-			$modslist= explode(',', $build['mods']);
+			$modslist= explode(',', $user['mods']);
 			?>
-			<script>document.title = 'Solder.cf - Build - <?php echo addslashes($build['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - Build - <?php echo addslashes($user['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
+				<?php if(substr($_SESSION['perms'],1,1)=="1") { ?>
 				<div class="card">
-					<h2>Build <?php echo $build['name'] ?></h2>
+					<h2>Build <?php echo $user['name'] ?></h2>
 					<form method="POST">
 						<label for="versions">Select minecraft version</label>
 						<select id="versions" name="versions" class="form-control">
@@ -592,7 +634,7 @@ if(isset($_GET['logout'])){
 							$vres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'forge'");
 							if(mysqli_num_rows($vres)!==0) {
 								while($version = mysqli_fetch_array($vres)) {
-									?><option <?php if($version['mcversion']==$build['minecraft']){ echo "selected"; } ?> value="<?php echo $version['id']?> "><?php echo $version['mcversion'] ?> - Forge <?php echo $version['version'] ?></option><?php
+									?><option <?php if($version['mcversion']==$user['minecraft']){ echo "selected"; } ?> value="<?php echo $version['id']?> "><?php echo $version['mcversion'] ?> - Forge <?php echo $version['version'] ?></option><?php
 								}
 								echo "</select>";
 							} else {
@@ -607,24 +649,24 @@ if(isset($_GET['logout'])){
 						<br />
 						<label for="java">Select java version</label>
 						<select name="java" class="form-control">
-							<option <?php if($build['java']=="1.8"){ echo "selected"; } ?> value="1.8">1.8</option>
-							<option <?php if($build['java']=="1.7"){ echo "selected"; } ?> value="1.7">1.7</option>
-							<option <?php if($build['java']=="1.6"){ echo "selected"; } ?> value="1.6">1.6</option>
+							<option <?php if($user['java']=="1.8"){ echo "selected"; } ?> value="1.8">1.8</option>
+							<option <?php if($user['java']=="1.7"){ echo "selected"; } ?> value="1.7">1.7</option>
+							<option <?php if($user['java']=="1.6"){ echo "selected"; } ?> value="1.6">1.6</option>
 						</select> <br />
 						<label for="memory">Memory (RAM in MB)</label>
-						<input class="form-control" type="number" id="memory" name="memory" value="<?php echo $build['memory'] ?>" min="1024" max="65536" placeholder="2048" step="512">
+						<input class="form-control" type="number" id="memory" name="memory" value="<?php echo $user['memory'] ?>" min="1024" max="65536" placeholder="2048" step="512">
 						<br />
 						<button type="submit" class="btn btn-success">Save and Refresh</button>
 					</form>
 				</div>
-				<?php if(isset($build['minecraft'])) { ?>
+				<?php } if(isset($user['minecraft'])) { ?>
 					<div class="card">
-						<h2>Mods in Build <?php echo $build['name'] ?></h2>
+						<h2>Mods in Build <?php echo $user['name'] ?></h2>
 						<script type="text/javascript">
 							function remove_mod(id) {
 								$("#mod-"+id).remove();
 								var request = new XMLHttpRequest();
-								request.open("GET", "functions/remove-mod.php?bid=<?php echo $build['id'] ?>&id="+id);
+								request.open("GET", "functions/remove-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
 								request.send();
 							}
 						</script>
@@ -645,7 +687,7 @@ if(isset($_GET['logout'])){
 								<tr id="mod-<?php echo $bmod ?>">
 									<td scope="row"><?php echo $moda['pretty_name'] ?></td>
 									<td><?php echo $moda['version'] ?></td>
-									<td><?php if($moda['name'] !== "forge"){ ?><button onclick="remove_mod(<?php echo $bmod ?>)" class="btn btn-danger"><i class="fas fa-times"></i></button><?php } ?></td>
+									<td><?php if(substr($_SESSION['perms'],1,1)=="1") { if($moda['name'] !== "forge"){ ?><button onclick="remove_mod(<?php echo $bmod ?>)" class="btn btn-danger"><i class="fas fa-times"></i></button><?php }} ?></td>
 								</tr>
 								<?php										
 									}
@@ -653,8 +695,9 @@ if(isset($_GET['logout'])){
 							</tbody>
 						</table>
 					</div>
+					<?php if(substr($_SESSION['perms'],1,1)=="1") { ?>
 					<div class="card">
-						<h2>Mods for Minecraft <?php echo $build['minecraft'] ?></h2>
+						<h2>Mods for Minecraft <?php echo $user['minecraft'] ?></h2>
 						<button onclick="window.location.href = window.location.href" class="btn btn-primary">Refresh</button>
 						<br />
 						<table class="table table-striped">
@@ -668,7 +711,7 @@ if(isset($_GET['logout'])){
 							</thead>
 							<tbody>
 							<?php
-							$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'mod' AND `mcversion` = '".$build['minecraft']."'");
+							$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'mod' AND `mcversion` = '".$user['minecraft']."'");
 							if(mysqli_num_rows($mres)!==0) {
 								?>
 								<script type="text/javascript">
@@ -678,11 +721,16 @@ if(isset($_GET['logout'])){
 										var request = new XMLHttpRequest();
 										request.onreadystatechange = function() {
 											if (this.readyState == 4 && this.status == 200) {
-												$("#cog-"+id).hide();
-												$("#check-"+id).show();
+												if(this.responseText=="Insufficient permission!") {
+													$("#cog-"+id).hide();
+													$("#times-"+id).show();
+												} else {
+													$("#cog-"+id).hide();
+													$("#check-"+id).show();
+												}
 											}
 										};
-										request.open("GET", "functions/add-mod.php?bid=<?php echo $build['id'] ?>&id="+id);
+										request.open("GET", "functions/add-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
 										request.send();
 									}
 								</script>
@@ -694,13 +742,13 @@ if(isset($_GET['logout'])){
 											<td scope="row"><?php echo $mod['pretty_name'] ?></td>
 											<td><?php echo $mod['version'] ?></td>
 											<td><button id="btn-add-mod-<?php echo $mod['id'] ?>" onclick="add(<?php echo $mod['id'] ?>)" class="btn btn-primary">Add to Build</button></td>
-											<td><i id="cog-<?php echo $mod['id'] ?>" style="display:none" class="fas fa-cog fa-spin fa-2x"></i><i id="check-<?php echo $mod['id'] ?>" style="display:none" class="text-success fas fa-check fa-2x"></i></td>
+											<td><i id="cog-<?php echo $mod['id'] ?>" style="display:none" class="fas fa-cog fa-spin fa-2x"></i><i id="check-<?php echo $mod['id'] ?>" style="display:none" class="text-success fas fa-check fa-2x"></i><i id="times-<?php echo $mod['id'] ?>" style="display:none" class="text-danger fas fa-times fa-2x"></i></td>
 										</tr>
 										<?php
 									}
 								}
 							} else {
-								echo "<div style='display:block' class='invalid-feedback'>There are no mods available for version ".$build['minecraft'].". Please upload mods in <a href='/lib-mods'>Mods Library</a></div>";
+								echo "<div style='display:block' class='invalid-feedback'>There are no mods available for version ".$user['minecraft'].". Please upload mods in <a href='/lib-mods'>Mods Library</a></div>";
 							} ?>
 							</tbody>
 						</table>				
@@ -732,7 +780,7 @@ if(isset($_GET['logout'])){
 												$("#check-o-"+id).show();
 											}
 										};
-										request.open("GET", "functions/add-mod.php?bid=<?php echo $build['id'] ?>&id="+id);
+										request.open("GET", "functions/add-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
 										request.send();
 									}
 								</script>
@@ -755,7 +803,7 @@ if(isset($_GET['logout'])){
 							</tbody>
 						</table>
 					</div>
-				<?php } else echo "<div class='card'><h3 class='text-info'>Select minecraft version and save before editing mods.</h3></div>"; ?>
+				<?php }} else echo "<div class='card'><h3 class='text-info'>Select minecraft version and save before editing mods.</h3></div>"; ?>
 			</div>
 
 		<?php
@@ -787,12 +835,23 @@ if(isset($_GET['logout'])){
 						<div class="upload-mods">
 							<center>
 								<div>
-									Drag n' Drop .jar files here.
-									<br />
-									<i class="fas fa-upload fa-4x"></i>
+									<?php
+									if(substr($_SESSION['perms'],3,1)=="1") {
+										echo "
+										Drag n' Drop .jar files here.
+										<br />
+										<i class='fas fa-upload fa-4x'></i>
+										";
+									} else {
+										echo "
+										Insuffiicient permissions!
+										<br />
+										<i class='fas fa-times fa-4x'></i>
+										";
+									} ?>
 								</div>									
 							</center>
-							<input type="file" name="fiels" multiple/>
+							<input <?php if(substr($_SESSION['perms'],3,1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple/>
 						</div>
 					</form>
 				</div>
@@ -836,10 +895,12 @@ if(isset($_GET['logout'])){
 									<td><?php echo $mod['version'] ?></td>
 									<td><?php echo $mod['mcversion'] ?></td>
 									<td>
+										<?php if(substr($_SESSION['perms'],4,1)=="1") { ?>
 										<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
 											<button onclick="window.location='/mod?id=<?php echo $mod['id'] ?>'" class="btn btn-primary">Edit</button>
 											<button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
 										</div>
+									<?php } ?>
 									</td>
 								</tr>
 							<?php
@@ -1045,6 +1106,7 @@ if(isset($_GET['logout'])){
 			</div>
 			<button id="fetch" onclick="fetch()" class="btn btn-primary btn-block">Fetch Forge Versions from minecraftforge.net</button>
 			<button style="display: none" id="save" onclick="window.location.reload()" class="btn btn-success btn-block">Save Forge Vesions and Refresh</button>
+			<span id="info" class="text-danger"></span>
 			<div class="card" id="fetched-mods" style="display: none">
 				<script type="text/javascript">
 					function fetch() {
@@ -1061,7 +1123,7 @@ if(isset($_GET['logout'])){
 									$("#fetch").hide();
 									$("#save").show();
 									for (var key in response) {
-										$("#forge-table").append('<tr id="forge-'+response[key]["id"]+'"><td scope="row">'+response[key]["mc"]+'</td><td>'+response[key]["name"]+'</td><td><a href="'+response[key]["link"]+'">'+response[key]["link"]+'</a></td><td><button id="button-add-'+response[key]["id"]+'" onclick="add(\''+response[key]["name"]+'\',\''+response[key]["link"]+'\',\''+response[key]["mc"]+'\',\''+response[key]["id"]+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><i id="cog-'+response[key]["id"]+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></i><i id="check-'+response[key]["id"]+'" style="display:none;color:green" class="fas fa-check fa-2x"></i></td></tr>');
+										$("#forge-table").append('<tr id="forge-'+response[key]["id"]+'"><td scope="row">'+response[key]["mc"]+'</td><td>'+response[key]["name"]+'</td><td><a href="'+response[key]["link"]+'">'+response[key]["link"]+'</a></td><td><button id="button-add-'+response[key]["id"]+'" onclick="add(\''+response[key]["name"]+'\',\''+response[key]["link"]+'\',\''+response[key]["mc"]+'\',\''+response[key]["id"]+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><i id="cog-'+response[key]["id"]+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></i><i id="check-'+response[key]["id"]+'" style="display:none;color:green" class="fas fa-check fa-2x"></i><i id="times-'+response[key]["id"]+'" style="display:none;color:red" class="fas fa-times fa-2x"></i></td></tr>');
 									}
 								}
 							}
@@ -1076,8 +1138,15 @@ if(isset($_GET['logout'])){
 						request.onreadystatechange = function() {
 							if (request.readyState == 4) {
 								if (request.status == 200) {
+									response = JSON.parse(this.response);
 									$("#cog-"+id).hide();
-									$("#check-"+id).show();
+									if(response['status']=="succ") {
+										$("#check-"+id).show();
+									} else {
+										$("#times-"+id).show();
+										$("#info").text("Insufficient permissions!");
+									}
+									
 								}
 							}
 						}
@@ -1429,11 +1498,12 @@ if(isset($_GET['logout'])){
 								<p class="card-text">
 									1. Open SSH client and connect to <?php echo $_SERVER['HTTP_HOST'] ?>. <br />
 									2. login with your credentials <br />
-									3. write <i>cd <?php echo dirname(dirname(get_included_files()[0])); ?> </i><br />
-									4. write <i>git clone https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate</i> <br />
-									5. write <i>cp -a SolderUpdate/. TechnicSolder/</i> <br>
-									6. write <i>rm -rf SolderUpdate</i> <br>
-									7. write <i>chown -R www-data TechnicSolder</i>
+									3. write: <br />
+									<i>cd <?php echo dirname(dirname(get_included_files()[0])); ?> </i><br />
+									<i>git clone https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate</i> <br />
+									<i>cp -a SolderUpdate/. TechnicSolder/</i> <br>
+									<i>rm -rf SolderUpdate</i> <br>
+									<i>chown -R www-data TechnicSolder</i>
 								</p>
 							</div>
 						</div>
@@ -1446,6 +1516,524 @@ if(isset($_GET['logout'])){
 				});
 			</script>
 		<?php			
+		}
+		if(uri("/user")) {
+			?>
+			<div class="main">
+				<div class="card">
+					<h1>My Account</h1>
+					<hr />
+					<h2>Your Permissions</h2>
+					<input type="text" class="form-control" id="perms" value="<?php echo $_SESSION['perms'] ?>" readonly>
+					<br />
+					<div class="custom-control custom-checkbox">
+						<input type="checkbox" class="custom-control-input" id="perm1" disabled>
+						<label class="custom-control-label" for="perm1">Create, delete and edit modpacks</label>
+					</div>
+					<div class="custom-control custom-checkbox">
+						<input type="checkbox" class="custom-control-input" id="perm2" disabled>
+						<label class="custom-control-label" for="perm2">Create, delete and edit builds</label>
+					</div>
+					<div class="custom-control custom-checkbox">
+						<input type="checkbox" class="custom-control-input" id="perm3" disabled>
+						<label class="custom-control-label" for="perm3">Set recommended build</label>
+					</div>
+					<div class="custom-control custom-checkbox">
+						<input type="checkbox" class="custom-control-input" id="perm4" disabled>
+						<label class="custom-control-label" for="perm4">Upload mods and files</label>
+					</div>
+					<div class="custom-control custom-checkbox">
+						<input type="checkbox" class="custom-control-input" id="perm5" disabled>
+						<label class="custom-control-label" for="perm5">Edit mods and files</label>
+					</div>
+					<div class="custom-control custom-checkbox">
+						<input type="checkbox" class="custom-control-input" id="perm6" disabled>
+						<label class="custom-control-label" for="perm6">Download and remove forge versions.</label>
+					</div>
+					<hr />
+					<h2>User Picture</h2>
+					<img class="img-thumbnail" style="width: 64px;height: 64px" src="data:image/png;base64,<?php 
+					$sql = mysqli_query($conn,"SELECT `icon` FROM `users` WHERE `name` = '".$_SESSION['user']."'");
+					$icon = mysqli_fetch_array($sql);
+					echo $icon['icon'];
+					 ?>">
+					 <br/>
+					 <h3>Change Icon</h3>
+					 <form enctype="multipart/form-data">
+					 	<div class="custom-file">
+							<input type="file" class="custom-file-input" id="newIcon" required>
+							<label class="custom-file-label" for="newIcon">Choose file...</label>
+						</div>
+					 </form>
+					 <hr />
+					 <h2>Change Password</h2>
+					 <form method="POST" action="./functions/chpw.php">
+					 	<input id="pass1" placeholder="Password" class="form-control" type="password" name="pass"><br />
+				        <input id="pass2" placeholder="Password" class="form-control" type="password"><br />
+				        <input class="btn btn-success" type="submit" name="save" id="save-button" value="Save" disabled>
+					 </form>
+				</div>
+			</div>
+			<script type="text/javascript">
+				$("#pass1").on("keyup", function() {
+					if($("#pass1").val()!=="") {
+						$("#pass1").addClass("is-valid");
+						$("#pass1").removeClass("is-invalid");
+						if($("#pass1").val()!==""&&$("#pass2").val()!==""&&$("#pass1").val()==$("#pass2").val()) {
+							$("#save-button").attr("disabled", false);
+						}
+					} else {
+						$("#pass1").addClass("is-invalid");
+						$("#pass1").removeClass("is-valid");
+						$("#save-button").attr("disabled", true);
+					}
+				});
+				$("#pass2").on("keyup", function() {
+					if($("#pass2").val()!==""&$("#pass2").val()==$("#pass1").val()) {
+						$("#pass2").addClass("is-valid");
+						$("#pass2").removeClass("is-invalid");
+						if($("#pass1").val()!==""&&$("#pass2").val()!==""&&$("#pass1").val()==$("#pass2").val()) {
+							$("#save-button").attr("disabled", false);
+						}
+					} else {
+						$("#pass2").addClass("is-invalid");
+						$("#pass2").removeClass("is-valid");
+						$("#save-button").attr("disabled", true);
+					}
+				});
+				$("#newIcon").change(function(){
+					var formData = new FormData();
+					var request = new XMLHttpRequest();
+					icon = document.getElementById('newIcon');
+					formData.set('newIcon', icon.files[0]);
+					request.open('POST', '/functions/new_icon.php');
+					request.onreadystatechange = function() {
+						if(request.readyState == 4) {
+							console.log(this.responseText);
+							setTimeout(function(){ window.location.reload(); }, 500);
+						}
+					}
+					request.send(formData);
+				});
+				var perm1 = $("#perms").val().substr(0,1);
+				var perm2 = $("#perms").val().substr(1,1);
+				var perm3 = $("#perms").val().substr(2,1);
+				var perm4 = $("#perms").val().substr(3,1);
+				var perm5 = $("#perms").val().substr(4,1);
+				var perm6 = $("#perms").val().substr(5,1);
+				if(perm1==1) {
+					$('#perm1').prop('checked', true);
+				} else {
+					$('#perm1').prop('checked', false);
+				}
+				if(perm2==1) {
+					$('#perm2').prop('checked', true);
+				} else {
+					$('#perm2').prop('checked', false);
+				}
+				if(perm3==1) {
+					$('#perm3').prop('checked', true);
+				} else {
+					$('#perm3').prop('checked', false);
+				}
+				if(perm4==1) {
+					$('#perm4').prop('checked', true);
+				} else {
+					$('#perm4').prop('checked', false);
+				}
+				if(perm5==1) {
+					$('#perm5').prop('checked', true);
+				} else {
+					$('#perm5').prop('checked', false);
+				}
+				if(perm6==1) {
+					$('#perm6').prop('checked', true);
+				} else {
+					$('#perm6').prop('checked', false);
+				}
+			</script>
+			<script>document.title = 'Solder.cf - My Account - <?php echo addslashes($_SESSION['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$("#nav-settings").trigger('click');
+				});
+			</script>
+			<?php
+		}
+		if(uri("/admin")) {
+			?>
+			<div class="main">
+				<div class="card">
+					<h1>Administration</h1>
+					<hr />
+					<button class="btn btn-success" data-toggle="modal" data-target="#newUser">New User</button><br />
+					<h2>Users</h2>
+					<div id="info">
+
+					</div>
+					<table class="table table-striped">
+						<thead>
+						<tr>
+							<td style="width:35%" scope="col">Name</td>
+							<td style="width:35%" scope="col">Email</td>
+							<td style="width:30%" scope="col"></td>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						$users = mysqli_query($conn,"SELECT * FROM `users`");
+						while ($user = mysqli_fetch_array($users)) {
+							?>
+							<tr>
+								<td scope="row"><?php echo $user['display_name'] ?></td>
+								<td><?php echo $user['name'] ?></td>
+								<td><div class="btn-group btn-group-sm" role="group" aria-label="Actions">
+										<button onclick="edit('<?php echo $user['name'] ?>','<?php echo $user['display_name'] ?>','<?php echo $user['perms'] ?>')" class="btn btn-primary" data-toggle="modal" data-target="#editUser" >Edit</button>
+										<button onclick="remove_box(<?php echo $user['id'] ?>,'<?php echo $user['name'] ?>')" data-toggle="modal" data-target="#removeUser" class="btn btn-danger">Remove</button>
+									</div></td>
+							</tr>
+							<?php
+						}
+						?>
+					</tbody>
+					</table>
+				</div>
+				<div class="modal fade" id="removeUser" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="rm">Delete user <span id="user-name-title"></span>?</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        Are you sure you want to delete user <span id="user-name"></span>?
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+				        <button id="remove-button" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				<div class="modal fade" id="newUser" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="rm">New User</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        <form>
+				        	<input id="email" placeholder="Email" class="form-control" type="email"> <br />
+				        	<input id="name" placeholder="Username" class="form-control" type="text"><br />
+				        	<input id="pass1" placeholder="Password" class="form-control" type="password"><br />
+				        	<input id="pass2" placeholder="Password" class="form-control" type="password">
+				        </form>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				        <button id="save-button" type="button" class="btn btn-success" disabled="disabled" onclick='new_user($("#email").val(),$("#name").val(),$("#pass1").val())' data-dismiss="modal">Save</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				<div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="rm">Edit User </h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        <form>
+				        	<input readonly id="mail2" placeholder="Email" class="form-control" type="text"><br />
+				        	<input id="name2" placeholder="Username" class="form-control" type="text"><br />
+				        	<h4>Permissions</h4>
+				        	<input id="perms" placeholder="Permissions" readonly value="000000" class="form-control" type="text"><br />
+				        	
+				        	<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="perm1">
+									<label class="custom-control-label" for="perm1">Create, delete and edit modpacks</label>
+							</div>
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="perm2">
+								<label class="custom-control-label" for="perm2">Create, delete and edit builds</label>
+							</div>
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="perm3">
+								<label class="custom-control-label" for="perm3">Set recommended build</label>
+							</div>
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="perm4">
+								<label class="custom-control-label" for="perm4">Upload mods and files</label>
+							</div>
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="perm5">
+								<label class="custom-control-label" for="perm5">Edit mods and files</label>
+							</div>
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="perm6">
+								<label class="custom-control-label" for="perm6">Download and remove forge versions.</label>
+							</div>
+				        </form>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				        <button id="save-button-2" type="button" class="btn btn-success" disabled="disabled" onclick='edit_user($("#mail2").val(),$("#name2").val(),$("#perms").val())' data-dismiss="modal">Save</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>	
+				<script type="text/javascript">
+					function remove(id) {
+						var request = new XMLHttpRequest();
+						request.open('POST', '/functions/remove_user.php');
+						request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+						request.onreadystatechange = function() {
+							if(request.readyState == 4) {
+								console.log(request.responseText);
+								$("#info").html(request.responseText + "<br />");
+								setTimeout(function(){ window.location.reload(); }, 500);
+							}
+							
+						}
+						request.send("id="+id);
+					}
+					function remove_box(id,name) {
+						$("#user-name").text(name);
+						$("#user-name-title").text(name);
+						$("#remove-button").attr("onclick","remove("+id+")");
+					}
+					function edit(mail,name, perms) {
+						$("#save-button-2").attr("disabled", true);
+						$("#mail2").val(mail);
+						$("#name2").val(name);
+						if(perms.match("^[01]+$")) {
+							$("#perms").val(perms);
+						} else {
+							$("#perms").val("000000");
+						}
+						var perm1 = $("#perms").val().substr(0,1);
+						var perm2 = $("#perms").val().substr(1,1);
+						var perm3 = $("#perms").val().substr(2,1);
+						var perm4 = $("#perms").val().substr(3,1);
+						var perm5 = $("#perms").val().substr(4,1);
+						var perm6 = $("#perms").val().substr(5,1);
+						if(perm1==1) {
+							$('#perm1').prop('checked', true);
+						} else {
+							$('#perm1').prop('checked', false);
+						}
+						if(perm2==1) {
+							$('#perm2').prop('checked', true);
+						} else {
+							$('#perm2').prop('checked', false);
+						}
+						if(perm3==1) {
+							$('#perm3').prop('checked', true);
+						} else {
+							$('#perm3').prop('checked', false);
+						}
+						if(perm4==1) {
+							$('#perm4').prop('checked', true);
+						} else {
+							$('#perm4').prop('checked', false);
+						}
+						if(perm5==1) {
+							$('#perm5').prop('checked', true);
+						} else {
+							$('#perm5').prop('checked', false);
+						}
+						if(perm6==1) {
+							$('#perm6').prop('checked', true);
+						} else {
+							$('#perm6').prop('checked', false);
+						}				
+					}
+					function edit_user(mail,name,perms) {
+						var request = new XMLHttpRequest();
+						request.open('POST', '/functions/edit_user.php');
+						request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+						request.onreadystatechange = function() {
+							if(request.readyState == 4) {
+								console.log(request.responseText);
+								$("#info").html(request.responseText + "<br />");
+								setTimeout(function(){ window.location.reload(); }, 500);
+							}
+							
+						}
+						request.send("name="+mail+"&display_name="+name+"&perms="+perms);
+					}
+				</script>
+				<script type="text/javascript">
+					// https://gist.github.com/endel/321925f6cafa25bbfbde
+					Number.prototype.pad = function(size) {
+					  var s = String(this);
+					  while (s.length < (size || 2)) {s = "0" + s;}
+					  return s;
+					}
+					$("#perm1").change(function(){
+						if($("#perm1").is(":checked")) {
+							$("#perms").val((parseInt($("#perms").val())+100000).pad(6));
+						} else {
+							$("#perms").val((parseInt($("#perms").val())-100000).pad(6));
+						}
+						if($("#name2").val()!=="") {
+							$("#save-button-2").attr("disabled", false);
+						}
+					});					
+					$("#perm2").change(function(){
+						if($("#perm2").is(":checked")) {
+							$("#perms").val((parseInt($("#perms").val())+10000).pad(6));
+						} else {
+							$("#perms").val((parseInt($("#perms").val())-10000).pad(6));
+						}
+						if($("#name2").val()!=="") {
+							$("#save-button-2").attr("disabled", false);
+						}
+					});					
+					$("#perm3").change(function(){
+						if($("#perm3").is(":checked")) {
+							$("#perms").val((parseInt($("#perms").val())+1000).pad(6));
+						} else {
+							$("#perms").val((parseInt($("#perms").val())-1000).pad(6));
+						}
+						if($("#name2").val()!=="") {
+							$("#save-button-2").attr("disabled", false);
+						}
+					});					
+					$("#perm4").change(function(){
+						if($("#perm4").is(":checked")) {
+							$("#perms").val((parseInt($("#perms").val())+100).pad(6));
+						} else {
+							$("#perms").val((parseInt($("#perms").val())-100).pad(6));
+						}
+						if($("#name2").val()!=="") {
+							$("#save-button-2").attr("disabled", false);
+						}
+					});					
+					$("#perm5").change(function(){
+						if($("#perm5").is(":checked")) {
+							$("#perms").val((parseInt($("#perms").val())+10).pad(6));
+						} else {
+							$("#perms").val((parseInt($("#perms").val())-10).pad(6));
+						}
+						if($("#name2").val()!=="") {
+							$("#save-button-2").attr("disabled", false);
+						}
+					});					
+					$("#perm6").change(function(){
+						if($("#perm6").is(":checked")) {
+							$("#perms").val((parseInt($("#perms").val())+1).pad(6));
+						} else {
+							$("#perms").val((parseInt($("#perms").val())-1).pad(6));
+						}
+						if($("#name2").val()!=="") {
+							$("#save-button-2").attr("disabled", false);
+						}
+					});
+
+				</script>			
+				<script type="text/javascript">
+					function new_user(email,name,pass) {
+						var request = new XMLHttpRequest();
+						request.open('POST', '/functions/new_user.php');
+						request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+						request.onreadystatechange = function() {
+							if(request.readyState == 4) {
+								console.log(request.responseText);
+								$("#info").html(request.responseText + "<br />");
+								setTimeout(function(){ window.location.reload(); }, 500);
+							}
+							
+						}
+						request.send("name="+email+"&display_name="+name+"&pass="+pass);
+					}
+				</script>
+				<script type="text/javascript">
+					$("#name2").on("keyup", function() {
+						if($("#name2").val()!=="") {
+							$("#name2").addClass("is-valid");
+							$("#name2").removeClass("is-invalid");
+							if($("#name2").val()!=="") {
+								$("#save-button-2").attr("disabled", false);
+							}
+						} else {
+							$("#name2").addClass("is-invalid");
+							$("#name2").removeClass("is-valid");
+							$("#save-button-2").attr("disabled", true);
+						}
+					});						
+				</script>
+				<script type="text/javascript">
+					$("#email").on("keyup", function() {
+						if($("#email").val()!=="") {
+							$("#email").addClass("is-valid");
+							$("#email").removeClass("is-invalid");
+							if($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
+								$("#save-button").attr("disabled", false);
+							}
+						} else {
+							$("#email").addClass("is-invalid");
+							$("#email").removeClass("is-valid");
+							$("#save-button").attr("disabled", true);
+						}
+					});
+					$("#name").on("keyup", function() {
+						if($("#name").val()!=="") {
+							$("#name").addClass("is-valid");
+							$("#name").removeClass("is-invalid");
+							if($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
+								$("#save-button").attr("disabled", false);
+							}
+						} else {
+							$("#name").addClass("is-invalid");
+							$("#name").removeClass("is-valid");
+							$("#save-button").attr("disabled", true);
+						}
+					});
+					$("#pass1").on("keyup", function() {
+						if($("#pass1").val()!=="") {
+							$("#pass1").addClass("is-valid");
+							$("#pass1").removeClass("is-invalid");
+							if($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
+								$("#save-button").attr("disabled", false);
+							}
+						} else {
+							$("#pass1").addClass("is-invalid");
+							$("#pass1").removeClass("is-valid");
+							$("#save-button").attr("disabled", true);
+						}
+					});
+					$("#pass2").on("keyup", function() {
+						if($("#pass2").val()!==""&$("#pass2").val()==$("#pass1").val()) {
+							$("#pass2").addClass("is-valid");
+							$("#pass2").removeClass("is-invalid");
+							if($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
+								$("#save-button").attr("disabled", false);
+							}
+						} else {
+							$("#pass2").addClass("is-invalid");
+							$("#pass2").removeClass("is-valid");
+							$("#save-button").attr("disabled", true);
+						}
+					});
+
+				</script>
+			</div>
+			<script>document.title = 'Solder.cf - Admin - <?php echo addslashes($config['author']) ?>';</script>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$("#nav-settings").trigger('click');
+				});
+			</script>
+			<?php
 		}
 	}
 	?>

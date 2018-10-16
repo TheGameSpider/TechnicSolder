@@ -2,7 +2,11 @@
 session_start();
 require("dbconnect.php");
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("Must be logged in!");
+	die("Unauthorized require or login session has expired!");
+}
+if(substr($_SESSION['perms'],4,1)!=="1") {
+	echo 'Insufficient permission!';
+	exit();
 }
 if(empty($_GET['id'])){
 	die("Mod not specified.");

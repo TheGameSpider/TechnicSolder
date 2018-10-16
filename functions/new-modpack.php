@@ -3,7 +3,11 @@ session_start();
 $config = require("config.php");
 require("dbconnect.php");
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("You need to be logged in!");
+	die("Unauthorized require or login session has expired!");
+}
+if(substr($_SESSION['perms'],0,1)!=="1") {
+	echo 'Insufficient permission!';
+	exit();
 }
 $mpq = mysqli_query($conn, "SELECT `id` FROM `modpacks` ORDER BY `id` DESC LIMIT 1");
 $mp = mysqli_fetch_array($mpq);

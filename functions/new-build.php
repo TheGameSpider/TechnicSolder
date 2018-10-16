@@ -11,7 +11,11 @@ if(empty($_GET['type'])){
 	die("type not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("You need to be logged in!");
+	die("Unauthorized require or login session has expired!");
+}
+if(substr($_SESSION['perms'],1,1)!=="1") {
+	echo 'Insufficient permission!';
+	exit();
 }
 if($_GET['type']=="update") {
 	mysqli_query($conn, "INSERT INTO builds(`name`,`minecraft`,`java`,`mods`,`modpack`) SELECT `name`,`minecraft`,`java`,`mods`,`modpack` FROM `builds` WHERE `modpack` = '".$_GET['id']."' ORDER BY `id` DESC LIMIT 1");

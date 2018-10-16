@@ -1,0 +1,1 @@
+<?php return array( "configured" => true, "author" => "TheGameSpider","mail" => "olomichalik@gmail.com","pass" => "Solder123","db-host" => "127.0.0.1","db-user" => "solder","db-name" => "solder","db-pass" => "OhaBuHa2!","host" => "demo.solder.cf","api_key" => "88d09eeee1ed6bbc9ba3866001d54cda" );

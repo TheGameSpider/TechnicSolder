@@ -2,6 +2,10 @@
 header('Content-Type: application/json');
 $config = require("config.php");
 require("dbconnect.php");
+if(substr($_SESSION['perms'],5,1)!=="1") {
+	echo '{"status":"error","message":"Insufficient permission!"}';
+	exit();
+}
 $link = $_GET['link'];
 $version = $_GET['version'];
 $mcversion = $_GET['mcversion'];

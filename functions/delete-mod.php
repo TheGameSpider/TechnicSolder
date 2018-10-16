@@ -6,7 +6,11 @@ if(empty($_GET['id'])){
 	die("Id not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("You need to be logged in!");
+	die("Unauthorized require or login session has expired!");
+}
+if(substr($_SESSION['perms'],4,1)!=="1") {
+	echo 'Insufficient permission!';
+	exit();
 }
 $modq = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = '".$_GET['id']."'");
 $mod = mysqli_fetch_array($modq);
