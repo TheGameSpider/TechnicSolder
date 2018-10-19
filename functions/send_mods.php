@@ -91,7 +91,7 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 		$version = $mcmod['version'];
 		$mcversion = $mcmod['mcversion'];
 		$md5 = md5_file("../mods/".$fileInfo['filename'].".zip");
-		$url = "http://".$config['host']."/mods/".$fileInfo['filename'].".zip";
+		$url = "http://".$config['host'].$config['dir']."mods/".$fileInfo['filename'].".zip";
 		$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','".$url."','".$link."','".$author."','".$description."','".$version."','".$mcversion."','".$fileInfo['filename'].".zip','mod')");
 		if($res) {
 			if($warn['b']==true) {

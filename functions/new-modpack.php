@@ -16,4 +16,5 @@ mysqli_query($conn, "INSERT INTO modpacks(`name`,`display_name`,`icon`,`icon_md5
 $mpq = mysqli_query($conn, "SELECT `id` FROM `modpacks` ORDER BY `id` DESC LIMIT 1");
 $mp = mysqli_fetch_array($mpq);
 $mpi =  intval($mp['id']);
-header('Location: /modpack?id='.$mpi);
+header("Location: ".$config['dir']."modpack?id=".$mpi);
+exit();

@@ -11,4 +11,5 @@ if(empty($_POST['pass'])) {
 $pass = $_POST['pass'];
 $sql = mysqli_query($conn,"UPDATE `users` SET `pass` = '".$pass."' WHERE `name` = '".$_SESSION['user']."'");
 echo mysqli_error($conn);
-header("Location: /user");
+header("Location: ".$config['dir']."user");
+exit();

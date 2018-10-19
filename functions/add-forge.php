@@ -34,7 +34,7 @@ if(file_put_contents("../forges/modpack-".$version."/modpack.jar", file_get_cont
 	unlink("../forges/modpack-".$version."/modpack.jar");
 	rmdir("../forges/modpack-".$version);
 	$md5 = md5_file("../forges/forge-".$version.".zip");
-	$url = "http://".$config['host']."/forges/forge-".$version.".zip";
+	$url = "http://".$config['host'].$config['dir']."forges/forge-".$version.".zip";
 	$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('forge','Minecraft Forge','".$md5."','".$url."','https://minecraftforge.net','LexManos','Minecraft Forge is a common open source API allowing a broad range of mods to work cooperatively together. Is allows many mods to be created without them editing the main Minecraft Code','".$version."','".$mcversion."','forge-".$version.".zip','forge')");
 	if($res) {
 		echo '{"status":"succ","message":"Mod has been saved."}';

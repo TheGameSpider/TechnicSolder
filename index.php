@@ -2,7 +2,8 @@
 session_start();
 $config = include("./functions/config.php");
 if($config['configured']!==true) {
-	header("Location: /configure.php");
+	header("Location: ".$config['dir']."configure.php");
+	exit();
 }
 $config = require("./functions/config.php");
 $dbcon = require("./functions/dbconnect.php");
@@ -20,7 +21,8 @@ if(substr($url,-1)=="/") {
 if(isset($_GET['logout'])){
 	if($_GET['logout']==true){
 		session_destroy();
-		header("Location: login");
+		header("Location: ".$config['dir']."login");
+		exit();
 	}
 }
 if(isset($_POST['email']) & isset($_POST['password'])){
@@ -36,7 +38,8 @@ if(isset($_POST['email']) & isset($_POST['password'])){
 			$_SESSION['name'] = $user['display_name'];
 			$_SESSION['perms'] = $user['perms'];
 		} else {
-			header("Location: login?ic");
+			header("Location: ".$config['dir']."login?ic");
+			exit();
 		}
 		
 	}
@@ -51,17 +54,13 @@ function uri($uri) {
 }
 if(isset($_SESSION['user'])) {
 	if(uri("/login")||uri("/")) {
-		header("Location: /dashboard");
+		header("Location: ".$config['dir']."dashboard");
 		exit();
 	}
 }
 if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
-	header("Location: /login");
+	header("Location: ".$config['dir']."login");
 	exit();
-}
-if(isset($_GET['logout'])){
-	session_destroy();
-	header("Refresh:0; url=/");
 }
 ?>
 <html>
@@ -234,7 +233,7 @@ if(isset($_GET['logout'])){
 			<div style="left: unset;right: 2px;" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 				<a class="dropdown-item" href="?logout=true" onclick="window.location = window.location+'?logout=true'">Log Out</a>
 				<?php if($_SESSION['user']!==$config['mail']) { ?>
-				<a class="dropdown-item" href="/user" onclick="window.location = '/user'">My account</a>
+				<a class="dropdown-item" href="./user" onclick="window.location = './user'">My account</a>
 				<?php } ?>
 			</div>
 					 </span>
@@ -242,7 +241,7 @@ if(isset($_GET['logout'])){
 		<div class="text-white" style="width:20em;height: 100%;position:fixed;background-color: #3E4956">
 			<ul class="nav nav-tabs" style="height:100%">
 				<li class="nav-item">
-					<a class="nav-link " href="/dashboard"><i class="fas fa-tachometer-alt fa-lg"></i></a>
+					<a class="nav-link " href="./dashboard"><i class="fas fa-tachometer-alt fa-lg"></i></a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link active" href="#modpacks" data-toggle="tab" role="tab"><i class="fas fa-boxes fa-lg"></i></a>
@@ -263,7 +262,7 @@ if(isset($_GET['logout'])){
 						if(mysqli_num_rows($result)!==0) {
 							while($modpack=mysqli_fetch_array($result)){
 								?>
-								<a href="/modpack?id=<?php echo $modpack['id'] ?>">
+								<a href="./modpack?id=<?php echo $modpack['id'] ?>">
 									<div class="modpack">
 										<p class="text-white"><img alt="<?php echo $modpack['display_name'] ?>" class="d-inline-block align-top" height="25px" src="<?php echo $modpack['icon'] ?>"> <?php echo $modpack['display_name'] ?></p>
 									</div>
@@ -273,7 +272,7 @@ if(isset($_GET['logout'])){
 						}
 						?>
 						<?php if(substr($_SESSION['perms'],0,1)=="1") { ?>
-						<a href="functions/new-modpack.php"><div class="modpack">
+						<a href="./functions/new-modpack.php"><div class="modpack">
 							<p><i style="height:25px" class="d-inline-block align-top fas fa-plus-circle"></i> Add Modpack</p>
 						</div></a>
 					<?php } ?>
@@ -281,34 +280,34 @@ if(isset($_GET['logout'])){
 				</div>
 				<div class="tab-pane" id="mods" role="tabpanel">
 					<p class="text-muted">LIBRARIES</p>
-					<a href="/lib-mods"><div class="modpack">
+					<a href="./lib-mods"><div class="modpack">
 						<p><i class="fas fa-cubes fa-lg"></i> <span style="margin-left:inherit;">Mod library</span></p>
 					</div></a>
-					<a href="/lib-forges"><div class="modpack">
+					<a href="./lib-forges"><div class="modpack">
 						<p><i class="fas fa-database fa-lg"></i> <span style="margin-left:inherit;">Forge versions</span> </p>
 					</div></a>
-					<a href="/lib-other"><div class="modpack">
+					<a href="./lib-other"><div class="modpack">
 						<p><i class="far fa-file-archive fa-lg"></i> <span style="margin-left:inherit;">Other files</span></p>
 					</div></a>
 				</div>
 				<div class="tab-pane" id="settings" role="tabpanel">
 					<p class="text-muted">SETTINGS</p>
 					<?php if($_SESSION['user']==$config['mail']) { ?>
-					<a href="/configure.php?reconfig"><div class="modpack">
+					<a href="./configure.php?reconfig"><div class="modpack">
 						<p><i class="fas fa-cogs fa-lg"></i> <span style="margin-left:inherit;">Solder Configuration</span></p>
 					</div></a>
-					<a href="/admin"><div class="modpack">
+					<a href="./admin"><div class="modpack">
 						<p><i class="fas fa-user-tie fa-lg"></i> <span style="margin-left:inherit;">Admin</span></p>
 					</div></a>
 				<?php } else { ?>
-					<a href="/user"><div class="modpack">
+					<a href="./user"><div class="modpack">
 						<p><i class="fas fa-user fa-lg"></i> <span style="margin-left:inherit;">My Account</span></p>
 					</div></a>
 				<?php } ?>
-					<a href="/about"><div class="modpack">
+					<a href="./about"><div class="modpack">
 						<p><i class="fas fa-info-circle fa-lg"></i> <span style="margin-left:inherit;">About Solder.cf</span></p>
 					</div></a>
-					<a href="/update"><div class="modpack">
+					<a href="./update"><div class="modpack">
 						<p><i class="fas fa-arrow-alt-circle-up fa-lg"></i> <span style="margin-left:inherit;">Update</span></p>
 					</div></a>
 				</div>
@@ -322,7 +321,6 @@ if(isset($_GET['logout'])){
 				<?php
 				$version = json_decode(file_get_contents("./api/version.json"),true);
 				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
-				echo $newversion['warns'];
 				if($version['version']!==$newversion['version']) {
 				?>
 				<div class="card alert-info">
@@ -336,25 +334,142 @@ if(isset($_GET['logout'])){
 						<p style="font-size: 2rem" class="display-4">The best Application to create and manage your modpacks.</p>
 					</center>
 					<hr />
-					<h2>How to create a modpack?</h2>
-					<p>With Solder.cf, you can create a modpack in three simple steps:</p>
-					<div style="margin-left: 25px">
-						<h5>1. Upload your mods.</h5>
-						<p>On the side panel, click the book icon <i class="fas fa-book"></i> and click Mods Library. Then, just Drag n' Drop your mods to the upload box.</p>
-						<h5>2. Select Forge version.</h5>
-						<p>Under the Mods Library, click Forge Versions. Click the blue button Fetch Forge Versions and wait until Versions are loaded. Then spimply add to database versions you want.</p>
-						<h5>3. Save your modpack.</h5>
-						<p>On the side panel, click the packs icon <i class="fas fa-boxes"></i> and click Add Modpack.</p>
-						<p>Rename your modpack and click Save.</p>
-						<p>Create a new empty build and in builds table click Edit.</p>
-						<p>Select minecraft versions and click green button Save and Refresh.</p>
-						<p>Now, you can add mods to your modpack.</p>
-						<p>The final step is to go back to your modpack and in builds table click green button Set reccommended.</p>
-						<hr />
-						<h5>4. (Optional)</h5>
-						<p>The author will be happy if you add this Markdown code to your platform page:</p>
-						<pre>[![](http://<?php echo $config['host'] ?>/resources/solderBanner.png)](https://solder.cf)</pre>
-						<img src="resources/solderBanner.png">
+					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseInst" role="button" aria-expanded="false" aria-controls="collapseInst">How to create a modpack?</button>
+					<div class="collapse" id="collapseInst">
+						<br />
+						<p>With Solder.cf, you can create a modpack in three simple steps:</p>
+						<div style="margin-left: 25px">
+							
+							<h5>1. Upload your mods and select Forge version.</h5>
+							<p>On the side panel, click the book icon <i class="fas fa-book"></i> and click Mods Library. Then, just Drag n' Drop your mods to the upload box.</p>
+							<p>Under the Mods Library, click Forge Versions. Click the blue button Fetch Forge Versions and wait until versions are loaded. Then spimply add to database versions you want.</p>
+							<h5>2. Add modpack do the database.</h5>
+							<p>On the side panel, click the packs icon <i class="fas fa-boxes"></i> and click Add Modpack. Rename your modpack and click Save.</p>
+							<h5>3. Create a new build.</h5>
+							<p>On the side panel, click on your modpack. Create a new empty build and in builds table click Edit. 	Select minecraft versions and click green button Save and Refresh.</p>
+							<p>Now, you can add mods to your modpack.</p>
+							<p>The final step is to go back to your modpack and in builds table click green button Set reccommended.</p>
+							<hr />
+							<h5>4. When you are done creating the modpack.</h5>
+							<a href="https://www.technicpack.net/modpack/create/solder" target="_blank"><button class="btn btn-primary">Import</button></a> your modpack to technicpack.net
+							<h5>5. (Optional)</h5>
+							<p>The author will be happy if you add this Markdown code to your platform page:</p>
+							<pre>[![](http://<?php echo $config['dir'] ?>resources/solderBanner.png)](https://solder.cf)</pre>
+							<img src="./resources/solderBanner.png">
+						</div>
+					</div>
+					<br />
+					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseAnno" role="button" aria-expanded="false" aria-controls="collapseAnno">Public Announcements</button>
+					<div class="collapse" id="collapseAnno">
+						<?php
+						echo $newversion['warns'];
+						?>
+					</div>
+					<br />
+					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseVerify" role="button" aria-expanded="false" aria-controls="collapseVerify">Solder Verifier</button>
+					<div class="collapse" id="collapseVerify">
+						<br />
+						<div class="input-group">
+							<input autocomplete="off" class="form-control" type="text" id="link" placeholder="Modpack slug" aria-describedby="search" />
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" onclick="get();" type="button" id="search">Search</button>
+							</div>
+						</div>
+						<pre class="card border-secondary" style="white-space: pre-wrap;width: 100%" id="responseRaw">
+							
+						</pre>
+						<h3 id="response-title"></h3>
+						<div id="response" style="width: 100%">
+							<span id="solder">
+								
+							</span>
+							<div id="responseR">
+								
+							</div>
+							<div id="feed">
+								
+							</div>
+						</div>
+						<script type="text/javascript">
+						document.getElementById("link").addEventListener("keyup", function(event) {
+							if (event.keyCode === 13) {
+								document.getElementById("search").click();
+								document.getElementById("responseRaw").innerHTML = "Loading...";
+
+							}
+						});
+						function get(){
+							console.log("working");
+							var link = document.getElementById("link").value;
+							var request = new XMLHttpRequest();
+							request.onreadystatechange = function() {
+								if (this.readyState == 4 && this.status == 200) {
+									response = request.responseText;
+									console.log(response);
+									var code = document.getElementById("responseRaw");
+									var responseDIV = document.getElementById("responseR");
+									var feedDIV = document.getElementById("feed");
+									var solderInfoDIV = document.getElementById("solderInfo");
+									var solderDIV = document.getElementById("solder");
+									code.innerHTML = response;
+									responseObj = JSON.parse(response);
+									if(responseObj.error=="Modpack does not exist") {
+										responseDIV.innerHTML = "<b>This modpack does not exists</b>";
+									} else {
+										if(responseObj.solder!==null) {
+											solderRequest = new XMLHttpRequest();
+											console.log("Getting info from solder");
+											solderRequest.onreadystatechange = function() {
+												if (this.readyState == 4 && this.status == 200) {
+													document.getElementById("response-title").innerHTML ="Response from Technic API:<br>";
+													solderRaw = solderRequest.responseText;
+													solder = JSON.parse(solderRaw);
+													var solderDIV = document.getElementById("solder");
+													solderDIV.innerHTML = "<b style='color:green'>This modpack is using Solder API - "+solder.api+" "+solder.version+" "+solder.stream+"</b>";
+													console.log(solderRaw);
+													console.log("done");
+												}
+											}
+											solderRequest.open("GET", "http://tgsapi.8u.cz/resolder.php?link="+responseObj.solder);
+											solderRequest.send();
+											
+										} else {
+											solderDIV.innerHTML = "<b style='color:red'>This modpack is not using Solder API</b>";
+										}
+										responseDIV.innerHTML = "<br /><b>Modpack Name: </b>"+responseObj.displayName;
+										responseDIV.innerHTML += "<br /><b>Author: </b>"+responseObj.user;
+										responseDIV.innerHTML += "<br /><b>Minecraft Version: </b>"+responseObj.minecraft;
+										responseDIV.innerHTML += "<br /><b>Downloads: </b>"+responseObj.downloads;
+										responseDIV.innerHTML += "<br /><b>Runs: </b>"+responseObj.runs;
+										responseDIV.innerHTML += "<br /><b>Official Modpack: </b>"+responseObj.isOfficial;
+										responseDIV.innerHTML += "<br /><b>Server Modpack: </b>"+responseObj.isServer;
+										responseDIV.innerHTML += "<br /><b>Platform Site: </b><a target='_blank' href='"+responseObj.platformUrl+"'>"+responseObj.platformUrl+"</a>";
+										if(responseObj.url!==null) {
+											responseDIV.innerHTML += "<br /><b>Download Link: </b><a target='_blank' href='"+responseObj.url+"'>"+responseObj.url+"</a>";
+										}
+										if(responseObj.solder!==null) {
+											responseDIV.innerHTML += "<br /><b>Solder API: </b><a target='_blank' href='"+responseObj.solder+"'>"+responseObj.solder+"</a>";
+										}
+										responseDIV.innerHTML += "<br /><b>Description: </b>"+responseObj.description
+										if(responseObj.discordServerId!=="") {
+											responseDIV.innerHTML += "<br /><br /><iframe src='https://discordapp.com/widget?id="+responseObj.discordServerId+"&theme=dark' width='350' height='500' allowtransparency='true' frameborder='0'></iframe>";
+										}
+										feedDIV.innerHTML = "<br /><h3>Updates: </h3><div class='card-columns' id='cards'></div>"
+										i=0;
+										responseObj.feed.forEach(element => {
+											i++
+											document.getElementById("cards").innerHTML += "<div style='padding:0px' class='card'><div class='card-header'><h5><img class='rounded-circle' src='"+element.avatar+"' height='32px' width='32px' /> "+element.user+"</h5></div><div class='card-body'><p>"+element.content+"</p></div></div>";
+										});
+										if(i==0) {
+											feedDIV.innerHTML = "";
+										}
+									}
+								}
+							};
+							request.open("GET", "http://tgsapi.8u.cz/platform.php?slug="+link);
+							request.send();
+						}
+					</script>
 					</div>
 				</div>
 			</div>
@@ -368,7 +483,7 @@ if(isset($_GET['logout'])){
 			<script>document.title = 'Solder.cf - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<ul class="nav justify-content-end info-versions">
 				<li class="nav-item">
-					<a class="nav-link" href="/dashboard"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $modpack['display_name'] ?></a>
+					<a class="nav-link" href="./dashboard"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $modpack['display_name'] ?></a>
 				</li>
 				<?php
 				$link = dirname(__FILE__).'/api/mp.php';
@@ -409,7 +524,7 @@ if(isset($_GET['logout'])){
 				<?php if(substr($_SESSION['perms'],0,1)=="1") { ?>
 				<div class="card">
 					<h2>Edit Modpack</h2>
-					<form action="/functions/edit-modpack.php" method="">
+					<form action="./functions/edit-modpack.php" method="">
 						<input hidden type="text" name="id" value="<?php echo $_GET['id'] ?>">
 						<input autocomplete="off" id="dn" class="form-control" type="text" name="display_name" placeholder="Modpack name" value="<?php echo $modpack['display_name'] ?>" />
 						<br />
@@ -435,7 +550,7 @@ if(isset($_GET['logout'])){
 					      </div>
 					      <div class="modal-footer">
 					        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-					        <button onclick="window.location='/functions/rmp.php?id=<?php echo $modpack['id'] ?>'" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
+					        <button onclick="window.location='./functions/rmp.php?id=<?php echo $modpack['id'] ?>'" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
 					      </div>
 					    </div>
 					  </div>
@@ -464,7 +579,7 @@ if(isset($_GET['logout'])){
 			<?php } if(substr($_SESSION['perms'],1,1)=="1") { ?>
 				<div class="card">
 					<h2>New Build</h2>
-					<form action="/functions/new-build.php" method="">
+					<form action="./functions/new-build.php" method="">
 						<input hidden type="text" name="id" value="<?php echo $_GET['id'] ?>">
 						<input required autocomplete="off" class="form-control" type="text" name="name" placeholder="Build name (e.g. 1.0)" />
 						<br />
@@ -529,7 +644,7 @@ if(isset($_GET['logout'])){
 					</div>
 					<script type="text/javascript">
 						function edit(id) {
-							window.location = "/build?id="+id;
+							window.location = "./build?id="+id;
 						}
 						function remove_box(id,name) {
 							$("#build-title").text(name);
@@ -565,7 +680,7 @@ if(isset($_GET['logout'])){
 
 								}
 							};
-							request.open("GET", "functions/delete-build.php?id="+id+"&pack=<?php echo $_GET['id'] ?>");
+							request.open("GET", "./functions/delete-build.php?id="+id+"&pack=<?php echo $_GET['id'] ?>");
 							request.send();
 						}
 						function set_recommended(id) {
@@ -588,7 +703,7 @@ if(isset($_GET['logout'])){
 									$("#b-"+id).attr('rec','true');
 								}
 							};
-							request.open("GET", "functions/set-recommended.php?id="+id);
+							request.open("GET", "./functions/set-recommended.php?id="+id);
 							request.send();
 						}
 					</script>
@@ -639,7 +754,7 @@ if(isset($_GET['logout'])){
 								echo "</select>";
 							} else {
 								echo "</select>";
-								echo "<div style='display:block' class='invalid-feedback'>There are no versions available. Please fetch versions in <a href='/lib-forges'>Forge Versions Library</a></div>";
+								echo "<div style='display:block' class='invalid-feedback'>There are no versions available. Please fetch versions in <a href='./lib-forges'>Forge Versions Library</a></div>";
 							}
 							?>
 						<div class="custom-control custom-checkbox mr-sm-2">
@@ -666,7 +781,7 @@ if(isset($_GET['logout'])){
 							function remove_mod(id) {
 								$("#mod-"+id).remove();
 								var request = new XMLHttpRequest();
-								request.open("GET", "functions/remove-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
+								request.open("GET", "./functions/remove-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
 								request.send();
 							}
 						</script>
@@ -730,7 +845,7 @@ if(isset($_GET['logout'])){
 												}
 											}
 										};
-										request.open("GET", "functions/add-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
+										request.open("GET", "./functions/add-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
 										request.send();
 									}
 								</script>
@@ -748,7 +863,7 @@ if(isset($_GET['logout'])){
 									}
 								}
 							} else {
-								echo "<div style='display:block' class='invalid-feedback'>There are no mods available for version ".$user['minecraft'].". Please upload mods in <a href='/lib-mods'>Mods Library</a></div>";
+								echo "<div style='display:block' class='invalid-feedback'>There are no mods available for version ".$user['minecraft'].". Please upload mods in <a href='./lib-mods'>Mods Library</a></div>";
 							} ?>
 							</tbody>
 						</table>				
@@ -780,7 +895,7 @@ if(isset($_GET['logout'])){
 												$("#check-o-"+id).show();
 											}
 										};
-										request.open("GET", "functions/add-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
+										request.open("GET", "./functions/add-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
 										request.send();
 									}
 								</script>
@@ -798,7 +913,7 @@ if(isset($_GET['logout'])){
 									}
 								}
 							} else {
-								echo "<div style='display:block' class='invalid-feedback'>There are no files available. Please upload files in <a href='/lib-other'>Files Library</a></div>";
+								echo "<div style='display:block' class='invalid-feedback'>There are no files available. Please upload files in <a href='./lib-other'>Files Library</a></div>";
 							} ?>
 							</tbody>
 						</table>
@@ -823,7 +938,7 @@ if(isset($_GET['logout'])){
 					request.onreadystatechange = function() {
 						$("#mod-row-"+id).remove();
 					}
-					request.open("GET", "functions/delete-mod.php?id="+id);
+					request.open("GET", "./functions/delete-mod.php?id="+id);
 					request.send();
 				}
 			</script>
@@ -897,7 +1012,7 @@ if(isset($_GET['logout'])){
 									<td>
 										<?php if(substr($_SESSION['perms'],4,1)=="1") { ?>
 										<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-											<button onclick="window.location='/mod?id=<?php echo $mod['id'] ?>'" class="btn btn-primary">Edit</button>
+											<button onclick="window.location='./mod?id=<?php echo $mod['id'] ?>'" class="btn btn-primary">Edit</button>
 											<button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
 										</div>
 									<?php } ?>
@@ -937,7 +1052,7 @@ if(isset($_GET['logout'])){
 				var formData = new FormData();
 				var request = new XMLHttpRequest();
 				formData.set('fiels', file);
-				request.open('POST', '/functions/send_mods.php');
+				request.open('POST', './functions/send_mods.php');
 				request.upload.addEventListener("progress", function(evt) {
 					if (evt.lengthComputable) {
 						var percentage = evt.loaded / evt.total * 100;
@@ -1051,7 +1166,7 @@ if(isset($_GET['logout'])){
 					request.onreadystatechange = function() {
 						$("#mod-row-"+id).remove();
 					}
-					request.open("GET", "functions/delete-mod.php?id="+id);
+					request.open("GET", "./functions/delete-mod.php?id="+id);
 					request.send();
 				}
 			</script>
@@ -1113,7 +1228,7 @@ if(isset($_GET['logout'])){
 						$("#fetch").attr("disabled",true);
 						$("#fetch").html("Please wait... This can take a while. <i class='fas fa-cog fa-spin fa-sm'></i>");
 						var request = new XMLHttpRequest();
-						request.open('GET', '/functions/forge-links.php');
+						request.open('GET', './functions/forge-links.php');
 						request.onreadystatechange = function() {
 							if (request.readyState == 4) {
 								if (request.status == 200) {
@@ -1134,7 +1249,7 @@ if(isset($_GET['logout'])){
 						$("#button-add-"+id).attr("disabled",true);
 						$("#cog-"+id).show();
 						var request = new XMLHttpRequest();
-						request.open('GET', '/functions/add-forge.php?version='+v+'&link='+link+'&mcversion='+mcv);
+						request.open('GET', './functions/add-forge.php?version='+v+'&link='+link+'&mcversion='+mcv);
 						request.onreadystatechange = function() {
 							if (request.readyState == 4) {
 								if (request.status == 200) {
@@ -1192,7 +1307,7 @@ if(isset($_GET['logout'])){
 					request.onreadystatechange = function() {
 						$("#mod-row-"+id).remove();
 					}
-					request.open("GET", "functions/delete-mod.php?id="+id);
+					request.open("GET", "./functions/delete-mod.php?id="+id);
 					request.send();
 				}
 			</script>
@@ -1286,7 +1401,7 @@ if(isset($_GET['logout'])){
 				var formData = new FormData();
 				var request = new XMLHttpRequest();
 				formData.set('fiels', file);
-				request.open('POST', '/functions/send_other.php');
+				request.open('POST', './functions/send_other.php');
 				request.upload.addEventListener("progress", function(evt) {
 					if (evt.lengthComputable) {
 						var percentage = evt.loaded / evt.total * 100;
@@ -1396,7 +1511,7 @@ if(isset($_GET['logout'])){
 			?>
 			<script>document.title = 'Solder.cf - Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="card">
-				<button onclick="window.location = '/lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
+				<button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
 				<form method="POST" action="./functions/edit-mod.php?id=<?php echo $_GET['id'] ?>">
 
 					<script type="text/javascript">
@@ -1606,7 +1721,7 @@ if(isset($_GET['logout'])){
 					var request = new XMLHttpRequest();
 					icon = document.getElementById('newIcon');
 					formData.set('newIcon', icon.files[0]);
-					request.open('POST', '/functions/new_icon.php');
+					request.open('POST', './functions/new_icon.php');
 					request.onreadystatechange = function() {
 						if(request.readyState == 4) {
 							console.log(this.responseText);
@@ -1793,7 +1908,7 @@ if(isset($_GET['logout'])){
 				<script type="text/javascript">
 					function remove(id) {
 						var request = new XMLHttpRequest();
-						request.open('POST', '/functions/remove_user.php');
+						request.open('POST', './functions/remove_user.php');
 						request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 						request.onreadystatechange = function() {
 							if(request.readyState == 4) {
@@ -1858,7 +1973,7 @@ if(isset($_GET['logout'])){
 					}
 					function edit_user(mail,name,perms) {
 						var request = new XMLHttpRequest();
-						request.open('POST', '/functions/edit_user.php');
+						request.open('POST', './functions/edit_user.php');
 						request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 						request.onreadystatechange = function() {
 							if(request.readyState == 4) {
@@ -1943,7 +2058,7 @@ if(isset($_GET['logout'])){
 				<script type="text/javascript">
 					function new_user(email,name,pass) {
 						var request = new XMLHttpRequest();
-						request.open('POST', '/functions/new_user.php');
+						request.open('POST', './functions/new_user.php');
 						request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 						request.onreadystatechange = function() {
 							if(request.readyState == 4) {

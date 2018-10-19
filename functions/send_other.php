@@ -37,7 +37,7 @@ if(move_uploaded_file($fileTmpLoc, "../others/".$fileName)){
 	$pretty_name = mysqli_real_escape_string($conn, $fileName);
 	$name = slugify($pretty_name);
 	$author = $config['author'];
-	$url = "http://".$config['host']."/others/".$fileName;
+	$url = "http://".$config['host'].$config['dir']."others/".$fileName;
 	$md5 = md5_file("../others/".$fileName);
 	$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`author`,`description`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','".$url."','".$author."','Custom file by ".$author."','".$fileName."','other')");
 	if($res) {

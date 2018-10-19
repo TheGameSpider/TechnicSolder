@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-$dbcon = require(dirname(dirname(__FILE__))."/functions/dbconnect.php");
+$dbcon = require("./functions/dbconnect.php");
 $mp = mysqli_real_escape_string($conn, $_GET['name']);
 $result = mysqli_query($conn, "SELECT * FROM `modpacks` WHERE `name` = '" . $mp . "'");
 $modpack = mysqli_fetch_array($result);
