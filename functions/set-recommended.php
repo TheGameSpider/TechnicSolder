@@ -12,7 +12,7 @@ if(substr($_SESSION['perms'],2,1)!=="1") {
 	echo 'Insufficient permission!';
 	exit();
 }
-$bq = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".$_GET['id']);
+$bq = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
 $build = mysqli_fetch_array($bq);
 mysqli_query($conn, "UPDATE `modpacks` SET `recommended` = '".$build['name']."' WHERE `id` = ".$build['modpack']);
 $response = array(

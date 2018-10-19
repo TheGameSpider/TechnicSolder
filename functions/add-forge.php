@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json');
+session_start();
 $config = require("config.php");
 require("dbconnect.php");
 if(substr($_SESSION['perms'],5,1)!=="1") {
