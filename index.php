@@ -659,13 +659,13 @@ if(isset($_GET['logout'])){
 						<h2>Mods for Minecraft <?php echo $build['minecraft'] ?></h2>
 						<button onclick="window.location.href = window.location.href" class="btn btn-primary">Refresh</button>
 						<br />
-						<table class="table table-striped">
+						<table class="table table-striped sortable">
 							<thead>
 								<tr>
-									<th scope="col" style="width: 55%">Mod Name</th>
-									<th scope="col" style="width: 20%">Version</th>
-									<th scope="col" style="width: 20%"></th>
-									<th scope="col" style="width: 5%"></th>
+									<th scope="col" style="width: 55%" data-defaultsign="AZ">Mod Name</th>
+									<th scope="col" style="width: 20%" data-defaultsign="_19">Version</th>
+									<th scope="col" style="width: 20%" data-defaultsort="disabled"></th>
+									<th scope="col" style="width: 5%" data-defaultsort="disabled"></th>
 								</tr>
 							</thead>
 							<tbody>
