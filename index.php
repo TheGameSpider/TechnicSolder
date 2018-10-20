@@ -58,10 +58,12 @@ if(isset($_GET['logout'])){
 		<link rel="icon" href="./resources/wrenchIcon.png" type="image/png" />
 		<title>Technic Solder</title>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="./resources/bootstrap-sortable.css" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 		<script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>
+        <script src="./resources/bootstrap-sortable.js"></script>
 
 		<style type="text/css">
 
@@ -628,12 +630,12 @@ if(isset($_GET['logout'])){
 								request.send();
 							}
 						</script>
-						<table class="table table-striped">
+						<table class="table table-striped sortable">
 							<thead>
 								<tr>
-									<td scope="col" style="width: 60%">Mod Name</td>
-									<td scope="col" style="width: 15%">Version</td>
-									<td scope="col" style="width: 15%"></td>
+									<th scope="col" style="width: 60%" data-defaultsign="AZ">Mod Name</th>
+									<th scope="col" style="width: 15%" data-defaultsign="_19">Version</th>
+									<th scope="col" style="width: 15%" data-defaultsort="disabled"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -814,14 +816,14 @@ if(isset($_GET['logout'])){
 			</div>
 			<div class="card">
 				<h2>Available Mods</h2>
-				<table class="table table-striped table-responsive">
+				<table class="table table-striped table-responsive sortable">
 					<thead>
 						<tr>
-							<td style="width:40%" scope="col">Mod name</td>
-							<td style="width:25%" scope="col">Author</td>
-							<td style="width:10%" scope="col">Version</td>
-							<td style="width:10%" scope="col">Minecraft version</td>
-							<td style="width:15%" scope="col"></td>
+							<th style="width:40%" scope="col" data-defaultsign="AZ">Mod name</th>
+							<th style="width:25%" scope="col" data-defaultsign="AZ">Author</td>
+							<th style="width:10%" scope="col" data-defaultsign="_19">Version</th>
+							<th style="width:10%" scope="col" data-defaultsign="_19">Minecraft version</th>
+							<th style="width:15%" scope="col" data-defaultsort="disabled"></th>
 						</tr>
 					</thead>
 					<tbody id="table-mods">
