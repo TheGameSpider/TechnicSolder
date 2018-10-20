@@ -58,10 +58,12 @@ if(isset($_GET['logout'])){
 		<link rel="icon" href="./resources/wrenchIcon.png" type="image/png" />
 		<title>Technic Solder</title>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="./resources/bootstrap-sortable.css" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 		<script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>
+        <script src="./resources/bootstrap-sortable.js"></script>
 
 		<style type="text/css">
 
@@ -437,11 +439,11 @@ if(isset($_GET['logout'])){
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<td style="width:25%" scope="col">Build</td>
-								<td style="width:20%" scope="col">Minecraft version</td>
-								<td style="width:20%" scope="col">Java version</td>
-								<td style="width:30%" scope="col"></td>
-								<td style="width:5%" scope="col"></td>
+								<th style="width:25%" scope="col">Build</th>
+								<th style="width:20%" scope="col">Minecraft version</th>
+								<th style="width:20%" scope="col">Java version</th>
+								<th style="width:30%" scope="col"></th>
+								<th style="width:5%" scope="col"></th>
 							</tr>
 						</thead>
 						<tbody id="table-builds">
@@ -628,12 +630,12 @@ if(isset($_GET['logout'])){
 								request.send();
 							}
 						</script>
-						<table class="table table-striped">
+						<table class="table table-striped sortable">
 							<thead>
 								<tr>
-									<td scope="col" style="width: 60%">Mod Name</td>
-									<td scope="col" style="width: 15%">Version</td>
-									<td scope="col" style="width: 15%"></td>
+									<th scope="col" style="width: 60%" data-defaultsign="AZ">Mod Name</th>
+									<th scope="col" style="width: 15%" data-defaultsign="_19">Version</th>
+									<th scope="col" style="width: 15%" data-defaultsort="disabled"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -657,13 +659,13 @@ if(isset($_GET['logout'])){
 						<h2>Mods for Minecraft <?php echo $build['minecraft'] ?></h2>
 						<button onclick="window.location.href = window.location.href" class="btn btn-primary">Refresh</button>
 						<br />
-						<table class="table table-striped">
+						<table class="table table-striped sortable">
 							<thead>
 								<tr>
-									<td scope="col" style="width: 55%">Mod Name</td>
-									<td scope="col" style="width: 20%">Version</td>
-									<td scope="col" style="width: 20%"></td>
-									<td scope="col" style="width: 5%"></td>
+									<th scope="col" style="width: 55%" data-defaultsign="AZ">Mod Name</th>
+									<th scope="col" style="width: 20%" data-defaultsign="_19">Version</th>
+									<th scope="col" style="width: 20%" data-defaultsort="disabled"></th>
+									<th scope="col" style="width: 5%" data-defaultsort="disabled"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -707,13 +709,13 @@ if(isset($_GET['logout'])){
 					</div>	
 					<div class="card">
 						<h2>Other Files</h2>
-						<table class="table table-striped">
+						<table class="table table-striped sortable">
 							<thead>
 								<tr>
-									<td scope="col" style="width: 55%">Mod Name</td>
-									<td scope="col" style="width: 20%">Version</td>
-									<td scope="col" style="width: 20%"></td>
-									<td scope="col" style="width: 5%"></td>
+									<th scope="col" style="width: 55%" data-defaultsign="AZ">Mod Name</th>
+									<th scope="col" style="width: 20%" data-defaultsign="_19">Version</th>
+									<th scope="col" style="width: 20%" data-defaultsort="disabled"></th>
+									<th scope="col" style="width: 5%" data-defaultsort="disabled"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -802,8 +804,8 @@ if(isset($_GET['logout'])){
 				<table class="table">
 					<thead>
 						<tr>
-							<td style="width:25%" scope="col">Mod</td>
-							<td scope="col">Status</td>
+							<th style="width:25%" scope="col">Mod</th>
+							<th scope="col">Status</th>
 						</tr>
 					</thead>
 					<tbody id="table-mods">
@@ -814,14 +816,14 @@ if(isset($_GET['logout'])){
 			</div>
 			<div class="card">
 				<h2>Available Mods</h2>
-				<table class="table table-striped table-responsive">
+				<table class="table table-striped table-responsive sortable">
 					<thead>
 						<tr>
-							<td style="width:40%" scope="col">Mod name</td>
-							<td style="width:25%" scope="col">Author</td>
-							<td style="width:10%" scope="col">Version</td>
-							<td style="width:10%" scope="col">Minecraft version</td>
-							<td style="width:15%" scope="col"></td>
+							<th style="width:40%" scope="col" data-defaultsign="AZ">Mod name</th>
+							<th style="width:25%" scope="col" data-defaultsign="AZ">Author</td>
+							<th style="width:10%" scope="col" data-defaultsign="_19">Version</th>
+							<th style="width:10%" scope="col" data-defaultsign="_19">Minecraft version</th>
+							<th style="width:15%" scope="col" data-defaultsort="disabled"></th>
 						</tr>
 					</thead>
 					<tbody id="table-mods">
@@ -1015,13 +1017,13 @@ if(isset($_GET['logout'])){
 			  </div>
 			</div>				
 		<h2>Forge Versions in Database</h2>
-				<table class="table table-striped">
+				<table class="table table-striped sortable">
 					<thead>
 						<tr>
-							<td scope="col" style="width:35%">Minecraft</td>
-							<td scope="col" style="width:40%">Forge Version</td>
-							<td scope="col" style="width:20%"></td>
-							<td scope="col" style="width:5%"></td>
+							<th scope="col" style="width:35%" data-defaultsign="_19">Minecraft</th>
+							<th scope="col" style="width:40%" data-defaultsign="_19">Forge Version</th>
+							<th scope="col" style="width:20%" data-defaultsort="disabled"></th>
+							<th scope="col" style="width:5%" data-defaultsort="disabled"></th>
 						</tr>
 					</thead>
 					<tbody id="forge-available">
@@ -1085,14 +1087,14 @@ if(isset($_GET['logout'])){
 					}
 				</script>
 				<h2>Available Forge Versions</h2>
-				<table class="table table-striped table-responsive">
+				<table class="table table-striped table-responsive sortable">
 					<thead>
 						<tr>
-							<td scope="col" style="width:10%">Minecraft</td>
-							<td scope="col" style="width:15%">Forge Version</td>
-							<td scope="col" style="width:55%">Link</td>
-							<td scope="col" style="width:15%"></td>
-							<td scope="col" style="width:5%"></td>
+							<th scope="col" style="width:10%" data-defaultsign="_19">Minecraft</th>
+							<th scope="col" style="width:15%" data-defaultsign="_19">Forge Version</th>
+							<th scope="col" style="width:55%" data-defaultsort="disabled">Link</th>
+							<th scope="col" style="width:15%" data-defaultsort="disabled"></th>
+							<th scope="col" style="width:5%" data-defaultsort="disabled"></th>
 						</tr>
 					</thead>
 					<tbody id="forge-table">
@@ -1150,8 +1152,8 @@ if(isset($_GET['logout'])){
 				<table class="table">
 					<thead>
 						<tr>
-							<td style="width:25%" scope="col">Mod</td>
-							<td scope="col">Status</td>
+							<th style="width:25%" scope="col">Mod</th>
+							<th scope="col">Status</th>
 						</tr>
 					</thead>
 					<tbody id="table-mods">
@@ -1162,11 +1164,11 @@ if(isset($_GET['logout'])){
 			</div>
 			<div class="card">
 				<h2>Available Files</h2>
-				<table class="table table-striped">
+				<table class="table table-striped sortable">
 					<thead>
 						<tr>
-							<td style="width:65%" scope="col">File Name</td>
-							<td style="width:35%" scope="col"></td>
+							<th style="width:65%" scope="col" data-defaultsign="AZ">File Name</th>
+							<th style="width:35%" scope="col" data-defaultsort="disabled"></th>
 						</tr>
 					</thead>
 					<tbody id="table-mods">
@@ -1421,6 +1423,7 @@ if(isset($_GET['logout'])){
 						<hr>
 						<p class="mb-0"><?php if($version==$newversion['version']){ echo $newversion['changelog']; } else { echo $newversion['changelog']; } ?></p>
 					</div>
+
 
 					<?php if($version!==$newversion['version']) { ?>
 						<div class="card text-white bg-info mb3" style="padding: 0px">
