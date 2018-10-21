@@ -1327,7 +1327,7 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 						</div>
 					</form>
 				</div>
-				<p>Theese file will be extracted to modpack's root directory. (e.g. Config files, worlds, resource packs....)</p>
+				<p>These file will be extracted to modpack's root directory. (e.g. Config files, worlds, resource packs....)</p>
 			</div>
 			<div style="display: none" id="u-mods" class="card">
 				<h2>New Mods</h2>
