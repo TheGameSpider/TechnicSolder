@@ -1,13 +1,17 @@
 <?php
 session_start();
+$config = include("./functions/config.php");
 if(!isset($_GET['reconfig'])) {
-	$config = include("./functions/config.php");
 	if($config['configured']==true) {
-		header("Location: /login");
+		header("Location: ".$config['dir']."login");
+		exit();
 	}
 } else {
 	if(!isset($_SESSION['user'])) {
 		die("You need to be logged in!");
+	}
+	if($_SESSION['user']!==$config['mail']) {
+		die("insufficient permission!");
 	}
 }
 ?>
@@ -63,6 +67,18 @@ if(!isset($_GET['reconfig'])) {
 					";
 					mysqli_query($conn, $sql);
 					$sql = "
+					CREATE TABLE users (
+					id int(64) AUTO_INCREMENT PRIMARY KEY,
+					name VARCHAR(128),
+					display_name VARCHAR(128),
+					pass VARCHAR(128),
+					perms VARCHAR(512),
+					icon LONGTEXT,
+					UNIQUE (name)
+					);
+					";
+					mysqli_query($conn, $sql);
+					$sql = "
 					CREATE TABLE builds (
 					id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 					modpack INT(6) NOT NULL,
@@ -92,7 +108,8 @@ if(!isset($_GET['reconfig'])) {
 					);
 					";
 					$res = mysqli_query($conn, $sql);
-					header("Location: /login");
+					header("Location: ".substr($_SERVER['REQUEST_URI'], 0, -strlen($_SERVER['REQUEST_URI']))."login");
+					exit();
 				} ?>
 				<center>
 					<h1>Before you start</h1>
@@ -117,17 +134,27 @@ if(!isset($_GET['reconfig'])) {
 						<input required name="db-user" type="text" class="form-control" id="db-user" placeholder="Database username"><br />
 						<input required name="db-name" type="text" class="form-control" id="db-name" placeholder="Database name"><br />
 						<input required name="db-pass" type="password" class="form-control" id="db-pass" placeholder="Database password">
-						<small id="errtext" class="form-text text-muted">Three tables will be created.</small>
+						<small id="errtext" class="form-text text-muted">Four tables will be created.</small>
 					</div>
 					<div class="form-group">
 						<label for="email">Almost done...</label>
 						<input required name="host" type="text" class="form-control" placeholder="Webserver public IP or domain name. (your IP is <?php print_r(file_get_contents('http://icanhazip.com')); ?>)"><br />
+						<input class="form-control" type="text" name="dir" placeholder="Install Directory" value="/" id="dir" required readonly><br />
 						<input required name="api_key" type="text" class="form-control" placeholder="API Key">
 						<small class="form-text text-muted">You can find you API Key in your profile at <a target="_blank" href="https://technicpack.net">technicpack.net</a></small>
 					</div>		
 					<button id="save" type="submit" class="btn btn-success btn-block btn-lg">Save</button>			
 				</form>	
 				<script type="text/javascript">
+					$(document).ready(function(){
+						var loc = window.location.pathname;
+						var dir = loc.substring(0, loc.lastIndexOf('/'));
+						$("#dir").val(dir + "/");
+						if($("#dir").val()=="//") {
+							$("#dir").val("/");
+						}
+						
+					});
 					$("#pass2").on("keyup", function() {
 						console.log($("#pass2").val()+"=="+$("#pass").val())
 						if($("#pass2").val()==$("#pass").val()) {

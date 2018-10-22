@@ -6,9 +6,12 @@ if(empty($_GET['id']) || empty($_GET['pack'])){
 	die("Build not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("You need to be logged in!");
+	die("Unauthorized require or login session has expired!");
 }
-mysqli_query($conn, "DELETE FROM `builds` WHERE `id` = '".$_GET['id']."'");
+if(substr($_SESSION['perms'],1,1)!=="1") {
+	die("Insufficient permission!");
+}
+mysqli_query($conn, "DELETE FROM `builds` WHERE `id` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
 $bq = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = '".$_GET['pack']."' ORDER BY `id` DESC LIMIT 1");
 if($bq) {
 	$build = mysqli_fetch_array($bq);

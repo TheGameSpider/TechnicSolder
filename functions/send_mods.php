@@ -2,7 +2,11 @@
 header('Content-Type: application/json');
 session_start();
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die('{"status":"error","message":"Unathorized request or login session has expired."}');
+	die('{"status":"error","message":"Login session has expired"}');
+}
+if(substr($_SESSION['perms'],3,1)!=="1") {
+	echo '{"status":"error","message":"Insufficient permission!"}';
+	exit();
 }
 $config = require("config.php");
 require("dbconnect.php");
@@ -87,7 +91,7 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 		$version = $mcmod['version'];
 		$mcversion = $mcmod['mcversion'];
 		$md5 = md5_file("../mods/".$fileInfo['filename'].".zip");
-		$url = "http://".$config['host']."/mods/".$fileInfo['filename'].".zip";
+		$url = "http://".$config['host'].$config['dir']."mods/".$fileInfo['filename'].".zip";
 		$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','".$url."','".$link."','".$author."','".$description."','".$version."','".$mcversion."','".$fileInfo['filename'].".zip','mod')");
 		if($res) {
 			if($warn['b']==true) {

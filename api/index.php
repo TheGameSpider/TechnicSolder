@@ -21,7 +21,7 @@ function uri($url, $uri) {
     return (substr($url, -$length) === $uri);
 }
 if(uri($url,"api/")){
-	print '{"api":"TechnicSolder","version":"v0.0.2.18","stream":"Beta"}';
+	print '{"api":"Solder.cf","version":"v0.0.3.1","stream":"Pre-release"}';
 	exit();
 } 
 if(uri($url,"api/verify")){
