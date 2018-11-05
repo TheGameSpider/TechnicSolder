@@ -595,9 +595,10 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<th style="width:25%" scope="col">Build</th>
+								<th style="width:20%" scope="col">Build</th>
 								<th style="width:20%" scope="col">Minecraft version</th>
 								<th style="width:20%" scope="col">Java version</th>
+								<th style="width:5%" scope="col">Mods</th>
 								<th style="width:30%" scope="col"></th>
 								<th style="width:5%" scope="col"></th>
 							</tr>
@@ -611,6 +612,7 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 								<td scope="row"><?php echo $user['name'] ?></td>
 								<td><?php echo $user['minecraft'] ?></td>
 								<td><?php echo $user['java'] ?></td>
+								<td><?php echo count(explode(',', $user['mods'])) ?></td>
 								<td>
 									<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
 										<?php if(substr($_SESSION['perms'],1,1)=="1") { ?> <button onclick="edit(<?php echo $user['id'] ?>)" class="btn btn-primary">Edit</button>
@@ -719,18 +721,19 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 			if($bres) {
 				$user = mysqli_fetch_array($bres);
 			}
-			if(isset($_POST['versions']) & isset($_POST['java']) & isset($_POST['memory'])) {
-				$modslist= explode(',', $user['mods']);
-				if(intval($_POST['versions'])!==intval($user['mods'][0])) {
+			$modslist= explode(',', $user['mods']);
+			if(isset($_POST['versions']) & isset($_POST['java'])) {
+				if(intval($_POST['versions'])!==intval($modslist[0])) {
 					if(isset($_POST['iforge'])) {
-						mysqli_query($conn, "UPDATE `builds` SET `mods` = '".$_POST['versions']."' WHERE `id` = ".$_GET['id']);
+						mysqli_query($conn, "UPDATE `builds` SET `mods` = '".intval($_POST['versions'])."' WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
 					}
-					$wipe = false;
 				}
 				$minecraft = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_POST['versions'])));
 				mysqli_query($conn, "UPDATE `builds` SET `minecraft` = '".$minecraft['mcversion']."', `java` = '".mysqli_real_escape_string($conn,$_POST['java'])."', `memory` = '".mysqli_real_escape_string($conn,$_POST['memory'])."' WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
-				if(!isset($_POST['iforge'])&$wipe!==false) {
-					mysqli_query($conn, "UPDATE `builds` SET `mods` = null WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+				if(!isset($_POST['iforge'])) {
+					if(mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".intval($modslist[0])))['name']=='forge') {
+						mysqli_query($conn, "UPDATE `builds` SET `mods` = null WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+					}
 				}
 			}
 			$bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
@@ -777,7 +780,7 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 							}
 							?>
 						<div class="custom-control custom-checkbox mr-sm-2">
-							<input type="checkbox" class="custom-control-input" name="iforge" value="true" checked id="iforge">
+							<input type="checkbox" class="custom-control-input" name="iforge" value="true" <?php if(mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".intval($modslist[0])))['name']=='forge') { ?>checked <?php } ?> id="iforge">
 							<label class="custom-control-label" for="iforge">Install Forge (Uncheck if you want to use your own modpack.jar)</label>
 						</div>
 						<br />
@@ -834,7 +837,9 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 						<h2>Mods for Minecraft <?php echo $user['minecraft'] ?></h2>
 						<button onclick="window.location.href = window.location.href" class="btn btn-primary">Refresh</button>
 						<br />
-						<table class="table table-striped sortable">
+						<input id="search" type="text" placeholder="Search..." class="form-control">
+						<br />
+						<table id="modstable" class="table table-striped sortable">
 							<thead>
 								<tr>
 									<th scope="col" style="width: 55%" data-defaultsign="AZ">Mod Name</th>
@@ -849,6 +854,42 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 							if(mysqli_num_rows($mres)!==0) {
 								?>
 								<script type="text/javascript">
+									$("#search").on('keyup',function(){
+										tr = document.getElementById("modstable").getElementsByTagName("tr");
+										
+										for (var i = 0; i < tr.length; i++) {
+											
+											td = tr[i].getElementsByTagName("td")[0];
+											if (td) {
+
+												console.log(td);
+												console.log(td.innerHTML.toUpperCase())
+												if (td.innerHTML.toUpperCase().indexOf($("#search").val().toUpperCase()) > -1) {
+													tr[i].style.display = "";
+												} else {
+													tr[i].style.display = "none";
+												}
+											}
+										}
+									});
+									$("#search2").on('keyup',function(){
+										tr = document.getElementById("filestable").getElementsByTagName("tr");
+										
+										for (var i = 0; i < tr.length; i++) {
+											
+											td = tr[i].getElementsByTagName("td")[0];
+											if (td) {
+
+												console.log(td);
+												console.log(td.innerHTML.toUpperCase())
+												if (td.innerHTML.toUpperCase().indexOf($("#search").val().toUpperCase()) > -1) {
+													tr[i].style.display = "";
+												} else {
+													tr[i].style.display = "none";
+												}
+											}
+										}
+									});
 									function add(id) {
 										$("#btn-add-mod-"+id).attr("disabled", true);
 										$("#cog-"+id).show();
@@ -889,6 +930,7 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 					</div>	
 					<div class="card">
 						<h2>Other Files</h2>
+						<input id="search" type="text" placeholder="Search..." class="form-control">
 						<table class="table table-striped sortable">
 							<thead>
 								<tr>
@@ -1562,8 +1604,9 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 						<input class="form-control" type="url" name="url" placeholder="File URL" value="<?php echo $mod['url'] ?>"><br />
 						<input class="form-control" required type="text" name="mcversion" placeholder="Minecraft Version" value="<?php echo $mod['mcversion'] ?>"><br />
 
-						<textarea class="form-control" required type="text" name="description" placeholder="Mod description"><?php echo $mod['description'] ?></textarea><br />
-						<input type="submit" value="Save" class="btn btn-success">
+						<textarea class="form-control" type="text" name="description" placeholder="Mod description"><?php echo $mod['description'] ?></textarea><br />
+						<input type="submit" name="submit" value="Save" class="btn btn-success">
+						<input type="submit" name="submit" value="Save and close" class="btn btn-success">
 				</form>
 			</div>
 		</div>

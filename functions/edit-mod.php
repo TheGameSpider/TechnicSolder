@@ -41,5 +41,9 @@ if($mod['mcversion']!==$_POST['version']){
 if($mod['url']!==$_POST['url']){
 	mysqli_query($conn, "UPDATE `mods` SET `url` = '".mysqli_real_escape_string($conn, $_POST['url'])."' WHERE `id` = ".$_GET['id']);
 }
+if($_POST['submit']=="Save and close") {
+	header("Location: ".$config['dir']."lib-mods");
+exit();
+}
 header("Location: ".$config['dir']."mod?id=".$_GET['id']);
 exit();
