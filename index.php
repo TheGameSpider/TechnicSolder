@@ -587,7 +587,62 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 						<br />
 						<button type="submit" name="type" value="new" class="btn btn-primary">Create Empty Build</button>
 						<button type="submit" name="type" value="update" class="btn btn-primary">Update latest version</button>
+					</form><br />
+					<h2>Copy Build</h2>
+					<form action="./functions/copy-build.php" method="">
+						<input hidden type="text" name="id" value="<?php echo $_GET['id'] ?>">
+						<?php
+							$mpab = array();
+							$allbuilds = mysqli_query($conn, "SELECT `id`,`name`,`modpack` FROM `builds`");
+							while($b = mysqli_fetch_array($allbuilds)) {
+								$ba = array(
+									"id" => $b['id'],
+									"name" => $b['name'],
+									"mpid" =>  $b['modpack'],
+									"mpname" => mysqli_fetch_array(mysqli_query($conn, "SELECT `display_name` FROM `modpacks` WHERE `id` = ".$b['modpack']))['display_name']
+								);
+								array_push($mpab, $ba);
+							}
+							$mps = array();
+							$allmps = mysqli_query($conn, "SELECT `id`,`display_name` FROM `modpacks`");
+							while($mp = mysqli_fetch_array($allmps)) {
+								$mpa = array(
+									"id" => $mp['id'],
+									"name" => $mp['display_name']
+								);
+								array_push($mps, $mpa);
+							}
+							?>
+						<select id="mplist" class="form-control">
+							<option value=null>Plase select a modpack..</option>
+							<?php
+							foreach ($mps as $pack) {
+								echo "<option value='".$pack['id']."'>".$pack['name']."</option>";
+							}
+							?>
+						</select>
+						<br />
+						<select name='build' id="buildlist" class="form-control">
+							<?php
+							
+							?>
+						</select>
+						<br />
+						<button type="submit" class="btn btn-primary">Copy</button>
 					</form>
+					<script type="text/javascript">
+						var builds = "<?php echo addslashes(json_encode($mpab)) ?>";
+						var bd = JSON.parse(builds);
+						$("#mplist").change(function() {
+							$("#buildlist").children().each(function(){this.remove();});
+							Object.keys(bd).forEach(function(element){
+								
+								if($("#mplist").val() == bd[element]['mpid']) {
+									$("#buildlist").append("<option value='"+bd[element]['id']+"'>"+bd[element]['mpname']+" - "+bd[element]['name']+"</option>")
+								}
+							});
+						});
+					</script>
 				</div>
 			<?php } ?>
 				<div class="card">
@@ -780,8 +835,8 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 							}
 							?>
 						<div class="custom-control custom-checkbox mr-sm-2">
-							<input type="checkbox" class="custom-control-input" name="iforge" value="true" <?php if(mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".intval($modslist[0])))['name']=='forge') { ?>checked <?php } ?> id="iforge">
-							<label class="custom-control-label" for="iforge">Install Forge (Uncheck if you want to use your own modpack.jar)</label>
+							<input type="checkbox" class="custom-control-input" name="iforge" value="true" <?php if(mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".intval($modslist[0])))['name']=='forge'||mysqli_fetch_array(mysqli_query($conn, "SELECT `minecraft` FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id'])))['minecraft']==null) { ?>checked <?php } ?> id="iforge">
+							<label class="custom-control-label" for="iforge"> Include modpack.jar (Mod Loader)</label>
 						</div>
 						<br />
 						<label for="java">Select java version</label>
@@ -1048,7 +1103,9 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 			</div>
 			<div class="card">
 				<h2>Available Mods</h2>
-				<table class="table table-striped table-responsive sortable">
+
+				<input placeholder="Search..." type="text" id="search" class="form-control"><br />
+				<table id="modstable" class="table table-striped table-responsive sortable">
 					<thead>
 						<tr>
 							<th style="width:40%" scope="col" data-defaultsign="AZ">Mod name</th>
@@ -1084,6 +1141,26 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 						?>
 					</tbody>
 				</table>
+				<script type="text/javascript">
+					$("#search").on('keyup',function(){
+						tr = document.getElementById("modstable").getElementsByTagName("tr");
+						
+						for (var i = 0; i < tr.length; i++) {
+							
+							td = tr[i].getElementsByTagName("td")[0];
+							if (td) {
+
+								console.log(td);
+								console.log(td.innerHTML.toUpperCase())
+								if (td.innerHTML.toUpperCase().indexOf($("#search").val().toUpperCase()) > -1) {
+									tr[i].style.display = "";
+								} else {
+									tr[i].style.display = "none";
+								}
+							}
+						}
+					});
+				</script>
 			</div>
 			<div class="modal fade" id="removeMod" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
 			  <div class="modal-dialog" role="document">
@@ -1251,6 +1328,14 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 			  </div>
 			</div>				
 		<h2>Forge Versions in Database</h2>
+		<?php if(isset($_GET['errfilesize'])) {
+			echo '<span class="text-danger">File is too big! Check your post_max_size (current value '.ini_get('post_max_size').') and upload_max_filesize (current value '.ini_get('upload_max_filesize').') values in '.php_ini_loaded_file().'</span>';
+		} ?>
+
+		<?php if(isset($_GET['succ'])) {
+			echo '<span class="text-success">File has been uploaded.</span>';
+		} ?>
+
 				<table class="table table-striped sortable">
 					<thead>
 						<tr>
@@ -1344,6 +1429,24 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 					</tbody>
 				</table>
 			</div>
+			<?php if(substr($_SESSION['perms'],5,1)=="1") { ?>
+			<div class="card">
+				<h2>Upload custom Forge version</h2>
+				<form action="./functions/custom_forge.php" method="POST" enctype="multipart/form-data">
+					<input class="form-control" type="text" name="version" placeholder="Forge Version Name" required="">
+					<br />
+					<input class="form-control" type="text" name="mcversion" placeholder="Minecraft Version" required="">
+					<br />
+					<div class="custom-file">
+						<input name="file" accept=".jar" type="file" class="custom-file-input" id="forge" required>
+						<label class="custom-file-label" for="forge">Choose modpack.jar file...</label>
+					</div>
+					<br />
+					<br />
+					<button type="submit" class="btn btn-primary">Upload</button>
+				</form>
+			</div>
+		<?php } ?>
 		</div>
 		<script type="text/javascript">
 			$(document).ready(function(){
@@ -1602,6 +1705,7 @@ if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
 						<input class="form-control" type="url" name="link" placeholder="Mod Website" value="<?php echo $mod['link'] ?>"><br />
 						<input class="form-control" type="url" name="donlink" placeholder="Author's Website" value="<?php echo $mod['donlink'] ?>"><br />
 						<input class="form-control" type="url" name="url" placeholder="File URL" value="<?php echo $mod['url'] ?>"><br />
+						<input class="form-control" type="text" name="md5" placeholder="File md5 Hash" value="<?php echo $mod['md5'] ?>"><br />
 						<input class="form-control" required type="text" name="mcversion" placeholder="Minecraft Version" value="<?php echo $mod['mcversion'] ?>"><br />
 
 						<textarea class="form-control" type="text" name="description" placeholder="Mod description"><?php echo $mod['description'] ?></textarea><br />
