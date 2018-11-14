@@ -113,6 +113,40 @@ service apache2 restart
 ```
 If you don't have remote access to the server (SSH), you can just download the master branch extract it to your document root folder<br />
 Installation is complete. Now you need to confige TechnicSolder before using it.
+# If you are using nginx:
+*there is an example for nging configuration"*
+```nginx
+	location / {
+        try_files   $uri $uri/ /index.php?$query_string;
+        }
+
+	location /api/ {
+        try_files   $uri $uri/ /api/index.php?$query_string;
+        }
+
+    location ~* \.php$ {
+            fastcgi_pass                    unix:/run/php/php7.2-fpm.sock;
+            fastcgi_index                   index.php;
+            fastcgi_split_path_info         ^(.+\.php)(.*)$;
+            include                         fcgi.conf;
+            fastcgi_param PATH_INFO         $fastcgi_path_info;
+            fastcgi_param SCRIPT_FILENAME   $document_root$fastcgi_script_name;
+    }
+
+    location ~ /\.ht {
+            deny all;
+    }
+
+    location ~ .*/\. {
+            return 403;
+    }
+
+    error_page 403 /403.html;
+    
+    location ~* \.(?:ico|css|js|jpe?g|JPG|png|svg|woff)$ {
+            expires 365d;
+	}
+```
 # Configuration
 **configure MySQL**
 ```bash
