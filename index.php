@@ -25,8 +25,9 @@ if(isset($_GET['logout'])){
 		exit();
 	}
 }
-if(isset($_POST['email']) & isset($_POST['password'])){
-	if($_POST['email']==$config['mail'] & $_POST['password']==$config['pass']){
+if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== ""){
+	if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']){
+		
 		$_SESSION['user'] = $_POST['email'];
 		$_SESSION['name'] = $config['author'];
 		$_SESSION['perms'] = "111111";
@@ -58,7 +59,7 @@ if(isset($_SESSION['user'])) {
 		exit();
 	}
 }
-if(!isset($_SESSION['user'])&!uri("/login")&!isset($_POST['email'])) {
+if(!isset($_SESSION['user'])&&!uri("/login")) {
 	header("Location: ".$config['dir']."login");
 	exit();
 }
