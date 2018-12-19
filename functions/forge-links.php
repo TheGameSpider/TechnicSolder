@@ -19,20 +19,12 @@ foreach(json_decode($forge_data, true)['promos'] as $forge => $ff) {
 				}
 			}
 			$modsq = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = 'forge' AND `version` = '".$fvs."'");
-			$handle = curl_init($versions[$fv]);
-			curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
-			$response = curl_exec($handle);
-			$httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-			if($httpCode == 200 & mysqli_num_rows($modsq)==0) {
-				$forges[$fv] = array(
-					"id" => $id,
-					"mc" => $fv,
-					"name" => $fvs,
-					"link" => $versions[$fv]
-				);
-			}
-			curl_close($handle);
-			
+			$forges[$fv] = array(
+				"id" => $id,
+				"mc" => $fv,
+				"name" => $fvs,
+				"link" => $versions[$fv]
+			);
 		}
 	}
 }

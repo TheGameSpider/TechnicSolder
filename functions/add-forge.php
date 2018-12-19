@@ -45,6 +45,7 @@ if(file_put_contents("../forges/modpack-".$version."/modpack.jar", file_get_cont
 	}
 } else {
 	echo '{"status":"error","message":"File download failed."}';
+	unlink("../forges/modpack-".$version."/modpack.jar");
 	rmdir("../forges/modpack-".$version);
 	exit();
 }

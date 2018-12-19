@@ -34,7 +34,7 @@ if(!isset($_GET['reconfig'])) {
 			<div class="card">
 				<?php
 				if(isset($_GET['reconfig'])) {
-					echo "<a href='/dashboard'><button class='btn btn-secondary'>Cancel</button></a>";
+					echo "<a href='./dashboard'><button class='btn btn-secondary'>Cancel</button></a>";
 				}
 				if(isset($_POST['host'])) {
 					$cf = '<?php return array( "configured" => true, ';
@@ -62,19 +62,30 @@ if(!isset($_GET['reconfig'])) {
 					background_md5 VARCHAR(512),
 					latest VARCHAR(512),
 					recommended VARCHAR(512),
+					public BOOLEAN,
+					clients LONGTEXT,
 					UNIQUE (name)
 					);
 					";
 					mysqli_query($conn, $sql);
 					$sql = "
 					CREATE TABLE users (
-					id int(64) AUTO_INCREMENT PRIMARY KEY,
+					id int(8) AUTO_INCREMENT PRIMARY KEY,
 					name VARCHAR(128),
 					display_name VARCHAR(128),
 					pass VARCHAR(128),
 					perms VARCHAR(512),
 					icon LONGTEXT,
 					UNIQUE (name)
+					);
+					";
+					mysqli_query($conn, $sql);
+					$sql = "
+					CREATE TABLE clients (
+					id int(8) AUTO_INCREMENT PRIMARY KEY,
+					name VARCHAR(128),
+					UUID VARCHAR(128),
+					UNIQUE (UUID)
 					);
 					";
 					mysqli_query($conn, $sql);
@@ -86,7 +97,9 @@ if(!isset($_GET['reconfig'])) {
 					minecraft VARCHAR(128),
 					java VARCHAR(512),
 					memory VARCHAR(512),
-					mods VARCHAR(1024)
+					mods VARCHAR(1024),
+					public BOOLEAN,
+					clients LONGTEXT
 					);
 					";
 					mysqli_query($conn, $sql);
