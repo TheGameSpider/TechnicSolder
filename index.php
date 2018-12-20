@@ -543,6 +543,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<?php if(substr($_SESSION['perms'],0,1)=="1") { ?>
 				<div class="card">
 					<h2>Edit Modpack</h2>
+					<hr>
 					<form action="./functions/edit-modpack.php" method="">
 						<input hidden type="text" name="id" value="<?php echo $_GET['id'] ?>">
 						<input autocomplete="off" id="dn" class="form-control" type="text" name="display_name" placeholder="Modpack name" value="<?php echo $modpack['display_name'] ?>" />
@@ -619,6 +620,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					?>
 				<div class="card">
 					<h2>Allowed clients</h2>
+					<hr>
 					<form method="POST" action="./functions/change-clients.php">
 					<input hidden name="id" value="<?php echo $_GET['id'] ?>">
 					<?php if(mysqli_num_rows($clients)<1) {
@@ -643,6 +645,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			<?php }} if(substr($_SESSION['perms'],1,1)=="1") { ?>
 				<div class="card">
 					<h2>New Build</h2>
+					<hr>
 					<form action="./functions/new-build.php" method="">
 						<input pattern="^[a-zA-Z0-9.-]+$" required id="newbname" autocomplete="off" class="form-control" type="text" name="name" placeholder="Build name (e.g. 1.0) (a-z, A-Z, 0-9, dot and dash)" />
 						<span id="warn_newbname" style="display: none" class="text-danger">Build with this name already exists.</span>
@@ -653,6 +656,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<button id="create2" type="submit" name="type" value="update" class="btn btn-primary">Update latest version</button>
 					</form><br />
 					<h2>Copy Build</h2>
+					<hr>
 					<form action="./functions/copy-build.php" method="">
 						<input hidden type="text" name="id" value="<?php echo $_GET['id'] ?>">
 						<?php
@@ -746,6 +750,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			<?php } ?>
 				<div class="card">
 					<h2>Builds</h2>
+					<hr>
 					<table class="table table-striped">
 						<thead>
 							<tr>
@@ -876,25 +881,33 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				$user = mysqli_fetch_array($bres);
 			}
 			$modslist= explode(',', $user['mods']);
-			if(isset($_POST['versions']) & isset($_POST['java'])) {
-				if(intval($_POST['versions'])!==intval($modslist[0])) {
-					if(isset($_POST['iforge'])) {
-						mysqli_query($conn, "UPDATE `builds` SET `mods` = '".intval($_POST['versions'])."' WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+			if($modslist[0]==""){
+				unset($modslist[0]);
+			}
+			if(isset($_POST['versions']) && isset($_POST['java'])) {
+				if($_POST['forgec']!=="none"||count($modslist)==0){
+					if($_POST['forgec']=="wipe"||count($modslist)==0) {
+						mysqli_query($conn, "UPDATE `builds` SET `mods` = '".mysqli_real_escape_string($conn,$_POST['versions'])."' WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+					} else {
+						$modslist2 = $modslist;
+						$modslist2[0] = $_POST['versions'];
+						mysqli_query($conn, "UPDATE `builds` SET `mods` = '".mysqli_real_escape_string($conn,implode(',',$modslist2))."' WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+
+
 					}
 				}
 				$minecraft = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_POST['versions'])));
 				mysqli_query($conn, "UPDATE `builds` SET `minecraft` = '".$minecraft['mcversion']."', `java` = '".mysqli_real_escape_string($conn,$_POST['java'])."', `memory` = '".mysqli_real_escape_string($conn,$_POST['memory'])."' WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
-				if(!isset($_POST['iforge'])) {
-					if(mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".intval($modslist[0])))['name']=='forge') {
-						mysqli_query($conn, "UPDATE `builds` SET `mods` = null WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
-					}
-				}
 			}
+			
 			$bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
 			if($bres) {
 				$user = mysqli_fetch_array($bres);
 			}
 			$modslist= explode(',', $user['mods']);
+			if($modslist[0]==""){
+				unset($modslist[0]);
+			}
 			?>
 			<script>document.title = 'Solder.cf - Build - <?php echo addslashes($user['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<?php
@@ -918,25 +931,45 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<?php if(substr($_SESSION['perms'],1,1)=="1") { ?>
 				<div class="card">
 					<h2>Build <?php echo $user['name'] ?></h2>
+					<hr>
 					<form method="POST">
 						<label for="versions">Select minecraft version</label>
 						<select id="versions" name="versions" class="form-control">
 							<?php
+							
 							$vres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'forge'");
 							if(mysqli_num_rows($vres)!==0) {
 								while($version = mysqli_fetch_array($vres)) {
-									?><option <?php if($version['mcversion']==$user['minecraft']){ echo "selected"; } ?> value="<?php echo $version['id']?> "><?php echo $version['mcversion'] ?> - Forge <?php echo $version['version'] ?></option><?php
+									?><option <?php if($modslist[0]==$version['id']){ echo "selected"; } ?> value="<?php echo $version['id']?>"><?php echo $version['mcversion'] ?> - Forge <?php echo $version['version'] ?></option><?php
 								}
 								echo "</select>";
 							} else {
 								echo "</select>";
-								echo "<div style='display:block' class='invalid-feedback'>There are no versions available. Please fetch versions in <a href='./lib-forges'>Forge Versions Library</a></div>";
+								echo "<div style='display:block' class='invalid-feedback'>There are no versions available. Please fetch versions in the <a href='./lib-forges'>Forge Library</a></div>";
 							}
 							?>
-						<div class="custom-control custom-checkbox mr-sm-2">
+							<script type="text/javascript">
+								$('#versions').change(function(){
+									$('#editBuild').modal('show');
+								});
+								function fnone(){
+									$('#versions').val('<?php echo $modslist[0] ?>');
+									$('#forgec').val('none');
+								};
+								function fchange(){
+									$('#forgec').val('change');
+									$('#submit-button').trigger('click');
+								};
+								function fwipe(){
+									$('#forgec').val('wipe');
+									$('#submit-button').trigger('click');
+								};
+							</script>
+							<input type="text" name="forgec" id="forgec" value="none" hidden required>
+						<!--div class="custom-control custom-checkbox mr-sm-2">
 							<input type="checkbox" class="custom-control-input" name="iforge" value="true" <?php if(mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".intval($modslist[0])))['name']=='forge'||mysqli_fetch_array(mysqli_query($conn, "SELECT `minecraft` FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id'])))['minecraft']==null) { ?>checked <?php } ?> id="iforge">
 							<label class="custom-control-label" for="iforge"> Include modpack.jar (Mod Loader)</label>
-						</div>
+						</div-->
 						<br />
 						<label for="java">Select java version</label>
 						<select name="java" class="form-control">
@@ -951,8 +984,26 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							<input checked type="checkbox" name="ispublic" class="custom-control-input" id="public">
 							<label class="custom-control-label" for="public">Public Build</label>
 						</div><br />
-						<button type="submit" class="btn btn-success">Save and Refresh</button>
+						<div style='display:none' id="wipewarn" class='text-danger'>Build will be wiped.</div>
+						<button type="submit" id="submit-button" class="btn btn-success">Save and Refresh</button>
 					</form>
+					<div class="modal fade" id="editBuild" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+					  <div class="modal-dialog" role="document">
+					    <div class="modal-content border-danger">
+					      <div class="modal-header">
+					        <h5 class="modal-title" id="rm">Warning!</h5>
+					      </div>
+					      <div class="modal-body">
+					        Some mods may not be compatible. If you change this, modpack may stop working.
+					      </div>
+					      <div class="modal-footer">
+					        <button id="cancel-button" onclick="fnone()" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+					        <button id="change-button" onclick="fchange()" type="button" class="btn btn-primary" data-dismiss="modal">Change</button>
+					        <button id="remove-button" onclick="fwipe()" type="button" class="btn btn-danger" data-dismiss="modal">Wipe build and change</button>
+					      </div>
+					    </div>
+					  </div>
+					</div>
 				</div>
 				<?php if($user['public']==false){
 					$clients = mysqli_query($conn, "SELECT * FROM `clients`");
@@ -981,7 +1032,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				</form>
 				</div>
 			<?php } ?>
-				<?php } if(isset($user['minecraft'])) { ?>
+				<?php } if(count($modslist)!==0) { ?>
 					<div class="card">
 						<h2>Mods in Build <?php echo $user['name'] ?></h2>
 						<script type="text/javascript">
@@ -1006,8 +1057,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									$modq = mysqli_query($conn,"SELECT * FROM `mods` WHERE `id` = ".$bmod);
 									$moda = mysqli_fetch_array($modq);
 									?>
-								<tr id="mod-<?php echo $bmod ?>">
-									<td scope="row"><?php echo $moda['pretty_name'] ?></td>
+								<tr <?php if($moda['mcversion']!==$user['minecraft'] ){echo 'class="table-warning"';} ?> id="mod-<?php echo $bmod ?>">
+									<td scope="row"><?php echo $moda['pretty_name']; if($moda['mcversion']!==$user['minecraft'] ){echo ' (For Minecraft '.$moda['mcversion'].')';}?></td>
 									<td><?php echo $moda['version'] ?></td>
 									<td><?php if(substr($_SESSION['perms'],1,1)=="1") { if($moda['name'] !== "forge"){ ?><button onclick="remove_mod(<?php echo $bmod ?>)" class="btn btn-danger"><i class="fas fa-times"></i></button><?php }} ?></td>
 								</tr>
@@ -1020,6 +1071,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<?php if(substr($_SESSION['perms'],1,1)=="1") { ?>
 					<div class="card">
 						<h2>Mods for Minecraft <?php echo $user['minecraft'] ?></h2>
+						<hr>
 						<button onclick="window.location.href = window.location.href" class="btn btn-primary">Refresh</button>
 						<br />
 						<input id="search" type="text" placeholder="Search..." class="form-control">
@@ -1115,6 +1167,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					</div>	
 					<div class="card">
 						<h2>Other Files</h2>
+						<hr>
 						<input id="search" type="text" placeholder="Search..." class="form-control">
 						<table class="table table-striped sortable">
 							<thead>
@@ -1233,7 +1286,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			</div>
 			<div class="card">
 				<h2>Available Mods</h2>
-
+				<hr>
 				<input placeholder="Search..." type="text" id="search" class="form-control"><br />
 				<table id="modstable" class="table table-striped table-responsive sortable">
 					<thead>
@@ -1562,6 +1615,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			<?php if(substr($_SESSION['perms'],5,1)=="1") { ?>
 			<div class="card">
 				<h2>Upload custom Forge version</h2>
+				<hr>
 				<form action="./functions/custom_forge.php" method="POST" enctype="multipart/form-data">
 					<input class="form-control" type="text" name="version" placeholder="Forge Version Name" required="">
 					<br />
@@ -2490,7 +2544,47 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		?>
 		<script>document.title = 'Solder.cf - Clients - <?php echo addslashes($config['author']) ?>';</script>
 		<div class="main">
-
+			<div class="card">
+				<h1>Clients</h1>
+				<hr>
+				<h3>Add Client</h3>
+				<form>
+					<div class="form-row">
+						<div class="col">
+							<input type="text" name="name" class="form-control" required placeholder="Name">
+						</div>
+						<div class="col">
+							<input type="text" name="uuid" class="form-control" required placeholder="UUID">
+						</div>
+					</div>
+					<br>
+					<input type="submit" value="Save" class="btn btn-primary">
+				</form>
+				<table class="table table-striped sortable">
+					<thead>
+						<tr>
+							<td style="width:35%" scope="col" data-defaultsort="AZ">Name</td>
+							<td style="width:50%" scope="col" data-defaultsort="disabled">UUID</td>
+							<td style="width:15%" scope="col" data-defaultsort="disabled"></td>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						$users = mysqli_query($conn,"SELECT * FROM `clients`");
+						while ($user = mysqli_fetch_array($users)) {
+							?>
+							<tr>
+								<td scope="row"><?php echo $user['name'] ?></td>
+								<td><?php echo $user['name'] ?></td>
+								<td><button onclick="remove_box(<?php echo $user['id'] ?>,'<?php echo $user['name'] ?>')" data-toggle="modal" data-target="#removeUser" class="btn btn-danger">Remove</button>
+									</div></td>
+							</tr>
+							<?php
+						}
+						?>
+					</tbody>
+				</table>
+			</div>
 		</div>
 		<script type="text/javascript">
 				$(document).ready(function(){

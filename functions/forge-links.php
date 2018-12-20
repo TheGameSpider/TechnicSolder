@@ -19,12 +19,14 @@ foreach(json_decode($forge_data, true)['promos'] as $forge => $ff) {
 				}
 			}
 			$modsq = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = 'forge' AND `version` = '".$fvs."'");
-			$forges[$fv] = array(
-				"id" => $id,
-				"mc" => $fv,
-				"name" => $fvs,
-				"link" => $versions[$fv]
-			);
+			if(mysqli_num_rows($modsq)==0) {
+				$forges[$fv] = array(
+					"id" => $id,
+					"mc" => $fv,
+					"name" => $fvs,
+					"link" => $versions[$fv]
+				);
+			}
 		}
 	}
 }
