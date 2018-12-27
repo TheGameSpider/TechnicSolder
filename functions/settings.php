@@ -1,0 +1,1 @@
+<?php return array( "use_verifier" => "on","use_tawkto" => "on","submit" => "Save" );

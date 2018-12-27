@@ -5,6 +5,7 @@ if($config['configured']!==true) {
 	header("Location: ".$config['dir']."configure.php");
 	exit();
 }
+$settings = include("./functions/settings.php");
 $config = require("./functions/config.php");
 $dbcon = require("./functions/dbconnect.php");
 $url = $_SERVER['REQUEST_URI'];
@@ -68,7 +69,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 	<head>
 		<link rel="icon" href="./resources/wrenchIcon.png" type="image/png" />
 		<title>Technic Solder</title>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<?php if($settings['dark']=="on") {
+			echo '<link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">';
+		} else {
+			echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">';
+		} ?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -185,7 +190,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			}*/
 		</style>
 	</head>
-	<body style="background-color: #f0f4f9">
+	<body style="<?php if($settings['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
 	<?php
 		if(uri("login")){
 		?>
@@ -209,6 +214,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		} else {
 			$filecontents = file_get_contents('./api/version.json');
 		?>
+		<?php if($settings['use_tawkto']=="on") { ?>
 		<!--Start of Tawk.to Script-->
 		<script type="text/javascript">
 		var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -222,7 +228,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		})();
 		</script>
 		<!--End of Tawk.to Script-->
-		<nav class="navbar navbar-light sticky-top bg-white">
+	<?php } ?>
+		<nav class="navbar <?php if($settings['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
   			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
   			<span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
   			<?php if($_SESSION['user']!==$config['mail']) { ?>
@@ -389,6 +396,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						?>
 					</div>
 					<br />
+					<?php if($settings['use_verifier']=="on") { ?>
 					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseVerify" role="button" aria-expanded="false" aria-controls="collapseVerify">Solder Verifier</button>
 					<div class="collapse" id="collapseVerify">
 						<br />
@@ -494,6 +502,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						}
 					</script>
 					</div>
+				<?php } ?>
 				</div>
 			</div>
 			<?php
@@ -889,7 +898,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			if($modslist[0]==""){
 				unset($modslist[0]);
 			}
-			if(isset($_POST['versions']) && isset($_POST['java'])) {
+			if(isset($_POST['java'])) {
 				if($_POST['forgec']!=="none"||count($modslist)==0){
 					if($_POST['forgec']=="wipe"||count($modslist)==0) {
 						mysqli_query($conn, "UPDATE `builds` SET `mods` = '".mysqli_real_escape_string($conn,$_POST['versions'])."' WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
@@ -901,8 +910,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 
 					}
 				}
+				$ispublic = 0;
+				if($_POST['ispublic']=="on") {
+					$ispublic = 1;
+				}
 				$minecraft = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_POST['versions'])));
-				mysqli_query($conn, "UPDATE `builds` SET `minecraft` = '".$minecraft['mcversion']."', `java` = '".mysqli_real_escape_string($conn,$_POST['java'])."', `memory` = '".mysqli_real_escape_string($conn,$_POST['memory'])."' WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+				mysqli_query($conn, "UPDATE `builds` SET `minecraft` = '".$minecraft['mcversion']."', `java` = '".mysqli_real_escape_string($conn,$_POST['java'])."', `memory` = '".mysqli_real_escape_string($conn,$_POST['memory'])."', `public` = ".$ispublic." WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
 			}
 			
 			$bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
@@ -982,7 +995,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<input class="form-control" type="number" id="memory" name="memory" value="<?php echo $user['memory'] ?>" min="1024" max="65536" placeholder="2048" step="512">
 						<br />
 						<div class="custom-control custom-checkbox">
-							<input checked type="checkbox" name="ispublic" class="custom-control-input" id="public">
+							<input <?php if($user['public']==1){echo "checked";} ?> type="checkbox" name="ispublic" class="custom-control-input" id="public">
 							<label class="custom-control-label" for="public">Public Build</label>
 						</div><br />
 						<div style='display:none' id="wipewarn" class='text-danger'>Build will be wiped.</div>
@@ -2536,9 +2549,50 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			<?php
 		}
 		else if(uri('/settings')) {
+			
+			if(isset($_POST['submit'])) {
+				$cf = '<?php return array( ';
+
+				foreach ($_POST as $key => $value) {
+					$cf .= '"'.$key.'" => "'.$value.'"';
+					if($key !== "submit") {
+						$cf .= ",";
+					}
+				}
+				if($cf." );" !== "<?php return array(  );")
+				file_put_contents("./functions/settings.php", $cf." );");
+				?>
+				<script>window.location = "./dashboard"</script>
+				<?php
+			}
 		?>
-		<script>document.title = 'Solder.cf - Settings - <?php echo addslashes($config['author']) ?>';</script>
+
+		
 		<div class="main">
+			<div class="card">
+				<h1>Quick Settings</h1>
+				<hr>
+				<form method="POST">
+					<div class="custom-control custom-checkbox">
+						<input <?php if($settings['dev_builds']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="dev_builds" id="dev_builds">
+						<label class="custom-control-label" for="dev_builds">Subscribe to dev builds</label>
+					</div>
+					<div class="custom-control custom-checkbox">
+						<input <?php if($settings['dark']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="dark" id="dark">
+						<label class="custom-control-label" for="dark">Use dark theme - Work in progress</label>
+					</div>
+					<div class="custom-control custom-checkbox">
+						<input <?php if($settings['use_verifier']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_verifier" id="use_verifier">
+						<label class="custom-control-label" for="use_verifier">Enable Solder Verifier - uses cookies</label>
+					</div>
+					<div class="custom-control custom-checkbox">
+						<input <?php if($settings['use_tawkto']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_tawkto" id="use_tawkto">
+						<label class="custom-control-label" for="use_tawkto">Enable Tawk.to - uses cookies</label>
+					</div>
+					<br>
+					<input type="submit" class="btn btn-primary" name="submit" value="Save">
+				</form>
+			</div>
 		</div>
 		<script type="text/javascript">
 				$(document).ready(function(){
