@@ -1,5 +1,5 @@
 {
-	"version": "v0.0.3.5_18.52.01",
+	"version": "v0.0.3.5_18.52.02",
 	"stream": "Dev",
 	"warns": "<div class='card alert-warning'><p><b>Warning!</b> If you are using Journey Map, you have to change it's file URL to <i>https://media.forgecdn.net/files/2498/313/%5bsolder%5djourneymap-1.12.2-5.5.2.zip</i> and it's MD5 to <i>FD05AC891D40DB9AF9B9057F38BF9667</i> (for Minecraft 1.12.2). If you need more information, check <a href='http://journeymap.info/Technic'>http://journeymap.info/Technic</a> or <a href='https://tawk.to/chat/5ba3d4c8c666d426648af4bc/default' target='_blank'>contact a human</a>.</p></div>",
 	"ltcl": "",

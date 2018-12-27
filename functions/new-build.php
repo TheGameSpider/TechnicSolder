@@ -19,13 +19,14 @@ if(substr($_SESSION['perms'],1,1)!=="1") {
 	exit();
 }
 if($_GET['type']=="update") {
-	mysqli_query($conn, "INSERT INTO builds(`name`,`minecraft`,`java`,`mods`,`modpack`) SELECT `name`,`minecraft`,`java`,`mods`,`modpack` FROM `builds` WHERE `modpack` = '".$_GET['id']."' ORDER BY `id` DESC LIMIT 1");
+	mysqli_query($conn, "INSERT INTO builds(`name`,`minecraft`,`java`,`mods`,`modpack`,`public`) SELECT `name`,`minecraft`,`java`,`mods`,`modpack`,`public` FROM `builds` WHERE `modpack` = '".$_GET['id']."' ORDER BY `id` DESC LIMIT 1");
 	mysqli_query($conn, "UPDATE `builds` SET `name` = '".mysqli_real_escape_string($conn, $_GET['name'])."' WHERE `modpack` = ".mysqli_real_escape_string($conn, $_GET['id'])." ORDER BY `id` DESC LIMIT 1");
 	mysqli_query($conn, "UPDATE `modpacks` SET `latest` = '".mysqli_real_escape_string($conn, $_GET['name'])."' WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
+	mysqli_query($conn, "UPDATE `modpacks` SET `public` = 0 WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
 	header("Location: ".$config['dir']."modpack?id=".$_GET['id']);
 	exit();
 } else {
-	mysqli_query($conn, "INSERT INTO builds(`name`,`modpack`) VALUES ('".mysqli_real_escape_string($conn, $_GET['name'])."','".mysqli_real_escape_string($conn, $_GET['id'])."')");
+	mysqli_query($conn, "INSERT INTO builds(`name`,`modpack`,`public`) VALUES ('".mysqli_real_escape_string($conn, $_GET['name'])."','".mysqli_real_escape_string($conn, $_GET['id'])."',0)");
 	mysqli_query($conn, "UPDATE `modpacks` SET `latest` = '".mysqli_real_escape_string($conn, $_GET['name'])."' WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
 	header("Location: ".$config['dir']."modpack?id=".$_GET['id']);
 	exit();

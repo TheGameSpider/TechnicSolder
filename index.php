@@ -557,7 +557,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<span id="warn_slug" style="display: none" class="text-warning"><b>Warning!</b> Modpack slug have to be the same as on the technic platform</span>
 						<br />
 						<div class="custom-control custom-checkbox">
-							<input checked type="checkbox" name="ispublic" class="custom-control-input" id="public">
+							<input <?php if($modpack['public']==1){echo "checked";} ?> type="checkbox" name="ispublic" class="custom-control-input" id="public">
 							<label class="custom-control-label" for="public">Public Modpack</label>
 						</div><br />
 						<div class="btn-group" role="group" aria-label="Actions">
@@ -625,7 +625,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<div class="card">
 					<h2>Allowed clients</h2>
 					<hr>
-					<form method="POST" action="./functions/change-clients.php">
+					<form method="GET" action="./functions/change-clients.php">
 					<input hidden name="id" value="<?php echo $_GET['id'] ?>">
 					<?php if(mysqli_num_rows($clients)<1) {
 						?>
@@ -634,10 +634,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<?php
 					} ?>
 					<?php
+					$clientlist = explode(',', $modpack['clients']);
 					while ($client = mysqli_fetch_array($clients)) {
 						?>
 						<div class="custom-control custom-checkbox">
-							<input checked type="checkbox" name="client-<?php echo $client['id'] ?>" class="custom-control-input" id="client-<?php echo $client['id'] ?>" required>
+							<input <?php if(in_array($client['id'],$clientlist)){echo "checked";} ?> type="checkbox" name="client[]" value="<?php echo $client['id'] ?>" class="custom-control-input" id="client-<?php echo $client['id'] ?>">
 							<label class="custom-control-label" for="client-<?php echo $client['id'] ?>"><?php echo $client['name']." (".$client['UUID'].")" ?></label>
 						</div><br />
 						<?php
@@ -970,10 +971,6 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 								};
 							</script>
 							<input type="text" name="forgec" id="forgec" value="none" hidden required>
-						<!--div class="custom-control custom-checkbox mr-sm-2">
-							<input type="checkbox" class="custom-control-input" name="iforge" value="true" <?php if(mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".intval($modslist[0])))['name']=='forge'||mysqli_fetch_array(mysqli_query($conn, "SELECT `minecraft` FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id'])))['minecraft']==null) { ?>checked <?php } ?> id="iforge">
-							<label class="custom-control-label" for="iforge"> Include modpack.jar (Mod Loader)</label>
-						</div-->
 						<br />
 						<label for="java">Select java version</label>
 						<select name="java" class="form-control">
@@ -1014,7 +1011,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					?>
 				<div class="card">
 					<h2>Allowed clients</h2>
-					<form method="POST" action="./functions/change-clients-build.php">
+					<form method="GET" action="./functions/change-clients-build.php">
 					<input hidden name="id" value="<?php echo $_GET['id'] ?>">
 					<?php if(mysqli_num_rows($clients)<1) {
 						?>
@@ -1023,10 +1020,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<?php
 					} ?>
 					<?php
+					$clientlist = explode(',', $user['clients']);
 					while ($client = mysqli_fetch_array($clients)) {
 						?>
 						<div class="custom-control custom-checkbox">
-							<input checked type="checkbox" name="client-<?php echo $client['id'] ?>" class="custom-control-input" id="client-<?php echo $client['id'] ?>" required>
+							<input <?php if(in_array($client['id'],$clientlist)){echo "checked";} ?> type="checkbox" name="client[]" value="<?php echo $client['id'] ?>" class="custom-control-input" id="client-<?php echo $client['id'] ?>">
 							<label class="custom-control-label" for="client-<?php echo $client['id'] ?>"><?php echo $client['name']." (".$client['UUID'].")" ?></label>
 						</div><br />
 						<?php
@@ -1945,7 +1943,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			<?php
 		}
 		else if(uri("/update")) {
-			$version = json_decode(file_get_contents("./api/version.json"),true)['version'];
+			$version = json_decode(file_get_contents("./api/version.json"),true);
 			if($version['stream']=="Dev") {
 				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true);
 			} else {
@@ -1957,13 +1955,13 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<div class="card">
 					<h2>Solder<span class="text-muted">.cf</span> Updater</h2>
 					<br />
-					<div class="alert <?php if($version==$newversion['version']) { echo "alert-success";} else { echo "alert-info"; } ?>" role="alert">
-						<h4 class="alert-heading"><?php if($version==$newversion['version']){echo "No updates";} else { echo "New update available - ".$newversion['version']; } ?></h4>
+					<div class="alert <?php if($version['version']==$newversion['version']) { echo "alert-success";} else { echo "alert-info"; } ?>" role="alert">
+						<h4 class="alert-heading"><?php if($version['version']==$newversion['version']){echo "No updates";} else { echo "New update available - ".$newversion['version']; } ?></h4>
 						<hr>
-						<p class="mb-0"><?php if($version==$newversion['version']){ echo $newversion['changelog']; } else { echo $newversion['changelog']; } ?></p>
+						<p class="mb-0"><?php if($version['version']==$newversion['version']){ echo $version['changelog']; } else { echo $newversion['changelog']; } ?></p>
 					</div>
 
-					<?php if($version!==$newversion['version']) { ?>
+					<?php if($version['version']!==$newversion['version']) { ?>
 						<div class="card text-white bg-info mb3" style="padding: 0px">
 							<div class="card-header">How to update?</div>
 							<div class="card-body">
