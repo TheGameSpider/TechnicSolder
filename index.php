@@ -331,7 +331,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			<div class="main">
 				<?php
 				$version = json_decode(file_get_contents("./api/version.json"),true);
-				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
+				if($version['stream']=="Dev") {
+					$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true);
+				} else {
+					$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
+				}
 				if($version['version']!==$newversion['version']) {
 				?>
 				<div class="card alert-info">
@@ -1942,7 +1946,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		}
 		else if(uri("/update")) {
 			$version = json_decode(file_get_contents("./api/version.json"),true)['version'];
-			$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
+			if($version['stream']=="Dev") {
+				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true);
+			} else {
+				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
+			}
 		?>
 		<script>document.title = 'Solder.cf - Update Checker - <?php echo $version ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<div class="main">
@@ -1964,7 +1972,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									2. login with your credentials <br />
 									3. write: <br />
 									<i>cd <?php echo dirname(dirname(get_included_files()[0])); ?> </i><br />
-									<i>git clone https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate</i> <br />
+									<i>git clone <?php if($newversion['stream']=="Dev") { echo "--single-branch --branch Dev"; } ?> https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate </i> <br />
 									<i>cp -a SolderUpdate/. TechnicSolder/</i> <br>
 									<i>rm -rf SolderUpdate</i> <br>
 									<i>chown -R www-data TechnicSolder</i>
@@ -2548,7 +2556,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<h1>Clients</h1>
 				<hr>
 				<h3>Add Client</h3>
-				<form>
+				<form action="./functions/new-client.php">
 					<div class="form-row">
 						<div class="col">
 							<input type="text" name="name" class="form-control" required placeholder="Name">
@@ -2573,10 +2581,10 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						$users = mysqli_query($conn,"SELECT * FROM `clients`");
 						while ($user = mysqli_fetch_array($users)) {
 							?>
-							<tr>
+							<tr id="mod-row-<?php echo $user['id'] ?>">
 								<td scope="row"><?php echo $user['name'] ?></td>
-								<td><?php echo $user['name'] ?></td>
-								<td><button onclick="remove_box(<?php echo $user['id'] ?>,'<?php echo $user['name'] ?>')" data-toggle="modal" data-target="#removeUser" class="btn btn-danger">Remove</button>
+								<td><?php echo $user['UUID'] ?></td>
+								<td><button onclick="remove_box(<?php echo $user['id'] ?>,'<?php echo $user['name'] ?>')" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
 									</div></td>
 							</tr>
 							<?php
@@ -2584,6 +2592,40 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						?>
 					</tbody>
 				</table>
+				<div class="modal fade" id="removeMod" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="rm">Delete client <span id="mod-name-title"></span>?</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        Are you sure you want to delete client <span id="mod-name"></span>?
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+				        <button id="remove-button" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				<script type="text/javascript">
+					function remove_box(id,name) {
+						$("#mod-name-title").text(name);
+						$("#mod-name").text(name);
+						$("#remove-button").attr("onclick","remove("+id+")");
+					}
+					function remove(id) {
+						var request = new XMLHttpRequest();
+						request.onreadystatechange = function() {
+							$("#mod-row-"+id).remove();
+						}
+						request.open("GET", "./functions/delete-client.php?id="+id);
+						request.send();
+					}
+				</script>
 			</div>
 		</div>
 		<script type="text/javascript">
