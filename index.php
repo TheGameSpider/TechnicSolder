@@ -1950,7 +1950,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<footer class="blockquote-footer"><a href="https://github.com/TechnicPack/TechnicSolder">Technic</a></footer>					
 					</blockquote>
 					<hr>
-					<p>TechnicSolder was originaly developed by <a href="https://github.com/TechnicPack">Technic</a> using the Laravel Framework. However, the application is difficult to install and use. <a href="https://github.com/TheGameSpider/TechnicSolder">Technic Solder - Solder.cf</a> by <a href="https://github.com/TheGameSpider">TheGameSpider</a> runs on pure PHP with zip, curl and MySQL extensions and it's very easy to use. To install, you just need to install zip, curl and MySQL and extract Solder to your root folder. And the usage is even easier! Just Drag n' Drop your mods.</p>
+					<p>TechnicSolder was originaly developed by <a href="https://github.com/TechnicPack">Technic</a> using the Laravel Framework. However, the application is difficult to install and use. <a href="https://github.com/TheGameSpider/TechnicSolder">Technic Solder - Solder.cf</a> by <a href="https://github.com/TheGameSpider">TheGameSpider</a> runs on pure PHP with zip and MySQL extensions and it's very easy to use. To install, you just need to install zip and MySQL and extract Solder to your root folder. And the usage is even easier! Just Drag n' Drop your mods.</p>
 					<p>Read the licence before redistributing.</p>
 					<div class="card text-white bg-info mb3" style="padding:0">
 						<div class="card-header">License</div>
