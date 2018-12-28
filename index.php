@@ -167,7 +167,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				border-radius: 5px;
 				width: 100%;
 				height: 15em;
-				background-color: #ddd;
+				background-color: <?php if($settings['dark']=="on"){echo "#333";}else{echo "#ddd";} ?>;
+
 				transition: 0.2s;
 			}
 			.upload-mods input{
@@ -186,7 +187,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				left: calc( 50% - 10em );
 			}
 			.upload-mods:hover{
-				background-color: #ccc;
+				background-color: <?php if($settings['dark']=="on"){echo "#444";}else{echo "#ccc";} ?>;
 			}*/
 		</style>
 	</head>
@@ -338,14 +339,14 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			<div class="main">
 				<?php
 				$version = json_decode(file_get_contents("./api/version.json"),true);
-				if($version['stream']=="Dev") {
+				if($version['stream']=="Dev"||$settings['dev_builds']=="on") {
 					$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true);
 				} else {
 					$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
 				}
 				if($version['version']!==$newversion['version']) {
 				?>
-				<div class="card alert-info">
+				<div class="card alert-info <?php if($settings['dark']=="on"){echo "text-white";} ?>">
 					<p>Version <b><?php echo $newversion['version'] ?></b> is now available!</p>
 					<p><?php echo $newversion['ltcl']; ?></p>
 				</div>
@@ -358,7 +359,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<hr />
 					<button class="btn btn-success" data-toggle="collapse" href="#collapseMp" role="button" aria-expanded="false" aria-controls="collapseMp">Instant Modpack</button>
 					<div class="collapse" id="collapseMp">
-						<div class="card alert-info">
+						<div class="card alert-info <?php if($settings['dark']=="on"){echo "text-white";} ?>">
 							Name your modpack, drag and drop your mod files. Solder will do the rest in a few seconds.<hr>
 							This feature will be available soon.
 						</div>
@@ -1957,7 +1958,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		}
 		else if(uri("/update")) {
 			$version = json_decode(file_get_contents("./api/version.json"),true);
-			if($version['stream']=="Dev") {
+			if($version['stream']=="Dev"||$settings['dev_builds']=="on") {
 				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true);
 			} else {
 				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
@@ -2574,7 +2575,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<hr>
 				<form method="POST">
 					<div class="custom-control custom-checkbox">
-						<input <?php if($settings['dev_builds']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="dev_builds" id="dev_builds">
+						<input <?php if($settings['dev_builds']=="on"){echo "checked";} if(json_decode($filecontents,true)['stream']=="Dev") {echo "checked disabled";} ?> type="checkbox" class="custom-control-input" name="dev_builds" id="dev_builds">
 						<label class="custom-control-label" for="dev_builds">Subscribe to dev builds</label>
 					</div>
 					<div class="custom-control custom-checkbox">

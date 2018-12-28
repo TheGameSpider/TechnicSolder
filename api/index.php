@@ -21,7 +21,7 @@ function uri($url, $uri) {
     return (substr($url, -$length) === $uri);
 }
 if(uri($url,"api/")){
-	print '{"api":"Solder.cf","version":"v0.0.3.5_18.52.03","stream":"Dev"}';
+	print '{"api":"Solder.cf","version":"v0.0.3.5_18.52.04","stream":"Dev"}';
 	exit();
 } 
 if(uri($url,"api/verify")){
@@ -45,22 +45,36 @@ if(uri($url,"api/modpack")){
 				$buildsres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".$modpack['id']);
 				$builds = [];
 				while($build=mysqli_fetch_array($buildsres)){
-					array_push($builds, $build['name']);
+					$clients = [];
+					$clientsq = mysqli_query($conn, "SELECT * FROM `clients` WHERE `id` IN (".$build['clients'].")");
+					while($client=mysqli_fetch_array($clientsq)){
+						array_push($clients, $client['UUID']);
+					}
+					if($build['public']==1||in_array($_GET['cid'],$clients)||$_GET['k']==$config['api_key']) {
+						array_push($builds, $build['name']);
+					}
 				}
-				$modpacks[$modpack['name']] = array(
-					"name" => $modpack['name'],
-					"display_name" => $modpack['display_name'],
-					"url" => $modpack['url'],
-					"icon" => $modpack['icon'],
-					"icon_md5" => $modpack['icon_md5'],
-					"logo" => $modpack['logo'],
-					"logo_md5" => $modpack['logo_md5'],
-					"background" => $modpack['background'],
-					"background_md5" => $modpack['background_md5'],
-					"recommended" => $modpack['recommended'],
-					"latest" => $modpack['latest'],
-					"builds" => $builds
-				);
+				$clients = [];
+				$clientsq = mysqli_query($conn, "SELECT * FROM `clients` WHERE `id` IN (".$modpack['clients'].")");
+				while($client=mysqli_fetch_array($clientsq)){
+					array_push($clients, $client['UUID']);
+				}
+				if($modpack['public']==1||in_array($_GET['cid'],$clients)||$_GET['k']==$config['api_key']) {
+					$modpacks[$modpack['name']] = array(
+						"name" => $modpack['name'],
+						"display_name" => $modpack['display_name'],
+						"url" => $modpack['url'],
+						"icon" => $modpack['icon'],
+						"icon_md5" => $modpack['icon_md5'],
+						"logo" => $modpack['logo'],
+						"logo_md5" => $modpack['logo_md5'],
+						"background" => $modpack['background'],
+						"background_md5" => $modpack['background_md5'],
+						"recommended" => $modpack['recommended'],
+						"latest" => $modpack['latest'],
+						"builds" => $builds
+					);
+				}
 				$response = array(
 					"modpacks" => $modpacks,
 					"mirror_url" => "http://".$config['host']."/mods"
@@ -70,9 +84,16 @@ if(uri($url,"api/modpack")){
 			$modpacks = array();
 			$result = mysqli_query($conn, "SELECT * FROM `modpacks`");
 			while($modpack=mysqli_fetch_array($result)){
-				$mn = $modpack['name'];
-				$mpn = $modpack['display_name'];
-				$modpacks[$mn] = $mpn;
+				$clients = [];
+				$clientsq = mysqli_query($conn, "SELECT * FROM `clients` WHERE `id` IN (".$modpack['clients'].")");
+				while($client=mysqli_fetch_array($clientsq)){
+					array_push($clients, $client['UUID']);
+				}
+				if($modpack['public']==1||in_array($_GET['cid'],$clients)||$_GET['k']==$config['api_key']) {
+					$mn = $modpack['name'];
+					$mpn = $modpack['display_name'];
+					$modpacks[$mn] = $mpn;
+				}
 			}
 			$response = array(
 				"modpacks" => $modpacks,
@@ -83,9 +104,16 @@ if(uri($url,"api/modpack")){
 		$modpacks = array();
 		$result = mysqli_query($conn, "SELECT * FROM `modpacks`");
 		while($modpack=mysqli_fetch_array($result)){
-			$mn = $modpack['name'];
-			$mpn = $modpack['display_name'];
-			$modpacks[$mn] = $mpn;
+			$clients = [];
+			$clientsq = mysqli_query($conn, "SELECT * FROM `clients` WHERE `id` IN (".$modpack['clients'].")");
+			while($client=mysqli_fetch_array($clientsq)){
+				array_push($clients, $client['UUID']);
+			}
+			if($modpack['public']==1||in_array($_GET['cid'],$clients)||$_GET['k']==$config['api_key']) {
+				$mn = $modpack['name'];
+				$mpn = $modpack['display_name'];
+				$modpacks[$mn] = $mpn;
+			}
 		}
 		$response = array(
 			"modpacks" => $modpacks,
@@ -102,7 +130,14 @@ if(uri($url,"api/modpack/".substr($url, strrpos($url, '/') + 1))){
 			$buildsres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".$modpack['id']);
 			$builds = [];
 			while($build=mysqli_fetch_array($buildsres)){
-				array_push($builds, $build['name']);
+				$clients = [];
+				$clientsq = mysqli_query($conn, "SELECT * FROM `clients` WHERE `id` IN (".$build['clients'].")");
+				while($client=mysqli_fetch_array($clientsq)){
+					array_push($clients, $client['UUID']);
+				}
+				if($build['public']==1||in_array($_GET['cid'],$clients)||$_GET['k']==$config['api_key']) {
+					array_push($builds, $build['name']);
+				}
 			}
 			$response = array(
 				"name" => $modpack['name'],
