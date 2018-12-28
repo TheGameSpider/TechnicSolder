@@ -242,7 +242,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<!--End of Tawk.to Script-->
 	<?php } ?>
 		<nav class="navbar <?php if($settings['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
-  			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
+  			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($settings['dark']=="on") {echo "W";}?>.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
   			<span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
   			<?php if($_SESSION['user']!==$config['mail']) { ?>
   			<img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php 
@@ -545,7 +545,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<span class="navbar-text"><i style="color:#2E74B2" class="fas fa-exclamation"></i> Latest: <b id="latest-name"><?php echo $user['name'] ?></b></span>
 				</li>
 				<li <?php if($latest==false){ echo "style='display:none'"; } ?> id="latest-mc-li" class="nav-item">
-					<span class="navbar-text">MC: <b id="latest-mc"><?php echo $user['minecraft'] ?></b></span>
+					<span class="navbar-text"><?php if(isset($user['minecraft'])){echo "MC: ";} ?><b id="latest-mc"><?php echo $user['minecraft'] ?></b></span>
 				</li>
 				<div style="width:30px"></div>
 					<?php
@@ -560,7 +560,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<span class="navbar-text"><i style="color:#329C4E" class="fas fa-check"></i> Recommended: <b id="rec-name"><?php echo $user['name'] ?></b></span>
 				</li>
 				<li <?php if($rec==false){ echo "style='display:none'"; } ?> id="rec-mc-li" class="nav-item">
-					<span class="navbar-text">MC: <b id="rec-mc"><?php echo $user['minecraft'] ?></b></span>
+					<span class="navbar-text"><?php if(isset($user['minecraft'])){echo "MC: ";} ?><b id="rec-mc"><?php echo $user['minecraft'] ?></b></span>
 				</li>
 				<div style="width:30px"></div>
 			</ul>
