@@ -1,6 +1,7 @@
 <?php
 session_start();
 $config = include("./functions/config.php");
+$settings = include("./functions/settings.php");
 if(!isset($_GET['reconfig'])) {
 	if($config['configured']==true) {
 		header("Location: ".$config['dir']."login");
@@ -17,7 +18,11 @@ if(!isset($_GET['reconfig'])) {
 ?>
 <html>
 	<head>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<?php if($settings['dark']=="on") {
+			echo '<link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">';
+		} else {
+			echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">';
+		} ?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -29,12 +34,12 @@ if(!isset($_GET['reconfig'])) {
 			}
 		</style>
 	</head>
-	<body style="background-color: #f0f4f9">
+	<body style="<?php if($settings['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
 		<div class="container">
 			<div class="card">
 				<?php
 				if(isset($_GET['reconfig'])) {
-					echo "<a href='/dashboard'><button class='btn btn-secondary'>Cancel</button></a>";
+					echo "<a href='./dashboard'><button class='btn btn-secondary'>Cancel</button></a>";
 				}
 				if(isset($_POST['host'])) {
 					$cf = '<?php return array( "configured" => true, ';
@@ -62,19 +67,30 @@ if(!isset($_GET['reconfig'])) {
 					background_md5 VARCHAR(512),
 					latest VARCHAR(512),
 					recommended VARCHAR(512),
+					public BOOLEAN,
+					clients LONGTEXT,
 					UNIQUE (name)
 					);
 					";
 					mysqli_query($conn, $sql);
 					$sql = "
 					CREATE TABLE users (
-					id int(64) AUTO_INCREMENT PRIMARY KEY,
+					id int(8) AUTO_INCREMENT PRIMARY KEY,
 					name VARCHAR(128),
 					display_name VARCHAR(128),
 					pass VARCHAR(128),
 					perms VARCHAR(512),
 					icon LONGTEXT,
 					UNIQUE (name)
+					);
+					";
+					mysqli_query($conn, $sql);
+					$sql = "
+					CREATE TABLE clients (
+					id int(8) AUTO_INCREMENT PRIMARY KEY,
+					name VARCHAR(128),
+					UUID VARCHAR(128),
+					UNIQUE (UUID)
 					);
 					";
 					mysqli_query($conn, $sql);
@@ -86,7 +102,9 @@ if(!isset($_GET['reconfig'])) {
 					minecraft VARCHAR(128),
 					java VARCHAR(512),
 					memory VARCHAR(512),
-					mods VARCHAR(1024)
+					mods VARCHAR(1024),
+					public BOOLEAN,
+					clients LONGTEXT
 					);
 					";
 					mysqli_query($conn, $sql);
@@ -137,9 +155,9 @@ if(!isset($_GET['reconfig'])) {
 						<small id="errtext" class="form-text text-muted">Four tables will be created.</small>
 					</div>
 					<div class="form-group">
-						<label for="email">Almost done...</label>
-						<input required name="host" type="text" class="form-control" placeholder="Webserver public IP or domain name. (your IP is <?php print_r(file_get_contents('http://icanhazip.com')); ?>)"><br />
-						<input class="form-control" type="text" name="dir" placeholder="Install Directory" value="/" id="dir" required readonly><br />
+						<label for="email">Installation details</label>
+						<input required name="host" type="text" class="form-control" placeholder="Webserver public IP or domain name. (does NOT start with http[s]://)"><br />
+						<input class="form-control" type="text" name="dir" placeholder="Install Directory" value="/" id="dir" required><br />
 						<input required name="api_key" type="text" class="form-control" placeholder="API Key">
 						<small class="form-text text-muted">You can find you API Key in your profile at <a target="_blank" href="https://technicpack.net">technicpack.net</a></small>
 					</div>		
@@ -172,7 +190,7 @@ if(!isset($_GET['reconfig'])) {
 						var params = 'db-pass='+ $("#db-pass").val() +'&db-name='+ $("#db-name").val() +'&db-user='+ $("#db-user").val() +'&db-host='+ $("#db-host").val() ;
 						http.open('POST', './functions/conntest.php');
 						http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-						http.onreadystatechange = function() {//Call a function when the state changes.
+						http.onreadystatechange = function() {
 							if(http.readyState == 4 && http.status == 200) {
 								if(http.responseText == "error") {
 									$("#errtext").text("Can't connect to database");
