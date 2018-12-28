@@ -155,9 +155,9 @@ if(!isset($_GET['reconfig'])) {
 						<small id="errtext" class="form-text text-muted">Four tables will be created.</small>
 					</div>
 					<div class="form-group">
-						<label for="email">Almost done...</label>
-						<input required name="host" type="text" class="form-control" placeholder="Webserver public IP or domain name. (your IP is <?php print_r(file_get_contents('http://icanhazip.com')); ?>)"><br />
-						<input class="form-control" type="text" name="dir" placeholder="Install Directory" value="/" id="dir" required readonly><br />
+						<label for="email">Installation details</label>
+						<input required name="host" type="text" class="form-control" placeholder="Webserver public IP or domain name. (does NOT start with http[s]://)"><br />
+						<input class="form-control" type="text" name="dir" placeholder="Install Directory" value="/" id="dir" required><br />
 						<input required name="api_key" type="text" class="form-control" placeholder="API Key">
 						<small class="form-text text-muted">You can find you API Key in your profile at <a target="_blank" href="https://technicpack.net">technicpack.net</a></small>
 					</div>		
@@ -190,7 +190,7 @@ if(!isset($_GET['reconfig'])) {
 						var params = 'db-pass='+ $("#db-pass").val() +'&db-name='+ $("#db-name").val() +'&db-user='+ $("#db-user").val() +'&db-host='+ $("#db-host").val() ;
 						http.open('POST', './functions/conntest.php');
 						http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-						http.onreadystatechange = function() {//Call a function when the state changes.
+						http.onreadystatechange = function() {
 							if(http.readyState == 4 && http.status == 200) {
 								if(http.responseText == "error") {
 									$("#errtext").text("Can't connect to database");

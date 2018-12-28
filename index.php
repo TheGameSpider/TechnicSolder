@@ -196,6 +196,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			table.sortable>thead th:hover:not([data-defaultsort=disabled]) {
 				background-color:#2E3D4C;
 			}
+			.form-control:disabled, .form-control[readonly] {
+				background-color: rgba(255,255,255,0.5);
+			}
 		<?php } ?>
 		</style>
 	</head>
@@ -393,7 +396,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							<a href="https://www.technicpack.net/modpack/create/solder" target="_blank"><button class="btn btn-primary">Import</button></a> your modpack to technicpack.net
 							<h5>5. (Optional)</h5>
 							<p>The author will be happy if you add this Markdown code to your platform page:</p>
-							<pre>[![](http://<?php echo $config['dir'] ?>resources/solderBanner.png)](https://solder.cf)</pre>
+							<pre>[![](http://<?php echo $config['host'].$config['dir'] ?>resources/solderBanner.png)](https://solder.cf)</pre>
 							<img src="./resources/solderBanner.png">
 						</div>
 					</div>
