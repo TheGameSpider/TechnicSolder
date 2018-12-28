@@ -346,7 +346,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<?php
 		if(uri("/dashboard")){
 			?>
-			<script>document.title = 'Solder.cf - Dashboard - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - Dashboard - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<div class="main">
 				<?php
 				$version = json_decode(file_get_contents("./api/version.json"),true);
@@ -524,7 +524,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			if($mpres) {
 			$modpack = mysqli_fetch_array($mpres);
 			?>
-			<script>document.title = 'Solder.cf - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<ul class="nav justify-content-end info-versions">
 				<li class="nav-item">
 					<a class="nav-link" href="./dashboard"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $modpack['display_name'] ?></a>
@@ -938,12 +938,10 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			if($modslist[0]==""){
 				unset($modslist[0]);
 			}
+			$pack = mysqli_query($conn, "SELECT * FROM `modpacks` WHERE `id` = ".$user['modpack']);
+			$mpack = mysqli_fetch_array($pack);
 			?>
-			<script>document.title = 'Solder.cf - Build - <?php echo addslashes($user['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
-			<?php
-				$pack = mysqli_query($conn, "SELECT * FROM `modpacks` WHERE `id` = ".$user['modpack']);
-				$mpack = mysqli_fetch_array($pack);
-			?>
+			<script>document.title = 'Solder.cf - <?php echo addslashes($mpack['display_name'])." ".addslashes($user['name'])  ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<ul class="nav justify-content-end info-versions">
 				<li class="nav-item">
 					<a class="nav-link" href="./modpack?id=<?php echo $mpack['id'] ?>"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $mpack['display_name'] ?></a>
@@ -1251,7 +1249,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		}
 		else if(uri('/lib-mods')) {
 		?>
-		<script>document.title = 'Solder.cf - Mod Library - <?php echo addslashes($config['author']) ?>';</script>
+		<script>document.title = 'Solder.cf - Mod Library - <?php echo addslashes($_SESSION['name']) ?>';</script>
 		<div class="main">
 		<script type="text/javascript">
 				function remove_box(id,name) {
@@ -1500,7 +1498,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		}
 		else if(uri('/lib-forges')) {
 		?>
-		<script>document.title = 'Solder.cf - Forge Versions - <?php echo addslashes($config['author']) ?>';</script>
+		<script>document.title = 'Solder.cf - Forge Versions - <?php echo addslashes($_SESSION['name']) ?>';</script>
 		<div class="main">
 			<script type="text/javascript">
 				function remove_box(id,name) {
@@ -1668,7 +1666,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		}
 		else if(uri('/lib-other')) {
 		?>
-		<script>document.title = 'Solder.cf - Other Files - <?php echo addslashes($config['author']) ?>';</script>
+		<script>document.title = 'Solder.cf - Other Files - <?php echo addslashes($_SESSION['name']) ?>';</script>
 		<div class="main">
 		<script type="text/javascript">
 				function remove_box(id,name) {
@@ -1883,7 +1881,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				$mod = mysqli_fetch_array($mres);
 			}
 			?>
-			<script>document.title = 'Solder.cf - Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<div class="card">
 				<button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
 				<form method="POST" action="./functions/edit-mod.php?id=<?php echo $_GET['id'] ?>">
@@ -1934,7 +1932,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		}
 		else if(uri("/about")) {
 			?>
-			<script>document.title = 'Solder.cf - About - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - About - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<center>
@@ -1975,7 +1973,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
 			}
 		?>
-		<script>document.title = 'Solder.cf - Update Checker - <?php echo $version ?> - <?php echo addslashes($config['author']) ?>';</script>
+		<script>document.title = 'Solder.cf - Update Checker - <?php echo $version['version'] ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<h2>Solder<span class="text-muted">.cf</span> Updater</h2>
@@ -2614,7 +2612,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<?php }
 		else if(uri('/clients')) {
 		?>
-		<script>document.title = 'Solder.cf - Clients - <?php echo addslashes($config['author']) ?>';</script>
+		<script>document.title = 'Solder.cf - Clients - <?php echo addslashes($_SESSION['name']) ?>';</script>
 		<div class="main">
 			<div class="card">
 				<h1>Clients</h1>
