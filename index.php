@@ -72,11 +72,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<?php if($settings['dark']=="on") {
 			echo '<link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">';
 		} else {
-			echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">';
+			echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">';
 		} ?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 		<script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>
 		<script src="./resources/bootstrap-sortable.js"></script>
 		<link rel="stylesheet" href="./resources/bootstrap-sortable.css" type="text/css">
@@ -188,7 +188,15 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			}
 			.upload-mods:hover{
 				background-color: <?php if($settings['dark']=="on"){echo "#444";}else{echo "#ccc";} ?>;
-			}*/
+			}
+			<?php if($settings['dark']=="on") {?>
+			.custom-file-label::after {
+				background-color: #df691a;
+			}
+			table.sortable>thead th:hover:not([data-defaultsort=disabled]) {
+				background-color:#2E3D4C;
+			}
+		<?php } ?>
 		</style>
 	</head>
 	<body style="<?php if($settings['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
@@ -402,12 +410,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<div class="collapse" id="collapseVerify">
 						<br />
 						<div class="input-group">
-							<input autocomplete="off" class="form-control" type="text" id="link" placeholder="Modpack slug" aria-describedby="search" />
+							<input autocomplete="off" class="form-control <?php if($settings['dark']=="on") {echo "border-primary";}?>" type="text" id="link" placeholder="Modpack slug" aria-describedby="search" />
 							<div class="input-group-append">
-								<button class="btn btn-outline-secondary" onclick="get();" type="button" id="search">Search</button>
+								<button class="<?php if($settings['dark']=="on") { echo "btn btn-primary";} else { echo "btn btn-outline-secondary";} ?>" onclick="get();" type="button" id="search">Search</button>
 							</div>
 						</div>
-						<pre class="card border-secondary" style="white-space: pre-wrap;width: 100%" id="responseRaw">
+						<pre class="card border-primary" style="white-space: pre-wrap;width: 100%" id="responseRaw">
 							
 						</pre>
 						<h3 id="response-title"></h3>
@@ -457,7 +465,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 													solderRaw = solderRequest.responseText;
 													solder = JSON.parse(solderRaw);
 													var solderDIV = document.getElementById("solder");
-													solderDIV.innerHTML = "<b style='color:green'>This modpack is using Solder API - "+solder.api+" "+solder.version+" "+solder.stream+"</b>";
+													solderDIV.innerHTML = "<b class='text-success'>This modpack is using Solder API - "+solder.api+" "+solder.version+" "+solder.stream+"</b>";
 													console.log(solderRaw);
 													console.log("done");
 												}
@@ -466,7 +474,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 											solderRequest.send();
 											
 										} else {
-											solderDIV.innerHTML = "<b style='color:red'>This modpack is not using Solder API</b>";
+											solderDIV.innerHTML = "<b class='text-danger'>This modpack is not using Solder API</b>";
 										}
 										responseDIV.innerHTML = "<br /><b>Modpack Name: </b>"+responseObj.displayName;
 										responseDIV.innerHTML += "<br /><b>Author: </b>"+responseObj.user;
@@ -1462,7 +1470,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			}
 
 			function showFile(file, i) {
-				$("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="color:green;display:none" class="fas fa-check"></i><i id="times-' + i + '" style="color:red;display:none" class="fas fa-times"></i><i id="exc-' + i + '" style="color:orange;display:none" class="fas fa-exclamation"></i><i id="inf-' + i + '" style="color:darkcyan;display:none" class="fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
+				$("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="display:none" class="test-success fas fa-check"></i><i id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></i><i id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></i><i id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
 			}
 			$(document).ready(function() {
 				$(':file').change(function() {
@@ -1582,7 +1590,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									$("#fetch").hide();
 									$("#save").show();
 									for (var key in response) {
-										$("#forge-table").append('<tr id="forge-'+response[key]["id"]+'"><td scope="row">'+response[key]["mc"]+'</td><td>'+response[key]["name"]+'</td><td><a href="'+response[key]["link"]+'">'+response[key]["link"]+'</a></td><td><button id="button-add-'+response[key]["id"]+'" onclick="add(\''+response[key]["name"]+'\',\''+response[key]["link"]+'\',\''+response[key]["mc"]+'\',\''+response[key]["id"]+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><i id="cog-'+response[key]["id"]+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></i><i id="check-'+response[key]["id"]+'" style="display:none;color:green" class="fas fa-check fa-2x"></i><i id="times-'+response[key]["id"]+'" style="display:none;color:red" class="fas fa-times fa-2x"></i></td></tr>');
+										$("#forge-table").append('<tr id="forge-'+response[key]["id"]+'"><td scope="row">'+response[key]["mc"]+'</td><td>'+response[key]["name"]+'</td><td><a href="'+response[key]["link"]+'">'+response[key]["link"]+'</a></td><td><button id="button-add-'+response[key]["id"]+'" onclick="add(\''+response[key]["name"]+'\',\''+response[key]["link"]+'\',\''+response[key]["mc"]+'\',\''+response[key]["id"]+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><i id="cog-'+response[key]["id"]+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></i><i id="check-'+response[key]["id"]+'" style="display:none" class="text-success fas fa-check fa-2x"></i><i id="times-'+response[key]["id"]+'" style="display:none" class="text-danger fas fa-times fa-2x"></i></td></tr>');
 									}
 								}
 							}
@@ -1613,14 +1621,14 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					}
 				</script>
 				<h2>Available Forge Versions</h2>
-				<table class="table table-striped table-responsive sortable">
+				<table class="table table-striped table-responsive">
 					<thead>
 						<tr>
-							<th scope="col" style="width:10%" data-defaultsign="_19">Minecraft</th>
-							<th scope="col" style="width:15%" data-defaultsign="_19">Forge Version</th>
-							<th scope="col" style="width:55%" data-defaultsort="disabled">Link</th>
-							<th scope="col" style="width:15%" data-defaultsort="disabled"></th>
-							<th scope="col" style="width:5%" data-defaultsort="disabled"></th>
+							<th scope="col" style="width:10%">Minecraft</th>
+							<th scope="col" style="width:15%">Forge Version</th>
+							<th scope="col" style="width:55%">Link</th>
+							<th scope="col" style="width:15%"></th>
+							<th scope="col" style="width:5%"></th>
 						</tr>
 					</thead>
 					<tbody id="forge-table">
@@ -1838,7 +1846,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			}
 
 			function showFile(file, i) {
-				$("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="color:green;display:none" class="fas fa-check"></i><i id="times-' + i + '" style="color:red;display:none" class="fas fa-times"></i><i id="exc-' + i + '" style="color:orange;display:none" class="fas fa-exclamation"></i><i id="inf-' + i + '" style="color:darkcyan;display:none" class="fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
+				$("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="display:none" class="text-success fas fa-check"></i><i id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></i><i id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></i><i id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
 			}
 			$(document).ready(function() {
 				$(':file').change(function() {
@@ -2574,19 +2582,19 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<h1>Quick Settings</h1>
 				<hr>
 				<form method="POST">
-					<div class="custom-control custom-checkbox">
+					<div class="custom-control custom-switch">
 						<input <?php if($settings['dev_builds']=="on"){echo "checked";} if(json_decode($filecontents,true)['stream']=="Dev") {echo "checked disabled";} ?> type="checkbox" class="custom-control-input" name="dev_builds" id="dev_builds">
 						<label class="custom-control-label" for="dev_builds">Subscribe to dev builds</label>
 					</div>
-					<div class="custom-control custom-checkbox">
+					<div class="custom-control custom-switch">
 						<input <?php if($settings['dark']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="dark" id="dark">
 						<label class="custom-control-label" for="dark">Use dark theme - Work in progress</label>
 					</div>
-					<div class="custom-control custom-checkbox">
+					<div class="custom-control custom-switch">
 						<input <?php if($settings['use_verifier']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_verifier" id="use_verifier">
 						<label class="custom-control-label" for="use_verifier">Enable Solder Verifier - uses cookies</label>
 					</div>
-					<div class="custom-control custom-checkbox">
+					<div class="custom-control custom-switch">
 						<input <?php if($settings['use_tawkto']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_tawkto" id="use_tawkto">
 						<label class="custom-control-label" for="use_tawkto">Enable Tawk.to - uses cookies</label>
 					</div>

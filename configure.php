@@ -1,6 +1,7 @@
 <?php
 session_start();
 $config = include("./functions/config.php");
+$settings = include("./functions/settings.php");
 if(!isset($_GET['reconfig'])) {
 	if($config['configured']==true) {
 		header("Location: ".$config['dir']."login");
@@ -17,7 +18,11 @@ if(!isset($_GET['reconfig'])) {
 ?>
 <html>
 	<head>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<?php if($settings['dark']=="on") {
+			echo '<link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">';
+		} else {
+			echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">';
+		} ?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -29,7 +34,7 @@ if(!isset($_GET['reconfig'])) {
 			}
 		</style>
 	</head>
-	<body style="background-color: #f0f4f9">
+	<body style="<?php if($settings['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
 		<div class="container">
 			<div class="card">
 				<?php
