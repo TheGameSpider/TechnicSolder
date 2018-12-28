@@ -1995,7 +1995,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									2. login with your credentials <br />
 									3. write: <br />
 									<i>cd <?php echo dirname(dirname(get_included_files()[0])); ?> </i><br />
-									<i>git clone <?php if($newversion['stream']=="Dev") { echo "--single-branch --branch Dev"; } ?> https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate </i> <br />
+									<i>git clone <?php if($newversion['stream']=="Dev"||$settings['dev_builds']=="on") { echo "--single-branch --branch Dev"; } ?> https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate </i> <br />
 									<i>cp -a SolderUpdate/. TechnicSolder/</i> <br>
 									<i>rm -rf SolderUpdate</i> <br>
 									<i>chown -R www-data TechnicSolder</i>
