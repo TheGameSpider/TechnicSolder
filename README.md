@@ -1,7 +1,7 @@
 # TechnicSolder
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Latest Stable Version: v0.0.3.4](https://img.shields.io/badge/Latest%20Stable%20Version-v0.0.3.4-brightgreen.svg)
-![Latest Dev Version: v1.0.0.rc2](https://img.shields.io/badge/Latest%20Dev%20Version-v1.0.0.rc2-brightgreen.svg)
+![Latest Stable Version: v1.0.0.rc2](https://img.shields.io/badge/Latest%20Stable%20Version-v1.0.0.rc2-brightgreen.svg)
+[//]: <> (![Latest Dev Version: v1.0.0.rc2](https://img.shields.io/badge/Latest%20Dev%20Version-v1.0.0.rc2-brightgreen.svg))
 
 TechnicSolder is an API that sits between a modpack repository and the Technic Launcher. It allows you to easily manage multiple modpacks in one single location.
 
@@ -12,7 +12,7 @@ Solder also interfaces with the Technic Platform using an API key you can genera
 -- Technic
 
 # Installation
-> ***Note: If you already have a working web server with mysql, zip and curl extensions and enabled rewrite mod, you can [skip to step 6.](https://github.com/TheGameSpider/TechnicSolder#cloning-technicsolder-repository)***
+> ***Note: If you already have a working web server with mysql and zip extensions and enabled rewrite mod, you can [skip to step 6.](https://github.com/TheGameSpider/TechnicSolder#cloning-technicsolder-repository)***
 
 **1. Install Ubuntu Server 18.04 (https://www.ubuntu.com/download/server)** <br />
 **2. Login to Ubuntu with credentials you set.** <br />
@@ -29,7 +29,7 @@ Login as root <br />
 **4. Install WEB Server**<br />
 ```bash
 apt update
-apt -y install apache2 php libapache2-mod-php mysql-server php-mysql php-curl php-dev zlib1g-dev
+apt -y install apache2 php libapache2-mod-php mysql-server php-mysql php-dev zlib1g-dev
 ```
 The above command can take a while to complete. Now, you need to install PHP ZIP extension.<br />
 ```bash
