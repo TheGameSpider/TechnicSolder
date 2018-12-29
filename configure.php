@@ -152,7 +152,7 @@ if(!isset($_GET['reconfig'])) {
 						<input required name="db-user" type="text" class="form-control" id="db-user" placeholder="Database username"><br />
 						<input required name="db-name" type="text" class="form-control" id="db-name" placeholder="Database name"><br />
 						<input required name="db-pass" type="password" class="form-control" id="db-pass" placeholder="Database password">
-						<small id="errtext" class="form-text text-muted">Four tables will be created.</small>
+						<small id="errtext" class="form-text text-muted">Five tables will be created.</small>
 					</div>
 					<div class="form-group">
 						<label for="email">Installation details</label>
