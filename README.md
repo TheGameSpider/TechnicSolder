@@ -1,7 +1,7 @@
 # TechnicSolder
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Latest Stable Version: v1.0.0.rc4](https://img.shields.io/badge/Latest%20Stable%20Version-v1.0.0.rc4-brightgreen.svg)
-![Latest Dev Version: v1.0.0.rc4](https://img.shields.io/badge/Latest%20Dev%20Version-v1.0.0.rc4-brightgreen.svg)
+![Latest Dev Version: v1.0.0.rc5](https://img.shields.io/badge/Latest%20Dev%20Version-v1.0.0.rc5-brightgreen.svg)
 
 TechnicSolder is an API that sits between a modpack repository and the Technic Launcher. It allows you to easily manage multiple modpacks in one single location.
 

@@ -1082,8 +1082,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									$modq = mysqli_query($conn,"SELECT * FROM `mods` WHERE `id` = ".$bmod);
 									$moda = mysqli_fetch_array($modq);
 									?>
-								<tr <?php if($moda['mcversion']!==$user['minecraft'] ){echo 'class="table-warning"';} ?> id="mod-<?php echo $bmod ?>">
-									<td scope="row"><?php echo $moda['pretty_name']; if($moda['mcversion']!==$user['minecraft'] ){echo ' (For Minecraft '.$moda['mcversion'].')';}?></td>
+								<tr <?php if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'class="table-warning"';} ?> id="mod-<?php echo $bmod ?>">
+									<td scope="row"><?php echo $moda['pretty_name']; if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo ' (For Minecraft '.$moda['mcversion'].' - May not be compatible!)';}?></td>
 									<td><?php echo $moda['version'] ?></td>
 									<td><?php if(substr($_SESSION['perms'],1,1)=="1") { if($moda['name'] !== "forge"){ ?><button onclick="remove_mod(<?php echo $bmod ?>)" class="btn btn-danger"><i class="fas fa-times"></i></button><?php }} ?></td>
 								</tr>
@@ -1307,7 +1307,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						
 					</tbody>
 				</table>
-				<button id="btn-done" disabled class="btn btn-success btn-block" onclick="window.location.reload();">Save Mods and Refresh</button>
+				<button id="btn-done" disabled class="btn btn-success btn-block" onclick="window.location.reload();">Done</button>
 			</div>
 			<div class="card">
 				<h2>Available Mods</h2>
@@ -1471,7 +1471,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			}
 
 			function showFile(file, i) {
-				$("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="display:none" class="test-success fas fa-check"></i><i id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></i><i id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></i><i id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
+				$("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="display:none" class="text-success fas fa-check"></i><i id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></i><i id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></i><i id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
 			}
 			$(document).ready(function() {
 				$(':file').change(function() {
@@ -1702,11 +1702,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<p>These files will be extracted to modpack's root directory. (e.g. Config files, worlds, resource packs....)</p>
 			</div>
 			<div style="display: none" id="u-mods" class="card">
-				<h2>New Mods</h2>
+				<h2>New Files</h2>
 				<table class="table">
 					<thead>
 						<tr>
-							<th style="width:25%" scope="col">Mod</th>
+							<th style="width:25%" scope="col">File</th>
 							<th scope="col">Status</th>
 						</tr>
 					</thead>
@@ -1714,7 +1714,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						
 					</tbody>
 				</table>
-				<button id="btn-done" disabled class="btn btn-success btn-block" onclick="window.location.reload();">Save Mods and Refresh</button>
+				<button id="btn-done" disabled class="btn btn-success btn-block" onclick="window.location.reload();">Done</button>
 			</div>
 			<div class="card">
 				<h2>Available Files</h2>
@@ -1750,7 +1750,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			  <div class="modal-dialog" role="document">
 			    <div class="modal-content">
 			      <div class="modal-header">
-			        <h5 class="modal-title" id="rm">Delete mod <span id="mod-name-title"></span>?</h5>
+			        <h5 class="modal-title" id="rm">Delete file <span id="mod-name-title"></span>?</h5>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
