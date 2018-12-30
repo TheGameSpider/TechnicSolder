@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE);
 session_start();
 $config = include("./functions/config.php");
 $settings = include("./functions/settings.php");

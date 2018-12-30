@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE);
 session_start();
 $config = include("./functions/config.php");
 if($config['configured']!==true) {
@@ -650,7 +651,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<input hidden name="id" value="<?php echo $_GET['id'] ?>">
 					<?php if(mysqli_num_rows($clients)<1) {
 						?>
-						<span class="text-danger">There are no clinets in the databse. <a href="./clients">You can add them here</a></span>
+						<span class="text-danger">There are no clients in the databse. <a href="./clients">You can add them here</a></span>
 						<br />
 						<?php
 					} ?>
@@ -1038,7 +1039,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<input hidden name="id" value="<?php echo $_GET['id'] ?>">
 					<?php if(mysqli_num_rows($clients)<1) {
 						?>
-						<span class="text-danger">There are no clinets in the databse. <a href="./clients">You can add them here</a></span>
+						<span class="text-danger">There are no clients in the databse. <a href="./clients">You can add them here</a></span>
 						<br />
 						<?php
 					} ?>

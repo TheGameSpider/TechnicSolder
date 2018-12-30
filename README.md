@@ -20,7 +20,7 @@ Solder also interfaces with the Technic Platform using an API key you can genera
 ```bash
 sudo passwd root
 ```
-Write you current password, then set new root password
+Write your current password, then set new root password
 ```bash
 exit
 ```
