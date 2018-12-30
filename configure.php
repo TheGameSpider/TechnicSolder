@@ -19,7 +19,7 @@ if(!isset($_GET['reconfig'])) {
 ?>
 <html>
 	<head>
-		<?php if($settings['dark']=="on") {
+		<?php if($_SESSION['dark']=="on") {
 			echo '<link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">';
 		} else {
 			echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">';
@@ -35,7 +35,7 @@ if(!isset($_GET['reconfig'])) {
 			}
 		</style>
 	</head>
-	<body style="<?php if($settings['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
+	<body style="<?php if($_SESSION['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
 		<div class="container">
 			<div class="card">
 				<?php

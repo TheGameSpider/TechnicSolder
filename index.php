@@ -13,6 +13,12 @@ $url = $_SERVER['REQUEST_URI'];
 if(strpos($url, '?') !== false) {
 	$url = substr($url, 0, strpos($url, "?"));
 }
+if(isset($_GET['dark'])){
+	$_SESSION['dark'] = "on";
+}
+if(isset($_GET['light'])){
+	$_SESSION['dark'] = "off";
+}
 if(substr($url,-1)=="/") {
 	if($_SERVER['QUERY_STRING']!==""){
 		header("Location: " . rtrim($url,'/') . "?" . $_SERVER['QUERY_STRING']);
@@ -70,7 +76,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 	<head>
 		<link rel="icon" href="./resources/wrenchIcon.png" type="image/png" />
 		<title>Technic Solder</title>
-		<?php if($settings['dark']=="on") {
+		<?php if($_SESSION['dark']=="on") {
 			echo '<link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">';
 		} else {
 			echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">';
@@ -159,6 +165,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			.main {
 				margin:2em;
 				margin-left: 22em;
+				transition: 0.5s;
 			}
 			.card {
 				 padding: 2em;
@@ -168,7 +175,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				border-radius: 5px;
 				width: 100%;
 				height: 15em;
-				background-color: <?php if($settings['dark']=="on"){echo "#333";}else{echo "#ddd";} ?>;
+				background-color: <?php if($_SESSION['dark']=="on"){echo "#333";}else{echo "#ddd";} ?>;
 
 				transition: 0.2s;
 			}
@@ -188,9 +195,55 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				left: calc( 50% - 10em );
 			}
 			.upload-mods:hover{
-				background-color: <?php if($settings['dark']=="on"){echo "#444";}else{echo "#ccc";} ?>;
+				background-color: <?php if($_SESSION['dark']=="on"){echo "#444";}else{echo "#ccc";} ?>;
 			}
-			<?php if($settings['dark']=="on") {?>
+			.sidenav {
+				width:20em;
+				height: 100%;
+				position:fixed;
+				background-color: #3E4956;
+				z-index: 1050;
+				transition: 0.5s;
+			}
+			#logindiv {
+				width:25em;
+				margin:auto;
+				margin-top:15em;
+				padding:0px
+			}
+			@media only screen and (min-width: 1001px) {
+				#logoutside {
+					display:none;
+				}
+			}
+			@media only screen and (max-width: 1000px) {
+				#logindiv {
+					width: auto;
+					margin-top:5em;
+				}
+				#techniclogo {
+					cursor: pointer;
+				}
+				#dropdownMenuButton, #solderinfo, #welcome {
+					display: none;
+				}
+				.sidenav {
+					margin-left: -20em;
+					transition: 0.5s;
+				}
+				.sidenavexpand {
+					margin-left: 0em;
+					transition: 0.5s;
+				}
+				.main {
+					margin-left: 2em;
+					transition: 0.5s;
+				}
+				#logoutside {
+					display:block;
+				}
+			}
+			<?php if($_SESSION['dark']=="on") {?>
 			.custom-file-label::after {
 				background-color: #df691a;
 			}
@@ -202,13 +255,14 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			}
 		<?php } ?>
 		</style>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 	</head>
-	<body style="<?php if($settings['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
+	<body style="<?php if($_SESSION['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
 	<?php
 		if(uri("login")){
 		?>
 		<div class="container">
-			<div style="width:25em;margin:auto;margin-top:15em;padding:0px">
+			<div id="logindiv">
 				<img style="margin:auto;display:block" alt="Technic logo" height="80" src="./resources/wrenchIcon.svg">
 				<legend style="text-align:center;margin:1em 0px">Technic Solder</legend>
 				<form method="POST" action="dashboard">
@@ -242,26 +296,31 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		</script>
 		<!--End of Tawk.to Script-->
 	<?php } ?>
-		<nav class="navbar <?php if($settings['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
-  			<span class="navbar-brand"  href="#"><img alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($settings['dark']=="on") {echo "W";}?>.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span>
+		<nav class="navbar <?php if($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
+  			<span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span></span>
   			<span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  			<?php if($_SESSION['user']!==$config['mail']) { ?>
-  			<img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php 
-					$sql = mysqli_query($conn,"SELECT `icon` FROM `users` WHERE `name` = '".$_SESSION['user']."'");
-					$icon = mysqli_fetch_array($sql);
-					echo $icon['icon'];
-					 ?>">
+	  			<?php if($_SESSION['user']!==$config['mail']) { ?>
+	  			<img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php 
+						$sql = mysqli_query($conn,"SELECT `icon` FROM `users` WHERE `name` = '".$_SESSION['user']."'");
+						$icon = mysqli_fetch_array($sql);
+						echo $icon['icon'];
+						 ?>">
+						<?php } ?>
+				<span class="navbar-text"><?php echo $_SESSION['name'] ?> </span>
+				<div style="left: unset;right: 2px;" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					<a class="dropdown-item" href="?logout=true&logout=true" onclick="window.location = window.location+'?logout=true&logout=true'">Log Out</a>
+					<?php if($_SESSION['user']!==$config['mail']) { ?>
+					<a class="dropdown-item" href="./user" onclick="window.location = './user'">My account</a>
 					<?php } ?>
-			<span class="navbar-text"><?php echo $_SESSION['name'] ?> </span>
-			<div style="left: unset;right: 2px;" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				<a class="dropdown-item" href="?logout=true&logout=true" onclick="window.location = window.location+'?logout=true&logout=true'">Log Out</a>
-				<?php if($_SESSION['user']!==$config['mail']) { ?>
-				<a class="dropdown-item" href="./user" onclick="window.location = './user'">My account</a>
-				<?php } ?>
-			</div>
-					 </span>
+				</div>
+			</span>
 		</nav>
-		<div class="text-white" style="width:20em;height: 100%;position:fixed;background-color: #3E4956">
+		<script type="text/javascript">
+			$("#techniclogo").click(function(){
+				$("#sidenav").toggleClass("sidenavexpand");
+			});
+		</script>
+		<div id="sidenav" class="text-white sidenav">
 			<ul class="nav nav-tabs" style="height:100%">
 				<li class="nav-item">
 					<a class="nav-link " href="./dashboard"><i class="fas fa-tachometer-alt fa-lg"></i></a>
@@ -275,7 +334,44 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<li class="nav-item">
 					<a id="nav-settings" class="nav-link" href="#settings" data-toggle="tab" role="tab"><i class="fas fa-sliders-h fa-lg"></i></a>
 				</li>
+				<div style="position:absolute;bottom:5em;left:4em;" class="custom-control custom-switch">
+					<input <?php if($_SESSION['dark']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="dark" id="dark">
+					<label class="custom-control-label" for="dark">Dark theme</label>
+				</div>
 			</ul>
+			<script type="text/javascript">
+				$("#dark").click(function(){
+					if($("#dark").is(":checked")){
+						if(window.location.href.indexOf("?light") > -1 || window.location.href.indexOf("&light") > -1) {
+							if(window.location.href.indexOf("?light") > -1) {
+								window.location.href = window.location.href.replace("?light","?dark");
+							} else {
+								window.location.href = window.location.href.replace("&light","&dark");
+							}
+						} else {
+							if(window.location.href.indexOf("?") > -1) {
+								window.location.href = window.location.href+"&dark";
+							} else {
+								window.location.href = window.location.href+"?dark";
+							}							
+						}
+					} else {
+						if(window.location.href.indexOf("?dark") > -1 || window.location.href.indexOf("&dark") > -1) {
+							if(window.location.href.indexOf("?dark") > -1) {
+								window.location.href = window.location.href.replace("?dark","?light");
+							} else {
+								window.location.href = window.location.href.replace("&dark","&light");
+							}
+						} else {
+							if(window.location.href.indexOf("?") > -1) {
+								window.location.href = window.location.href+"&light";
+							} else {
+								window.location.href = window.location.href+"?light";
+							}							
+						}
+					}
+				});
+			</script>
 			<div class="tab-content">
 				<div class="tab-pane active" id="modpacks" role="tabpanel">
 					<div style="overflow:auto;height: calc( 100% - 62px )">
@@ -314,33 +410,38 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					</div></a>
 				</div>
 				<div class="tab-pane" id="settings" role="tabpanel">
-					<p class="text-muted">SETTINGS</p>
-					<?php if($_SESSION['user']==$config['mail']) { ?>
-					<a href="./settings"><div class="modpack">
-						<p><i class="fas fa-cog fa-lg"></i> <span style="margin-left:inherit;">Quick settings</span></p>
-					</div></a>	
-					<a href="./configure.php?reconfig"><div class="modpack">
-						<p><i class="fas fa-cogs fa-lg"></i> <span style="margin-left:inherit;">Solder Configuration</span></p>
-					</div></a>
-					<a href="./admin"><div class="modpack">
-						<p><i class="fas fa-user-tie fa-lg"></i> <span style="margin-left:inherit;">Admin</span></p>
-					</div></a>
-				<?php } else { ?>
-					<a href="./user"><div class="modpack">
-						<p><i class="fas fa-user fa-lg"></i> <span style="margin-left:inherit;">My Account</span></p>
-					</div></a>
-				<?php } ?>
-				<?php if(substr($_SESSION['perms'],6,1)=="1") { ?>
-					<a href="./clients"><div class="modpack">
-						<p><i class="fas fa-users fa-lg"></i> <span style="margin-left:inherit;">Clients</span></p>
-					</div></a>	
+					<div style="overflow:auto;height: calc( 100% - 62px )">
+						<p class="text-muted">SETTINGS</p>
+						<?php if($_SESSION['user']==$config['mail']) { ?>
+						<a href="./settings"><div class="modpack">
+							<p><i class="fas fa-cog fa-lg"></i> <span style="margin-left:inherit;">Quick settings</span></p>
+						</div></a>	
+						<a href="./configure.php?reconfig"><div class="modpack">
+							<p><i class="fas fa-cogs fa-lg"></i> <span style="margin-left:inherit;">Solder Configuration</span></p>
+						</div></a>
+						<a href="./admin"><div class="modpack">
+							<p><i class="fas fa-user-tie fa-lg"></i> <span style="margin-left:inherit;">Admin</span></p>
+						</div></a>
+					<?php } else { ?>
+						<a href="./user"><div class="modpack">
+							<p><i class="fas fa-user fa-lg"></i> <span style="margin-left:inherit;">My Account</span></p>
+						</div></a>
 					<?php } ?>
-					<a href="./about"><div class="modpack">
-						<p><i class="fas fa-info-circle fa-lg"></i> <span style="margin-left:inherit;">About Solder.cf</span></p>
-					</div></a>
-					<a href="./update"><div class="modpack">
-						<p><i class="fas fa-arrow-alt-circle-up fa-lg"></i> <span style="margin-left:inherit;">Update</span></p>
-					</div></a>
+					<?php if(substr($_SESSION['perms'],6,1)=="1") { ?>
+						<a href="./clients"><div class="modpack">
+							<p><i class="fas fa-users fa-lg"></i> <span style="margin-left:inherit;">Clients</span></p>
+						</div></a>	
+						<?php } ?>
+						<a href="./about"><div class="modpack">
+							<p><i class="fas fa-info-circle fa-lg"></i> <span style="margin-left:inherit;">About Solder.cf</span></p>
+						</div></a>
+						<a href="./update"><div class="modpack">
+							<p><i class="fas fa-arrow-alt-circle-up fa-lg"></i> <span style="margin-left:inherit;">Update</span></p>
+						</div></a>
+						<a style="margin-bottom: 3em;" href="?logout=true&logout=true" id="logoutside"><div class="modpack">
+							<p><i class="fas fa-sign-out-alt fa-lg"></i> <span style="margin-left:inherit;">Logout</span></p>
+						</div></a>
+					</div>
 				</div>
 			</div>	
 		</div>
@@ -358,20 +459,20 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				}
 				if($version['version']!==$newversion['version']) {
 				?>
-				<div class="card alert-info <?php if($settings['dark']=="on"){echo "text-white";} ?>">
+				<div class="card alert-info <?php if($_SESSION['dark']=="on"){echo "text-white";} ?>">
 					<p>Version <b><?php echo $newversion['version'] ?></b> is now available!</p>
 					<p><?php echo $newversion['ltcl']; ?></p>
 				</div>
 			<?php } ?>
 				<div class="card">
 					<center>
-						<p style="font-size: 4rem" class="display-3">Welcome to Solder<span class="text-muted">.cf</span></p>
-						<p style="font-size: 2rem" class="display-4">The best Application to create and manage your modpacks.</p>
+						<p class="display-4"><span id="welcome" >Welcome to </span>Solder<span class="text-muted">.cf</span></p>
+						<p class="display-5">The best Application to create and manage your modpacks.</p>
 					</center>
 					<hr />
 					<button class="btn btn-success" data-toggle="collapse" href="#collapseMp" role="button" aria-expanded="false" aria-controls="collapseMp">Instant Modpack</button>
 					<div class="collapse" id="collapseMp">
-						<div class="card alert-info <?php if($settings['dark']=="on"){echo "text-white";} ?>">
+						<div class="card alert-info <?php if($_SESSION['dark']=="on"){echo "text-white";} ?>">
 							Name your modpack, drag and drop your mod files. Solder will do the rest in a few seconds.<hr>
 							This feature will be available soon.
 						</div>
@@ -414,9 +515,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<div class="collapse" id="collapseVerify">
 						<br />
 						<div class="input-group">
-							<input autocomplete="off" class="form-control <?php if($settings['dark']=="on") {echo "border-primary";}?>" type="text" id="link" placeholder="Modpack slug" aria-describedby="search" />
+							<input autocomplete="off" class="form-control <?php if($_SESSION['dark']=="on") {echo "border-primary";}?>" type="text" id="link" placeholder="Modpack slug" aria-describedby="search" />
 							<div class="input-group-append">
-								<button class="<?php if($settings['dark']=="on") { echo "btn btn-primary";} else { echo "btn btn-outline-secondary";} ?>" onclick="get();" type="button" id="search">Search</button>
+								<button class="<?php if($_SESSION['dark']=="on") { echo "btn btn-primary";} else { echo "btn btn-outline-secondary";} ?>" onclick="get();" type="button" id="search">Search</button>
 							</div>
 						</div>
 						<pre class="card border-primary" style="white-space: pre-wrap;width: 100%" id="responseRaw">
@@ -2587,10 +2688,6 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<div class="custom-control custom-switch">
 						<input <?php if($settings['dev_builds']=="on"){echo "checked";} if(json_decode($filecontents,true)['stream']=="Dev") {echo "checked disabled";} ?> type="checkbox" class="custom-control-input" name="dev_builds" id="dev_builds">
 						<label class="custom-control-label" for="dev_builds">Subscribe to dev builds</label>
-					</div>
-					<div class="custom-control custom-switch">
-						<input <?php if($settings['dark']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="dark" id="dark">
-						<label class="custom-control-label" for="dark">Use dark theme - Work in progress</label>
 					</div>
 					<div class="custom-control custom-switch">
 						<input <?php if($settings['use_verifier']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_verifier" id="use_verifier">
