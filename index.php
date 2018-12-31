@@ -297,7 +297,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<!--End of Tawk.to Script-->
 	<?php } ?>
 		<nav class="navbar <?php if($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
-  			<span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']." ".json_decode($filecontents,true)['stream']; ?></span></span></span>
+  			<span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
   			<span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	  			<?php if($_SESSION['user']!==$config['mail']) { ?>
 	  			<img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php 
@@ -575,7 +575,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 													console.log("done");
 												}
 											}
-											solderRequest.open("GET", "http://tgsapi.8u.cz/resolder.php?link="+responseObj.solder);
+											solderRequest.open("GET", "./functions/resolder.php?link="+responseObj.solder);
 											solderRequest.send();
 											
 										} else {
@@ -611,7 +611,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									}
 								}
 							};
-							request.open("GET", "http://tgsapi.8u.cz/platform.php?slug="+link);
+							request.open("GET", "./functions/platform.php?slug="+link);
 							request.send();
 						}
 					</script>
@@ -780,8 +780,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<input hidden type="text" name="id" value="<?php echo $_GET['id'] ?>">
 						
 						<br />
-						<button id="create1" type="submit" name="type" value="new" class="btn btn-primary">Create Empty Build</button>
-						<button id="create2" type="submit" name="type" value="update" class="btn btn-primary">Update latest version</button>
+						<div class="btn-group">
+							<button id="create1" type="submit" name="type" value="new" class="btn btn-primary">Create Empty Build</button>
+							<button id="create2" type="submit" name="type" value="update" class="btn btn-primary">Update latest version</button>
+						</div>
+						
 					</form><br />
 					<h2>Copy Build</h2>
 					<hr>
@@ -879,15 +882,15 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<div class="card">
 					<h2>Builds</h2>
 					<hr>
-					<table class="table table-striped">
+					<table class="table table-responsive sortable table-striped">
 						<thead>
 							<tr>
-								<th style="width:20%" scope="col">Build</th>
-								<th style="width:20%" scope="col">Minecraft version</th>
-								<th style="width:20%" scope="col">Java version</th>
-								<th style="width:5%" scope="col">Mods</th>
-								<th style="width:30%" scope="col"></th>
-								<th style="width:5%" scope="col"></th>
+								<th style="width:20%" data-defaultsign="AZ" scope="col">Build</th>
+								<th style="width:20%" data-defaultsign="AZ" scope="col">Minecraft version</th>
+								<th style="width:20%" data-defaultsign="AZ" scope="col">Java version</th>
+								<th style="width:5%" data-defaultsign="_19" scope="col">Mods</th>
+								<th style="width:30%" data-defaultsign="disabled" scope="col"></th>
+								<th style="width:5%" data-defaultsign="disabled" scope="col"></th>
 							</tr>
 						</thead>
 						<tbody id="table-builds">
@@ -2716,18 +2719,39 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<h1>Clients</h1>
 				<hr>
 				<h3>Add Client</h3>
-				<form action="./functions/new-client.php">
+				<form class="needs-validation" novalidate action="./functions/new-client.php">
 					<div class="form-row">
 						<div class="col">
 							<input type="text" name="name" class="form-control" required placeholder="Name">
 						</div>
 						<div class="col">
-							<input type="text" name="uuid" class="form-control" required placeholder="UUID">
+							<input pattern="^[a-f0-9]{8}[-][a-f0-9]{4}[-][a-f0-9]{4}[-][a-f0-9]{4}[-][a-f0-9]{12}$" type="text" name="uuid" class="form-control" required placeholder="UUID">
+							<div class="invalid-feedback">
+								This in not a valid Client ID.
+							</div>
 						</div>
+						
 					</div>
 					<br>
 					<input type="submit" value="Save" class="btn btn-primary">
 				</form>
+				<script>
+					(function() {
+						'use strict';
+						window.addEventListener('load', function() {
+							var forms = document.getElementsByClassName('needs-validation');
+							var validation = Array.prototype.filter.call(forms, function(form) {
+							form.addEventListener('submit', function(event) {
+								if (form.checkValidity() === false) {
+									event.preventDefault();
+									event.stopPropagation();
+								}
+									form.classList.add('was-validated');
+								}, false);
+							});
+						}, false);
+					})();
+				</script>
 				<table class="table table-striped sortable">
 					<thead>
 						<tr>
