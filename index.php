@@ -8,6 +8,7 @@ if($config['configured']!==true) {
 }
 $settings = include("./functions/settings.php");
 $config = require("./functions/config.php");
+$cache = json_decode(file_get_contents("./functions/cache.json"),true);
 $dbcon = require("./functions/dbconnect.php");
 $url = $_SERVER['REQUEST_URI'];
 if(strpos($url, '?') !== false) {
@@ -77,17 +78,16 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<link rel="icon" href="./resources/wrenchIcon.png" type="image/png" />
 		<title>Technic Solder</title>
 		<?php if($_SESSION['dark']=="on") {
-			echo '<link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">';
+			echo '<link rel="stylesheet" href="./resources/bootstrap/dark/bootstrap.min.css">';
 		} else {
-			echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">';
+			echo '<link rel="stylesheet" href="./resources/bootstrap/bootstrap.min.css">';
 		} ?>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-		<script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>
-		<script src="./resources/bootstrap-sortable.js"></script>
-		<link rel="stylesheet" href="./resources/bootstrap-sortable.css" type="text/css">
-
+		<script src="./resources/js/jquery.min.js"></script>
+		<script src="./resources/js/popper.min.js"></script>
+		<script src="./resources/bootstrap/bootstrap.min.js"></script>
+		<script src="./resources/js/fontawesome.js"></script>
+		<script src="./resources/bootstrap/bootstrap-sortable.js"></script>
+		<link rel="stylesheet" href="./resources/bootstrap/bootstrap-sortable.css" type="text/css">
 		<style type="text/css">
 
 			.nav-tabs .nav-link {
@@ -211,9 +211,41 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				margin-top:15em;
 				padding:0px
 			}
+			.d-icon {
+				font-size: 0.5em;
+				vertical-align: middle;
+				margin-right: 0.5em;
+			}
+			.w-text {
+				vertical-align: middle;
+			}
 			@media only screen and (min-width: 1001px) {
 				#logoutside {
 					display:none;
+				}
+			}
+			@media only screen and (min-width: 1251px), (max-width: 780px) {
+				.w-sm {
+					display: none;
+				}
+			}
+			@media only screen and (max-width: 780px) {
+				.row {
+					display: block;
+				}
+				.col-4 {
+					max-width: unset;
+				}
+			}
+
+			@media only screen and (max-width: 1250px) and (min-width: 781px) {
+				.w-lg {
+					display: none;
+				}
+			}
+			@media only screen and (max-width: 1500px) and (min-width: 781px), (max-width: 450px) {
+				.d-icon {
+					display: none;
 				}
 			}
 			@media only screen and (max-width: 1000px) {
@@ -378,12 +410,37 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<p class="text-muted">MODPACKS</p>
 						<?php
 						$result = mysqli_query($conn, "SELECT * FROM `modpacks`");
+						$totaldownloads=0;
+						$totalruns=0;
+						$totallikes=0;
 						if(mysqli_num_rows($result)!==0) {
 							while($modpack=mysqli_fetch_array($result)){
+								if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
+									$info = $cache[$modpack['name']]['info'];
+								} else {
+									if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
+										$cache[$modpack['name']]['time'] = time();
+										$cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
+										$cache[$modpack['name']]['info'] = $info;
+										$ws = json_encode($cache);
+										file_put_contents("./functions/cache.json", $ws);
+									} else {
+										$info = $cache[$modpack['name']]['info'];
+										$notechnic = true;
+									}
+								}
+								if(isset($cache[$modpack['name']]['icon'])&&$cache[$modpack['name']]['icon']!=="") {
+									$info_icon = "data:image/png;base64, ".$cache[$modpack['name']]['icon'];
+								} else {
+									$info_icon = $modpack['icon'];
+								}
+								$totaldownloads = $totaldownloads + $info['downloads'];
+								$totalruns = $totalruns + $info['runs'];
+								$totallikes = $totallikes + $info['ratings'];
 								?>
 								<a href="./modpack?id=<?php echo $modpack['id'] ?>">
 									<div class="modpack">
-										<p class="text-white"><img alt="<?php echo $modpack['display_name'] ?>" class="d-inline-block align-top" height="25px" src="<?php echo $modpack['icon'] ?>"> <?php echo $modpack['display_name'] ?></p>
+										<p class="text-white"><img alt="<?php echo $modpack['display_name'] ?>" class="d-inline-block align-top" height="25px" src="<?php echo $info_icon; ?>"> <?php echo $modpack['display_name'] ?></p>
 									</div>
 								</a>
 							<?php
@@ -453,9 +510,19 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<?php
 				$version = json_decode(file_get_contents("./api/version.json"),true);
 				if($version['stream']=="Dev"||$settings['dev_builds']=="on") {
-					$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true);
+					if($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true)) {
+						$checked = true;
+					} else {
+						$checked = false;
+						$newversion = $version;
+					}
 				} else {
-					$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
+					if($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true)) {
+						$checked = true;
+					} else {
+						$checked = false;
+						$newversion = $version;
+					}
 				}
 				if($version['version']!==$newversion['version']) {
 				?>
@@ -463,21 +530,378 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<p>Version <b><?php echo $newversion['version'] ?></b> is now available!</p>
 					<p><?php echo $newversion['ltcl']; ?></p>
 				</div>
-			<?php } ?>
+			<?php } 
+			if(!$checked) {
+				?>
+				<div class="card alert-warning">
+					<b>Warning! </b>Cannot check for updates!
+				</div>
+				<?php
+			}
+			if(isset($notechnic) && $notechnic) {
+			?>
+				<div class="card alert-warning">
+					<b>Warning! </b>Cannot connect to Technic!
+				</div>
+				<?php
+			} else {
+				if($totaldownloads>99999999) {
+					$downloadsbig = number_format($totaldownloads/1000000,0)."M";
+					$downloadssmall = number_format($totaldownloads/1000000000,1)."G";
+				} else if($totaldownloads>9999999) {
+					$downloadsbig = number_format($totaldownloads/1000000,0)."M";
+					$downloadssmall = number_format($totaldownloads/1000000,0)."M";
+				} else if($totaldownloads>999999) {
+					$downloadsbig = number_format($totaldownloads/1000000,1)."M";
+					$downloadssmall = number_format($totaldownloads/1000000,1)."M";
+				} else if ($totaldownloads>99999) {
+					$downloadsbig = number_format($totaldownloads/1000,0)."K";
+					$downloadssmall = number_format($totaldownloads/1000000,1)."M";
+				} else if ($totaldownloads>9999) {
+					$downloadsbig = number_format($totaldownloads/1000,1)."K";
+					$downloadssmall = number_format($totaldownloads/1000,0)."K";
+				} else if ($totaldownloads>999) {
+					$downloadsbig = number_format($totaldownloads,0);
+					$downloadssmall = number_format($totaldownloads/1000,1)."K";
+				} else if ($totaldownloads>99) {
+					$downloadsbig = number_format($totaldownloads,0);
+					$downloadssmall = number_format($totaldownloads/1000,1)."K";
+				} else {
+					$downloadsbig = $totaldownloads;
+					$downloadssmall = $totaldownloads;
+				}
+				if($totalruns>99999999) {
+					$runsbig = number_format($totalruns/1000000,0)."M";
+					$runssmall = number_format($totalruns/1000000000,1)."G";
+				} else if($totalruns>9999999) {
+					$runsbig = number_format($totalruns/1000000,0)."M";
+					$runssmall = number_format($totalruns/1000000,0)."M";
+				} else if($totalruns>999999) {
+					$runsbig = number_format($totalruns/1000000,1)."M";
+					$runssmall = number_format($totalruns/1000000,1)."M";
+				} else if ($totalruns>99999) {
+					$runsbig = number_format($totalruns/1000,0)."K";
+					$runssmall = number_format($totalruns/1000000,1)."M";
+				} else if ($totalruns>9999) {
+					$runsbig = number_format($totalruns/1000,1)."K";
+					$runssmall = number_format($totalruns/1000,0)."K";
+				} else if ($totalruns>999) {
+					$runsbig = number_format($totalruns,0);
+					$runssmall = number_format($totalruns/1000,1)."K";
+				} else if ($totalruns>99) {
+					$runsbig = number_format($totalruns,0);
+					$runssmall = number_format($totalruns/1000,1)."K";
+				} else {
+					$runsbig = $totalruns;
+					$runssmall = $totalruns;
+				}
+				if($totallikes>99999999) {
+					$likesbig = number_format($totallikes/1000000,0)."M";
+					$likessmall = number_format($totallikes/1000000000,1)."G";
+				} else if($totallikes>9999999) {
+					$likesbig = number_format($totallikes/1000000,0)."M";
+					$likessmall = number_format($totallikes/1000000,0)."M";
+				} else if($totallikes>999999) {
+					$likesbig = number_format($totallikes/1000000,1)."M";
+					$likessmall = number_format($totallikes/1000000,1)."M";
+				} else if ($totallikes>99999) {
+					$likesbig = number_format($totallikes/1000,0)."K";
+					$likessmall = number_format($totallikes/1000000,1)."M";
+				} else if ($totallikes>9999) {
+					$likesbig = number_format($totallikes/1000,1)."K";
+					$likessmall = number_format($totallikes/1000,0)."K";
+				} else if ($totallikes>999) {
+					$likesbig = number_format($totallikes,0);
+					$likessmall = number_format($totallikes/1000,1)."K";
+				} else if ($totallikes>99) {
+					$likesbig = number_format($totallikes,0);
+					$likessmall = number_format($totallikes/1000,1)."K";
+				} else {
+					$likesbig = $totallikes;
+					$likessmall = $totallikes;
+				}
+
+				?>
+					<div style="margin-left: 0;margin-right: 0" class="row">
+						<div class="col-4">
+							<div class="card text-white bg-success" style="padding: 0">
+								<div class="card-header">Total Runs</div>
+								<div class="card-body">
+									<center>
+										<h1 class="display-2 w-lg"><i class="fas fa-play d-icon"></i><span class="w-text"><?php echo $runsbig ?></span></h1>
+										<h1 class="display-4 w-sm"><i class="fas fa-play d-icon"></i><?php echo $runssmall ?></h1>
+									</center>
+								</div>
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="card bg-info text-white" style="padding: 0">
+								<div class="card-header">Total Downloads</div>
+								<div class="card-body">
+									<center>
+										<h1 class="display-2 w-lg"><i class="d-icon fas fa-download"></i><span class="w-text"><?php echo $downloadsbig ?></span></h1>
+										<h1 class="display-4 w-sm"><i class="d-icon fas fa-download"></i><?php echo $downloadssmall ?></h1>
+									</center>
+								</div>
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="card bg-primary text-white" style="padding: 0">
+								<div class="card-header">Total Likes</div>
+								<div class="card-body">
+									<center>
+										<h1 class="display-2 w-lg"><i class="fas fa-heart d-icon"></i><span class="w-text"><?php echo $likesbig ?></span></h1>
+										<h1 class="display-4 w-sm"><i class="fas fa-heart d-icon"></i><?php echo $likessmall ?></h1>
+									</center>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
 				<div class="card">
 					<center>
 						<p class="display-4"><span id="welcome" >Welcome to </span>Solder<span class="text-muted">.cf</span></p>
 						<p class="display-5">The best Application to create and manage your modpacks.</p>
 					</center>
 					<hr />
+					<?php if(substr($_SESSION['perms'],0,1)=="1" && substr($_SESSION['perms'],1,1)=="1") { ?>
 					<button class="btn btn-success" data-toggle="collapse" href="#collapseMp" role="button" aria-expanded="false" aria-controls="collapseMp">Instant Modpack</button>
 					<div class="collapse" id="collapseMp">
-						<div class="card alert-info <?php if($_SESSION['dark']=="on"){echo "text-white";} ?>">
-							Name your modpack, drag and drop your mod files. Solder will do the rest in a few seconds.<hr>
-							This feature will be available soon.
+						<form method="POST" action="./functions/instant-modpack.php">
+							<br>
+							<input autocomplete="off" required id="dn" class="form-control" type="text" name="display_name" placeholder="Modpack name" />
+							<br />
+							<input autocomplete="off" required id="slug" pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" class="form-control" type="text" name="name" placeholder="Modpack slug" />
+							<br />
+							<label for="java">Select java version</label>
+							<select name="java" class="form-control">
+								<option <?php if($user['java']=="1.8"){ echo "selected"; } ?> value="1.8">1.8</option>
+								<option <?php if($user['java']=="1.7"){ echo "selected"; } ?> value="1.7">1.7</option>
+								<option <?php if($user['java']=="1.6"){ echo "selected"; } ?> value="1.6">1.6</option>
+							</select> <br />
+							<label for="memory">Memory (RAM in MB)</label>
+							<input required class="form-control" type="number" id="memory" name="memory" value="2048" min="1024" max="65536" placeholder="2048" step="512">
+							<br />
+							<label for="versions">Select minecraft version</label>
+							<select required id="versions" name="versions" class="form-control">
+							<?php
+							
+							$vres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'forge'");
+							if(mysqli_num_rows($vres)!==0) {
+								while($version = mysqli_fetch_array($vres)) {
+									?><option <?php if($modslist[0]==$version['id']){ echo "selected"; } ?> value="<?php echo $version['id']?>"><?php echo $version['mcversion'] ?> - Forge <?php echo $version['version'] ?></option><?php
+								}
+								echo "</select>";
+							} else {
+								echo "</select>";
+								echo "<div style='display:block' class='invalid-feedback'>There are no versions available. Please fetch versions in the <a href='./lib-forges'>Forge Library</a></div>";
+							}
+							?>
+							<br />
+							<input autocomplete="off" id="modlist" required readonly class="form-control" type="text" name="modlist" placeholder="Mods to add" />
+							<br />
+							<script type="text/javascript">
+								$("#dn").on("keyup", function(){
+									var slug = slugify($(this).val());
+									$("#slug").val(slug);
+								});
+								function slugify (str) {
+									str = str.replace(/^\s+|\s+$/g, '');
+									str = str.toLowerCase();
+									var from = "àáãäâèéëêìíïîòóöôùúüûñšç·/_,:;";
+									var to = "aaaaaeeeeiiiioooouuuunsc------";
+									for (var i=0, l=from.length ; i<l ; i++) {
+										str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+									}
+									str = str.replace(/[^a-z0-9 -]/g, '')
+										.replace(/\s+/g, '-')
+										.replace(/-+/g, '-');
+									return str;
+								}
+							</script>
+							<input type="submit" id="submit" disabled class="btn btn-primary btn-block" value="Create">
+						</form>
+						<div id="upload-card" class="card">
+							<h2>Upload mods</h2>
+							<div class="card-img-bottom">
+								<form id="modsform" enctype="multipart/form-data">
+									<div class="upload-mods">
+										<center>
+											<div>
+												<?php
+												if(substr($_SESSION['perms'],3,1)=="1") {
+													echo "
+													Drag n' Drop .jar files here.
+													<br />
+													<i class='fas fa-upload fa-4x'></i>
+													";
+												} else {
+													echo "
+													Insufficient permissions!
+													<br />
+													<i class='fas fa-times fa-4x'></i>
+													";
+												} ?>
+											</div>									
+										</center>
+										<input <?php if(substr($_SESSION['perms'],3,1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple/>
+									</div>
+								</form>
+							</div>
 						</div>
+						<div style="display: none" id="u-mods" class="card">
+							<h2>Mods</h2>
+							<table class="table">
+								<thead>
+									<tr>
+										<th style="width:25%" scope="col">Mod</th>
+										<th scope="col">Status</th>
+									</tr>
+								</thead>
+								<tbody id="table-mods">
+									
+								</tbody>
+							</table>
+							<button id="btn-done" disabled class="btn btn-success btn-block" onclick="againMods();">Add more Mods</button>
+						</div>
+						<script type="text/javascript">
+							var formdisabled = true;
+							$('#modsform').submit(function() {
+								if(formDisabled) {
+									return false;
+								} else {
+									return true;
+								}
+							});
+							var addedmodslist = [];
+							mn = 1;
+							function againMods() {
+								$("#btn-done").attr("disabled",true);
+								$("#table-mods").html("");
+								$("#upload-card").show();
+								$("#u-mods").hide();
+								addedmodslist = [];
+								mn = 1;
+							}
+							function sendFile(file, i) {
+								formdisabled = true;
+								$("#submit").attr("disabled",true);
+								var formData = new FormData();
+								var request = new XMLHttpRequest();
+								formData.set('fiels', file);
+								request.open('POST', './functions/send_mods.php');
+								request.upload.addEventListener("progress", function(evt) {
+									if (evt.lengthComputable) {
+										var percentage = evt.loaded / evt.total * 100;
+										$("#" + i).attr('aria-valuenow', percentage + '%');
+										$("#" + i).css('width', percentage + '%');
+										request.onreadystatechange = function() {
+											if (request.readyState == 4) {
+												if (request.status == 200) {
+													console.log(request.response);
+													response = JSON.parse(request.response);
+													if(response.modid) {
+														if(! $('#modlist').val().split(",").includes(response.modid.toString())) {
+															addedmodslist.push(response.modid);
+														}
+													}
+													if ( mn == modcount ) {
+														if(addedmodslist.length > 0) {
+															if($('#modlist').val().length > 0) {
+																$('#modlist').val($('#modlist').val() + "," + addedmodslist);
+															} else {
+																$('#modlist').val($('#modlist').val() + addedmodslist);
+															}
+														}
+														if($('#modlist').val().length > 0) {
+															console.log($('#modlist').val().length);
+															$("#submit").attr("disabled",false);
+															formdisabled = false;
+														}
+														$("#btn-done").attr("disabled",false);
+													} else {
+														mn = mn + 1;
+													}
+													
+													switch(response.status) {
+														case "succ":
+														{
+															$("#cog-" + i).hide();
+															$("#check-" + i).show();
+															$("#" + i).removeClass("progress-bar-striped progress-bar-animated");
+															$("#" + i).addClass("bg-success");
+															$("#info-" + i).text(response.message);
+															$("#" + i).attr("id", i + "-done");
+															break;
+														}
+														case "error":
+														{
+															$("#cog-" + i).hide();
+															$("#times-" + i).show();
+															$("#" + i).removeClass("progress-bar-striped progress-bar-animated");
+															$("#" + i).addClass("bg-danger");
+															$("#info-" + i).text(response.message);
+															$("#" + i).attr("id", i + "-done");
+															break;
+														}
+														case "warn":
+														{
+															$("#cog-" + i).hide();
+															$("#exc-" + i).show();
+															$("#" + i).removeClass("progress-bar-striped progress-bar-animated");
+															$("#" + i).addClass("bg-warning");
+															$("#info-" + i).text(response.message);
+															$("#" + i).attr("id", i + "-done");	
+															break;
+														}
+														case "info":
+														{
+															$("#cog-" + i).hide();
+															$("#inf-" + i).show();
+															$("#" + i).removeClass("progress-bar-striped progress-bar-animated");
+															$("#" + i).addClass("bg-info");
+															$("#info-" + i).text(response.message);
+															$("#" + i).attr("id", i + "-done");	
+															break;
+														}
+													}
+												} else {
+													$("#cog-" + i).hide();
+													$("#times-" + i).show();
+													$("#" + i).removeClass("progress-bar-striped progress-bar-animated");
+													$("#" + i).addClass("bg-danger");
+													$("#info-" + i).text("An error occured: " + request.status);
+													$("#" + i).attr("id", i + "-done");
+												}
+											}
+										}
+									}
+								}, false);
+								request.send(formData);
+							}
+
+							function showFile(file, i) {
+								$("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="display:none" class="text-success fas fa-check"></i><i id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></i><i id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></i><i id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
+							}
+							$(document).ready(function() {
+								$(':file').change(function() {
+									$("#upload-card").hide();
+									$("#u-mods").show();
+									modcount = this.files.length;
+									for (var i = 0; i < this.files.length; i++) {
+										var file = this.files[i];
+										showFile(file, i);
+									}
+									for (var i = 0; i < this.files.length; i++) {
+										var file = this.files[i];
+										sendFile(file, i);
+									}
+								});
+							});
+						</script>
 					</div>
 					<br />
+				<?php } ?>
 					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseInst" role="button" aria-expanded="false" aria-controls="collapseInst">How to create a modpack?</button>
 					<div class="collapse" id="collapseInst">
 						<br />
@@ -504,7 +928,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					</div>
 					<br />
 					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseAnno" role="button" aria-expanded="false" aria-controls="collapseAnno">Public Announcements</button>
-					<div class="collapse" id="collapseAnno">
+					<div class="collapse show" id="collapseAnno">
 						<?php
 						echo $newversion['warns'];
 						?>
@@ -625,6 +1049,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			$mpres = mysqli_query($conn, "SELECT * FROM `modpacks` WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
 			if($mpres) {
 			$modpack = mysqli_fetch_array($mpres);
+
 			?>
 			<script>document.title = 'Solder.cf - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<ul class="nav justify-content-end info-versions">
@@ -667,7 +1092,26 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<div style="width:30px"></div>
 			</ul>
 			<div class="main">
-				<?php if(substr($_SESSION['perms'],0,1)=="1") { ?>
+				<?php
+				if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
+					$info = $cache[$modpack['name']]['info'];
+				} else {
+					if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
+						$cache[$modpack['name']]['time'] = time();
+						$cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
+						$cache[$modpack['name']]['info'] = $info;
+						$ws = json_encode($cache);
+						file_put_contents("./functions/cache.json", $ws);
+					} else {
+						$info = $cache[$modpack['name']]['info'];
+						?>
+						<div class="card alert-warning">
+							<b>Warning! </b>Cannot connect to Technic!
+						</div>
+						<?php
+					}
+				}
+				if(substr($_SESSION['perms'],0,1)=="1") { ?>
 				<div class="card">
 					<h2>Edit Modpack</h2>
 					<hr>
@@ -742,9 +1186,131 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						}
 					</script>					
 				</div>
-				<?php if($modpack['public']==false){
+				<?php
+				$totaldownloads = $info['downloads'];
+				$totalruns = $info['runs'];
+				$totallikes = $info['ratings'];
+				if($totaldownloads>99999999) {
+					$downloadsbig = number_format($totaldownloads/1000000,0)."M";
+					$downloadssmall = number_format($totaldownloads/1000000000,1)."G";
+				} else if($totaldownloads>9999999) {
+					$downloadsbig = number_format($totaldownloads/1000000,0)."M";
+					$downloadssmall = number_format($totaldownloads/1000000,0)."M";
+				} else if($totaldownloads>999999) {
+					$downloadsbig = number_format($totaldownloads/1000000,1)."M";
+					$downloadssmall = number_format($totaldownloads/1000000,1)."M";
+				} else if ($totaldownloads>99999) {
+					$downloadsbig = number_format($totaldownloads/1000,0)."K";
+					$downloadssmall = number_format($totaldownloads/1000000,1)."M";
+				} else if ($totaldownloads>9999) {
+					$downloadsbig = number_format($totaldownloads/1000,1)."K";
+					$downloadssmall = number_format($totaldownloads/1000,0)."K";
+				} else if ($totaldownloads>999) {
+					$downloadsbig = number_format($totaldownloads,0);
+					$downloadssmall = number_format($totaldownloads/1000,1)."K";
+				} else if ($totaldownloads>99) {
+					$downloadsbig = number_format($totaldownloads,0);
+					$downloadssmall = number_format($totaldownloads/1000,1)."K";
+				} else {
+					$downloadsbig = $totaldownloads;
+					$downloadssmall = $totaldownloads;
+				}
+				if($totalruns>99999999) {
+					$runsbig = number_format($totalruns/1000000,0)."M";
+					$runssmall = number_format($totalruns/1000000000,1)."G";
+				} else if($totalruns>9999999) {
+					$runsbig = number_format($totalruns/1000000,0)."M";
+					$runssmall = number_format($totalruns/1000000,0)."M";
+				} else if($totalruns>999999) {
+					$runsbig = number_format($totalruns/1000000,1)."M";
+					$runssmall = number_format($totalruns/1000000,1)."M";
+				} else if ($totalruns>99999) {
+					$runsbig = number_format($totalruns/1000,0)."K";
+					$runssmall = number_format($totalruns/1000000,1)."M";
+				} else if ($totalruns>9999) {
+					$runsbig = number_format($totalruns/1000,1)."K";
+					$runssmall = number_format($totalruns/1000,0)."K";
+				} else if ($totalruns>999) {
+					$runsbig = number_format($totalruns,0);
+					$runssmall = number_format($totalruns/1000,1)."K";
+				} else if ($totalruns>99) {
+					$runsbig = number_format($totalruns,0);
+					$runssmall = number_format($totalruns/1000,1)."K";
+				} else {
+					$runsbig = $totalruns;
+					$runssmall = $totalruns;
+				}
+				if($totallikes>99999999) {
+					$likesbig = number_format($totallikes/1000000,0)."M";
+					$likessmall = number_format($totallikes/1000000000,1)."G";
+				} else if($totallikes>9999999) {
+					$likesbig = number_format($totallikes/1000000,0)."M";
+					$likessmall = number_format($totallikes/1000000,0)."M";
+				} else if($totallikes>999999) {
+					$likesbig = number_format($totallikes/1000000,1)."M";
+					$likessmall = number_format($totallikes/1000000,1)."M";
+				} else if ($totallikes>99999) {
+					$likesbig = number_format($totallikes/1000,0)."K";
+					$likessmall = number_format($totallikes/1000000,1)."M";
+				} else if ($totallikes>9999) {
+					$likesbig = number_format($totallikes/1000,1)."K";
+					$likessmall = number_format($totallikes/1000,0)."K";
+				} else if ($totallikes>999) {
+					$likesbig = number_format($totallikes,0);
+					$likessmall = number_format($totallikes/1000,1)."K";
+				} else if ($totallikes>99) {
+					$likesbig = number_format($totallikes,0);
+					$likessmall = number_format($totallikes/1000,1)."K";
+				} else {
+					$likesbig = $totallikes;
+					$likessmall = $totallikes;
+				}
+
+				?>
+					<div style="margin-left: 0;margin-right: 0" class="row">
+						<div class="col-4">
+							<div class="card text-white bg-success" style="padding: 0">
+								<div class="card-header">Runs</div>
+								<div class="card-body">
+									<center>
+										<h1 class="display-2 w-lg"><i class="fas fa-play d-icon"></i><span class="w-text"><?php echo $runsbig ?></span></h1>
+										<h1 class="display-4 w-sm"><i class="fas fa-play d-icon"></i><?php echo $runssmall ?></h1>
+									</center>
+								</div>
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="card bg-info text-white" style="padding: 0">
+								<div class="card-header">Downloads</div>
+								<div class="card-body">
+									<center>
+										<h1 class="display-2 w-lg"><i class="d-icon fas fa-download"></i><span class="w-text"><?php echo $downloadsbig ?></span></h1>
+										<h1 class="display-4 w-sm"><i class="d-icon fas fa-download"></i><?php echo $downloadssmall ?></h1>
+									</center>
+								</div>
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="card bg-primary text-white" style="padding: 0">
+								<div class="card-header">Likes</div>
+								<div class="card-body">
+									<center>
+										<h1 class="display-2 w-lg"><i class="fas fa-heart d-icon"></i><span class="w-text"><?php echo $likesbig ?></span></h1>
+										<h1 class="display-4 w-sm"><i class="fas fa-heart d-icon"></i><?php echo $likessmall ?></h1>
+									</center>
+								</div>
+							</div>
+						</div>
+					</div>
+					<?php
+					
+				
+				
+					if($modpack['public']==false){
 					$clients = mysqli_query($conn, "SELECT * FROM `clients`");
-					?>
+				?>
+					
+
 				<div class="card">
 					<h2>Allowed clients</h2>
 					<hr>
@@ -2073,9 +2639,19 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		else if(uri("/update")) {
 			$version = json_decode(file_get_contents("./api/version.json"),true);
 			if($version['stream']=="Dev"||$settings['dev_builds']=="on") {
-				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true);
+				if($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true)) {
+					$checked = true;
+					$checked = false;
+				} else {
+					$newversion = $version;
+				}
 			} else {
-				$newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true);
+				if($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true)) {
+						$checked = true;
+				} else {
+					$newversion = $version;
+					$checked = false;
+				}
 			}
 		?>
 		<script>document.title = 'Solder.cf - Update Checker - <?php echo $version['version'] ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
@@ -2083,8 +2659,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<div class="card">
 					<h2>Solder<span class="text-muted">.cf</span> Updater</h2>
 					<br />
-					<div class="alert <?php if($version['version']==$newversion['version']) { echo "alert-success";} else { echo "alert-info"; } ?>" role="alert">
-						<h4 class="alert-heading"><?php if($version['version']==$newversion['version']){echo "No updates";} else { echo "New update available - ".$newversion['version']; } ?></h4>
+					<div class="alert <?php if($version['version']==$newversion['version'] && $checked) { echo "alert-success";} else { if($checked) {echo "alert-info";} else {echo "alert-warning";} } ?>" role="alert">
+						<h4 class="alert-heading"><?php if($checked){if($version['version']==$newversion['version']){echo "No updates";} else { echo "New update available - ".$newversion['version']; }} else {echo "Cannot check for updates!";} ?></h4>
 						<hr>
 						<p class="mb-0"><?php if($version['version']==$newversion['version']){ echo $version['changelog']; } else { echo $newversion['changelog']; } ?></p>
 					</div>
@@ -2677,7 +3253,6 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				if($cf." );" !== "<?php return array(  );")
 				file_put_contents("./functions/settings.php", $cf." );");
 				?>
-				<script>window.location = "./dashboard"</script>
 				<?php
 			}
 		?>
@@ -2701,6 +3276,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<label class="custom-control-label" for="use_tawkto">Enable Tawk.to - uses cookies</label>
 					</div>
 					<br>
+					<i>It might take a few moments to take effect.</i>
+					<br><br>
 					<input type="submit" class="btn btn-primary" name="submit" value="Save">
 				</form>
 			</div>

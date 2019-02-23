@@ -39,10 +39,80 @@ if(!file_exists("../mods/mods-".$fileName)) {
 if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 	$fileInfo = pathinfo("../mods/mods-".$fileName."/".$fileName);
 	if(file_exists("../mods/".$fileInfo['filename'].".zip")) {
-		echo '{"status":"error","message":"File already exists!"}';
+		$md5_1 = md5_file("../mods/mods-".$fileName."/".$fileName);
+		$exisingzip = new ZipArchive();
+		$exisingzip->open("../mods/".$fileInfo['filename'].".zip");
+		$exisingzip->extractTo("../mods/mods-".$fileName."/tmp/");
+		$exisingzip->close();
+		$md5_2 = md5_file("../mods/mods-".$fileName."/tmp/mods/".$fileName);
 		unlink("../mods/mods-".$fileName."/".$fileName);
+		unlink("../mods/mods-".$fileName."/tmp/mods/".$fileName);
+		rmdir("../mods/mods-".$fileName."/tmp/mods");
+		rmdir("../mods/mods-".$fileName."/tmp");
 		rmdir("../mods/mods-".$fileName);
-		exit();
+		if($md5_1 !== $md5_2) {
+			echo '{"status":"error","message":"File with name \''.$fileName.'\' already exists!","md51":"'.$md5_1.'","md52":"'.$md5_2.'","zip":"../mods/mods-'.$fileName.'/tmp/mods/'.$fileName.'"}';
+			unlink("../mods/mods-".$fileName."/".$fileName);
+			rmdir("../mods/mods-".$fileName);
+			exit();
+		} else {
+			$fq = mysqli_query($conn, "SELECT `id` FROM `mods` WHERE `filename` = '".$fileInfo['filename'].".zip'");
+			if(mysqli_num_rows($fq)==1){
+				echo '{"status":"info","message":"This mod is already in the database.","modid":'.mysqli_fetch_array($fq)['id'].'}';
+			} else {
+				$result = file_get_contents("zip://../mods/mods-".$fileName."/".$fileName."#mcmod.info");
+				if($result) {
+					$mcmod = json_decode($result,true)[0];
+					if(!$mcmod['modid']||!$mcmod['name']||!$mcmod['description']||!$mcmod['version']||!$mcmod['mcversion']||!$mcmod['url']||!$mcmod['authorList']) {
+						$warn['b'] = true;
+						$warn['level'] = "info";
+						$warn['message'] = "There is some information missing in mcmod.info.";
+					}
+				} else {
+					$warn['b'] = true;
+					$warn['level'] = "warn";
+					$warn['message'] = "File does not contain mod info. Manual configuration required.";
+				}
+				if(!$mcmod['name']) {
+					$pretty_name = mysqli_real_escape_string($conn, $fileName);
+				} else {
+					$pretty_name = mysqli_real_escape_string($conn, $mcmod['name']);
+				}
+				if(!$mcmod['modid']) {
+					$name = slugify($pretty_name);
+				} else {
+					if(preg_match("^[a-z0-9]+(?:-[a-z0-9]+)*$", $mcmod['modid'])) {
+						$name = $mcmod['modid'];
+					} else {
+						$name = slugify($mcmod['modid']);
+					}
+				}
+				$link = $mcmod['url'];
+				$author = mysqli_real_escape_string($conn, implode(', ', $mcmod['authorList']));
+				$description = mysqli_real_escape_string($conn, $mcmod['description']);
+				$version = $mcmod['version'];
+				$mcversion = $mcmod['mcversion'];
+				$md5 = md5_file("../mods/".$fileInfo['filename'].".zip");
+				$url = "http://".$config['host'].$config['dir']."mods/".$fileInfo['filename'].".zip";
+				$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','".$url."','".$link."','".$author."','".$description."','".$version."','".$mcversion."','".$fileInfo['filename'].".zip','mod')");
+				if($res) {
+					if($warn['b']==true) {
+						if($warn['level']=="info") {
+							echo '{"status":"info","message":"'.$warn['message'].'","modid":'.mysqli_insert_id($conn).'}';
+						} else {
+							echo '{"status":"warn","message":"'.$warn['message'].'","modid":'.mysqli_insert_id($conn).'}';
+						}
+						
+					} else {
+						echo '{"status":"succ","message":"Mod has been saved.","modid":'.mysqli_insert_id($conn).'}';
+					}
+				} else {
+					echo '{"status":"error","message":"Mod could not be added to database"}';
+				}
+				exit();
+			}
+			
+		}
 	} else {
 		$result = file_get_contents("zip://../mods/mods-".$fileName."/".$fileName."#mcmod.info");
 		if($result) {
@@ -96,13 +166,13 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 		if($res) {
 			if($warn['b']==true) {
 				if($warn['level']=="info") {
-					echo '{"status":"info","message":"'.$warn['message'].'"}';
+					echo '{"status":"info","message":"'.$warn['message'].'","modid":'.mysqli_insert_id($conn).'}';
 				} else {
-					echo '{"status":"warn","message":"'.$warn['message'].'"}';
+					echo '{"status":"warn","message":"'.$warn['message'].'","modid":'.mysqli_insert_id($conn).'}';
 				}
 				
 			} else {
-				echo '{"status":"succ","message":"Mod has been saved."}';
+				echo '{"status":"succ","message":"Mod has been uploaded and saved.","modid":'.mysqli_insert_id($conn).'}';
 			}
 		} else {
 			echo '{"status":"error","message":"Mod could not be added to database"}';
