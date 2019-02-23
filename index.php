@@ -2641,8 +2641,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			if($version['stream']=="Dev"||$settings['dev_builds']=="on") {
 				if($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true)) {
 					$checked = true;
-					$checked = false;
 				} else {
+					$checked = false;
 					$newversion = $version;
 				}
 			} else {
