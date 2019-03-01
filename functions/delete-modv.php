@@ -12,9 +12,8 @@ if(substr($_SESSION['perms'],4,1)!=="1") {
 	echo 'Insufficient permission!';
 	exit();
 }
-$modq = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
-while($mod = mysqli_fetch_array($modq)) {
-	unlink("../".$mod['type']."s/".$mod['filename']);
-}
-mysqli_query($conn, "DELETE FROM `mods` WHERE `name` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
+$modq = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
+$mod = mysqli_fetch_array($modq);
+unlink("../".$mod['type']."s/".$mod['filename']);
+mysqli_query($conn, "DELETE FROM `mods` WHERE `id` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
 exit();

@@ -1265,7 +1265,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					$likesbig = $totallikes;
 					$likessmall = $totallikes;
 				}
-
+				if(isset($runsbig)) {
 				?>
 					<div style="margin-left: 0;margin-right: 0" class="row">
 						<div class="col-4">
@@ -1303,7 +1303,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						</div>
 					</div>
 					<?php
-					
+					}
 				
 				
 					if($modpack['public']==false){
@@ -1333,7 +1333,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<?php
 					}
 					?>
-					<input class="btn btn-primary" type="submit" name="submit" value="Save">
+					<?php if(mysqli_num_rows($clients)>0) { ?> <input class="btn btn-primary" type="submit" name="submit" value="Save"> <?php } ?>
 				</form>
 				</div>
 			<?php }} if(substr($_SESSION['perms'],1,1)=="1") { ?>
@@ -1577,7 +1577,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			if($bres) {
 				$user = mysqli_fetch_array($bres);
 			}
-			$modslist= explode(',', $user['mods']);
+			$modslist = explode(',', $user['mods']);
 			if($modslist[0]==""){
 				unset($modslist[0]);
 			}
@@ -1724,7 +1724,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<?php
 					}
 					?>
-					<input class="btn btn-primary" type="submit" name="submit" value="Save">
+					<?php if(mysqli_num_rows($clients)>0) { ?> <input class="btn btn-primary" type="submit" name="submit" value="Save"> <?php } ?>
 				</form>
 				</div>
 			<?php } ?>
@@ -1732,33 +1732,88 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<div class="card">
 						<h2>Mods in Build <?php echo $user['name'] ?></h2>
 						<script type="text/javascript">
-							function remove_mod(id) {
-								$("#mod-"+id).remove();
+							function remove_mod(id,name) {
+								$("#mod-"+name).remove();
 								var request = new XMLHttpRequest();
 								request.open("GET", "./functions/remove-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
+								request.send();
+							}
+							function changeversion(id, mod, name, compatible) {
+								if(!compatible) {
+									$("#mod-"+name).removeClass("table-warning");
+									$("#warn-incompatible-"+name).hide();
+									$("#bmversions-"+name).children().each(function(){
+										if(this.value == mod) {
+											this.remove();
+										}
+									});
+								}
+								console.log("Change "+mod+" to "+id);
+								$("#bmversions-"+name).attr("onchange","changeversion(this.value,"+id+",'"+name+"',true)");
+								$("#spinner-"+name).show();
+								var request = new XMLHttpRequest();
+								request.open("GET", "./functions/change-version.php?bid=<?php echo $user['id'] ?>&id="+id+"&mod="+mod);
+								request.onreadystatechange = function() {
+									if (this.readyState == 4 && this.status == 200) {
+										$("#spinner-"+name).hide();
+									}
+								}
 								request.send();
 							}
 						</script>
 						<table class="table table-striped sortable">
 							<thead>
 								<tr>
-									<th scope="col" style="width: 60%" data-defaultsign="AZ">Mod Name</th>
-									<th scope="col" style="width: 15%" data-defaultsign="_19">Version</th>
+									<th scope="col" style="width: 40%" data-defaultsign="AZ">Mod Name</th>
+									<th scope="col" style="width: 30%" data-defaultsort="disabled">Version</th>
+									<th scope="col" style="width: 15%" data-defaultsort="disabled"></th>
 									<th scope="col" style="width: 15%" data-defaultsort="disabled"></th>
 								</tr>
 							</thead>
 							<tbody>
-								<?php foreach($modslist as $bmod) {
+								<?php
+								$modsluglist = Array();
+								foreach($modslist as $bmod) {
 									if($bmod) {
-									$modq = mysqli_query($conn,"SELECT * FROM `mods` WHERE `id` = ".$bmod);
-									$moda = mysqli_fetch_array($modq);
-									?>
-								<tr <?php if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'class="table-warning"';} ?> id="mod-<?php echo $bmod ?>">
-									<td scope="row"><?php echo $moda['pretty_name']; if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo ' (For Minecraft '.$moda['mcversion'].' - May not be compatible!)';}?></td>
-									<td><?php echo $moda['version'] ?></td>
-									<td><?php if(substr($_SESSION['perms'],1,1)=="1") { if($moda['name'] !== "forge"){ ?><button onclick="remove_mod(<?php echo $bmod ?>)" class="btn btn-danger"><i class="fas fa-times"></i></button><?php }} ?></td>
-								</tr>
-								<?php										
+										$modq = mysqli_query($conn,"SELECT * FROM `mods` WHERE `id` = ".$bmod);
+										$moda = mysqli_fetch_array($modq);
+										array_push($modsluglist, $moda['name']);
+										$modvq = mysqli_query($conn,"SELECT `version`,`id` FROM `mods` WHERE `name` = '".$moda['name']."' AND (`mcversion` = '".$user['minecraft']."' OR `id` = ".$bmod.")");
+										?>
+									<tr <?php if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'class="table-warning"';} ?> id="mod-<?php echo $moda['name'] ?>">
+										<td scope="row"><?php echo $moda['pretty_name']; if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo ' <span id="warn-incompatible-'.$moda['name'].'">(For Minecraft '.$moda['mcversion'].' - May not be compatible!)</span>';}?></td>
+										<td>
+											<?php if($moda['type'] == "forge") {
+												echo $moda['version'];
+											} else { ?>
+												<select class="form-control" onchange="changeversion(this.value,<?php echo $moda['id'] ?>,'<?php echo $moda['name'] ?>',<?php if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'false';} else { echo 'true'; } ?>);" name="bmversions" id="bmversions-<?php echo $moda['name'] ?>"><?php 
+												while ($mv = mysqli_fetch_array($modvq)) {
+													if($mv['id'] == $moda['id']) {
+														echo "<option selected value='".$mv['id']."'>".$mv['version']."</option>";
+													} else {
+														echo "<option value='".$mv['id']."'>".$mv['version']."</option>";
+													}
+												}
+											}
+											?>
+											</select>
+										</td>
+										<td>
+											<?php
+											if(substr($_SESSION['perms'],1,1)=="1") {
+												if($moda['name'] !== "forge"){
+													?>
+													<button onclick="remove_mod(<?php echo $bmod ?>,'<?php echo $moda['name'] ?>')" class="btn btn-danger"><i class="fas fa-times"></i></button>
+													<?php
+												}
+											}
+											?>
+										</td>
+										<td>
+											<i style="font-size: 2em;display: none;" class="fas fa-cog fa-spin" id="spinner-<?php echo $moda['name'] ?>"></i>
+										</td>
+									</tr>
+									<?php										
 									}
  								} ?>
 							</tbody>
@@ -1775,9 +1830,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<table id="modstable" class="table table-striped sortable">
 							<thead>
 								<tr>
-									<th scope="col" style="width: 55%" data-defaultsign="AZ">Mod Name</th>
-									<th scope="col" style="width: 20%" data-defaultsign="_19">Version</th>
-									<th scope="col" style="width: 20%" data-defaultsort="disabled"></th>
+									<th scope="col" style="width: 40%" data-defaultsign="AZ">Mod Name</th>
+									<th scope="col" style="width: 25%" data-defaultsign="_19">Version</th>
+									<th scope="col" style="width: 30%" data-defaultsort="disabled"></th>
 									<th scope="col" style="width: 5%" data-defaultsort="disabled"></th>
 								</tr>
 							</thead>
@@ -1823,36 +1878,74 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 											}
 										}
 									});
-									function add(id) {
-										$("#btn-add-mod-"+id).attr("disabled", true);
-										$("#cog-"+id).show();
+									
+
+									function add(name) {
+										$("#btn-add-mod-"+name).attr("disabled", true);
+										$("#cog-"+name).show();
 										var request = new XMLHttpRequest();
 										request.onreadystatechange = function() {
 											if (this.readyState == 4 && this.status == 200) {
 												if(this.responseText=="Insufficient permission!") {
-													$("#cog-"+id).hide();
-													$("#times-"+id).show();
+													$("#cog-"+name).hide();
+													$("#times-"+name).show();
 												} else {
-													$("#cog-"+id).hide();
-													$("#check-"+id).show();
+													$("#cog-"+name).hide();
+													$("#check-"+name).show();
+													setTimeout(function() {
+														$("#mod-add-row-"+name).remove();
+													}, 3000);
+													
 												}
 											}
 										};
-										request.open("GET", "./functions/add-mod.php?bid=<?php echo $user['id'] ?>&id="+id);
+										request.open("GET", "./functions/add-mod.php?bid=<?php echo $user['id'] ?>&id="+$("#versionselect-"+name).val());
 										request.send();
 									}
 								</script>
 								<?php
-								while($mod = mysqli_fetch_array($mres)) {
-									if(!in_array($mod['id'], $modslist)) {
-										?>
-										<tr>
+								if($mres){
+									$modsi = Array();
+									$modslugs = Array();
+									while($mod = mysqli_fetch_array($mres)){
+										$modversionsq = mysqli_query($conn, "SELECT `id`,`version` FROM `mods` WHERE `type` = 'mod' AND `name` = '".$mod['name']."' AND `mcversion` = '".$user['minecraft']."' ORDER BY `version` DESC");
+										$modversions = Array();
+										if(!in_array($mod['name'], $modsluglist)) {
+											while($modversionsa = mysqli_fetch_array($modversionsq)) {
+												$modversions[$modversionsa['id']] = $modversionsa['version'];
+											}
+											$modarray = Array(
+												"id" => $mod['id'],
+												"name" => $mod['name'],
+												"pretty_name" => $mod['pretty_name'],
+												"versions" => $modversions,
+												"author" => $modauthors,
+												"mcversion" => $mod['mcversion']
+											);
+
+											if(!in_array($mod['name'], $modslugs)) {
+												array_push($modslugs, $mod['name']);
+												array_push($modsi, $modarray);
+											}
+										}
+									}
+									foreach ($modsi as $mod) {
+									?>
+										<tr id="mod-add-row-<?php echo $mod['name'] ?>">
 											<td scope="row"><?php echo $mod['pretty_name'] ?></td>
-											<td><?php echo $mod['version'] ?></td>
-											<td><button id="btn-add-mod-<?php echo $mod['id'] ?>" onclick="add(<?php echo $mod['id'] ?>)" class="btn btn-primary">Add to Build</button></td>
-											<td><i id="cog-<?php echo $mod['id'] ?>" style="display:none" class="fas fa-cog fa-spin fa-2x"></i><i id="check-<?php echo $mod['id'] ?>" style="display:none" class="text-success fas fa-check fa-2x"></i><i id="times-<?php echo $mod['id'] ?>" style="display:none" class="text-danger fas fa-times fa-2x"></i></td>
+											<td>
+												<select class="form-control" name="version" id="versionselect-<?php echo $mod['name'] ?>">
+													<?php
+													foreach ($mod['versions'] as $id => $v) {
+														echo "<option value='".$id."'>".$v."</option>";
+													}
+													?>
+												</select>
+											</td>
+											<td><button id="btn-add-mod-<?php echo $mod['name'] ?>" onclick="add('<?php echo $mod['name'] ?>')" class="btn btn-primary">Add to Build</button></td>
+											<td><i id="cog-<?php echo $mod['name'] ?>" style="display:none" class="fas fa-cog fa-spin fa-2x"></i><i id="check-<?php echo $mod['name'] ?>" style="display:none" class="text-success fas fa-check fa-2x"></i></td>
 										</tr>
-										<?php
+									<?php
 									}
 								}
 							} else {
@@ -1868,9 +1961,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<table class="table table-striped sortable">
 							<thead>
 								<tr>
-									<th scope="col" style="width: 55%" data-defaultsign="AZ">Mod Name</th>
-									<th scope="col" style="width: 20%" data-defaultsign="_19">Version</th>
-									<th scope="col" style="width: 20%" data-defaultsort="disabled"></th>
+									<th scope="col" style="width: 40%" data-defaultsign="AZ">Mod Name</th>
+									<th scope="col" style="width: 25%" data-defaultsign="_19">Version</th>
+									<th scope="col" style="width: 30%" data-defaultsort="disabled"></th>
 									<th scope="col" style="width: 5%" data-defaultsort="disabled"></th>
 								</tr>
 							</thead>
@@ -1923,10 +2016,10 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<script>document.title = 'Solder.cf - Mod Library - <?php echo addslashes($_SESSION['name']) ?>';</script>
 		<div class="main">
 		<script type="text/javascript">
-				function remove_box(id,name) {
+				function remove_box(name) {
 					$("#mod-name-title").text(name);
 					$("#mod-name").text(name);
-					$("#remove-button").attr("onclick","remove("+id+")");
+					$("#remove-button").attr("onclick","remove('"+name+"')");
 				}
 				function remove(id) {
 					var request = new XMLHttpRequest();
@@ -1987,29 +2080,56 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<table id="modstable" class="table table-striped table-responsive sortable">
 					<thead>
 						<tr>
-							<th style="width:40%" scope="col" data-defaultsign="AZ">Mod name</th>
-							<th style="width:25%" scope="col" data-defaultsign="AZ">Author</td>
-							<th style="width:10%" scope="col" data-defaultsign="_19">Version</th>
-							<th style="width:10%" scope="col" data-defaultsign="_19">Minecraft version</th>
-							<th style="width:15%" scope="col" data-defaultsort="disabled"></th>
+							<th style="width:30%" scope="col" data-defaultsign="AZ">Mod name</th>
+							<th style="width:30%" scope="col" data-defaultsign="AZ">Author</td>
+							<th style="width:10%" scope="col" data-defaultsign="_19">Versions</td>
+							<th style="width:30%" scope="col" data-defaultsort="disabled"></th>
 						</tr>
 					</thead>
 					<tbody id="table-mods">
 						<?php
 						$mods = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'mod' ORDER BY `id` DESC");
 						if($mods){
+							$modsi = Array();
+							$modslugs = Array();
 							while($mod = mysqli_fetch_array($mods)){
+								$modversionsq = mysqli_query($conn, "SELECT `version`,`author` FROM `mods` WHERE `type` = 'mod' AND `name` = '".$mod['name']."' ORDER BY `version` DESC");
+								$modversions = Array();
+								$modauthors = Array();
+								
+								while($modversionsa = mysqli_fetch_array($modversionsq)) {
+									array_push($modversions, $modversionsa['version']);
+									foreach (explode(", ", $modversionsa['author']) as $a) {
+										if(!in_array($a, $modauthors)) {
+											array_push($modauthors, $a);
+										}
+									}
+								}
+								$modarray = Array(
+									"id" => $mod['id'],
+									"name" => $mod['name'],
+									"pretty_name" => $mod['pretty_name'],
+									"versions" => $modversions,
+									"author" => $modauthors,
+									"mcversion" => $mod['mcversion']
+								);
+
+								if(!in_array($mod['name'], $modslugs)) {
+									array_push($modslugs, $mod['name']);
+									array_push($modsi, $modarray);
+								}
+							}
+							foreach ($modsi as $mod) {
 							?>
-								<tr id="mod-row-<?php echo $mod['id'] ?>">
+								<tr id="mod-row-<?php echo $mod['name'] ?>">
 									<td scope="row"><?php echo $mod['pretty_name'] ?></td>
-									<td><?php echo $mod['author'] ?></td>
-									<td><?php echo $mod['version'] ?></td>
-									<td><?php echo $mod['mcversion'] ?></td>
+									<td><?php if(implode(", ", $mod['author'])!=="") { echo implode(", ", $mod['author']); } else { echo "<span class='text-info'>Unknown</span>"; } ?></td>
+									<td><?php echo count($mod['versions']); ?></td>
 									<td>
 										<?php if(substr($_SESSION['perms'],4,1)=="1") { ?>
 										<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-											<button onclick="window.location='./mod?id=<?php echo $mod['id'] ?>'" class="btn btn-primary">Edit</button>
-											<button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
+											<button onclick="window.location='./mod?id=<?php echo $mod['name'] ?>'" class="btn btn-primary">Edit</button>
+											<button onclick="remove_box('<?php echo $mod['name'] ?>')" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
 										</div>
 									<?php } ?>
 									</td>
@@ -2051,7 +2171,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			        </button>
 			      </div>
 			      <div class="modal-body">
-			        Are you sure you want to delete mod <span id="mod-name"></span>? Mod's file will be deleted too.
+			        Are you sure you want to delete mod <span id="mod-name"></span>? All the mod's files and versions will be deleted too.
 			      </div>
 			      <div class="modal-footer">
 			        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
@@ -2120,7 +2240,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 											$("#cog-" + i).hide();
 											$("#inf-" + i).show();
 											$("#" + i).removeClass("progress-bar-striped progress-bar-animated");
-											$("#" + i).addClass("bg-info");
+											$("#" + i).addClass("bg-success");
 											$("#info-" + i).text(response.message);
 											$("#" + i).attr("id", i + "-done");	
 											break;
@@ -2547,6 +2667,125 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		?>
 		<div class="main">
 			<?php
+			$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
+			?>
+			<script>document.title = 'Solder.cf - Mod - <?php echo addslashes($_GET['id']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
+			function remove_box(id,version,name) {
+					$("#mod-name-title").text(name+" "+version);
+					$("#mod-name").text(name+" "+version);
+					$("#remove-button").attr("onclick","remove("+id+")");
+				}
+				function remove(id) {
+					var request = new XMLHttpRequest();
+					request.onreadystatechange = function() {
+						$("#mod-row-"+id).remove();
+						if($("#table-mods tr").length==0) {
+							window.location = "./lib-mods";
+						}
+					}
+					request.open("GET", "./functions/delete-modv.php?id="+id);
+					request.send();
+				}
+			</script>
+			<div class="card">
+				<button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
+				<h2>Versions</h2>
+				<table class="table sortable table-striped">
+					<thead>
+						<tr>
+							<th style="width:20%" data-defaultsort="AZ" scope="col">Version</th>
+							<th style="width:20%" data-defaultsort="AZ" scope="col">Minecraft</th>
+							<th style="width:30%" data-defaultsort="AZ" scope="col">File</th>
+							<th style="width:30%" scope="col"></th>
+						</tr>
+					</thead>
+					<tbody id="table-mods">
+					<?php
+					while($mod = mysqli_fetch_array($mres)) {
+						$modpn = $mod['pretty_name'];
+						$modd = $mod['description'];
+						?>
+						<tr id="mod-row-<?php echo $mod['id'] ?>">
+							<td scope="row"><?php echo $mod['version'] ?></td>
+							<td><?php echo $mod['mcversion'] ?></td>
+							<td><?php echo $mod['filename'] ?></td>
+							<td>
+								<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
+									<button onclick="window.location = './modv?id=<?php echo $mod['id'] ?>'" class="btn btn-primary">Edit</button>
+									<button onclick="remove_box(<?php echo $mod['id'].",'".$mod['version']."','".$mod['filename']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
+									<button onclick="window.location = '<?php echo $mod['url']; ?>'" class="btn btn-secondary"><i class="fas fa-file-download"></i> .zip</button>
+											<button onclick="window.location = './functions/mod_extract.php?id=<?php echo $mod['id']; ?>'" class="btn btn-secondary"><i class="fas fa-file-download"></i> .jar</button>
+								</div>
+							</td>
+						</tr>
+						<?php
+					}
+					?>
+					</tbody>
+				</table>
+				<div class="modal fade" id="removeMod" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="rm">Delete file <span id="mod-name-title"></span>?</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        Are you sure you want to delete file <span id="mod-name"></span>?
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+				        <button id="remove-button" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				<h2>Details</h2><hr>
+				<form method="POST" action="./functions/edit-mod.php?id=<?php echo $_GET['id'] ?>">
+
+					
+					<input id="pn" required class="form-control" type="text" name="pretty_name" placeholder="Mod name" value="<?php echo $modpn ?>" />
+					<br />
+					<input id="slug" required pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" class="form-control" type="text" name="name" placeholder="Mod slug" value="<?php echo $_GET['id'] ?>" /><br />
+					<textarea class="form-control" type="text" name="description" placeholder="Mod description"><?php echo $modd ?></textarea><br />
+					<input type="submit" name="submit" value="Save" class="btn btn-success">
+					<input type="submit" name="submit" value="Save and close" class="btn btn-success">
+				</form>
+			</div>
+		</div>
+		<script type="text/javascript">
+			$("#pn").on("keyup", function(){
+				var slug = slugify($(this).val());
+				console.log(slug);
+				$("#slug").val(slug);
+			});
+			function slugify (str) {
+				str = str.replace(/^\s+|\s+$/g, '');
+				str = str.toLowerCase();
+				var from = "àáãäâèéëêìíïîòóöôùúüûñç·/_,:;";
+				var to = "aaaaaeeeeiiiioooouuuunc------";
+				for (var i=0, l=from.length ; i<l ; i++) {
+					str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+				}
+				str = str.replace(/[^a-z0-9 -]/g, '')
+					.replace(/\s+/g, '-')
+					.replace(/-+/g, '-');
+				return str;
+			}
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$("#nav-mods").trigger('click');
+			});
+		</script>
+		<?php
+		}
+		else if(uri("/modv")) {
+		?>
+		<div class="main">
+			<?php
 			$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
 			if($mres) {
 				$mod = mysqli_fetch_array($mres);
@@ -2554,8 +2793,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			?>
 			<script>document.title = 'Solder.cf - Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<div class="card">
-				<button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
-				<form method="POST" action="./functions/edit-mod.php?id=<?php echo $_GET['id'] ?>">
+				<button onclick="window.location = './mod?id=<?php echo $mod['name'] ?>'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
+				<h3>Edit <?php echo $mod['pretty_name']." ".$mod['version']; ?></h3>
+				<form method="POST" action="./functions/edit-modv.php?id=<?php echo $_GET['id'] ?>">
 
 					<script type="text/javascript">
 						$("#pn").on("keyup", function(){
@@ -2577,9 +2817,6 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							return str;
 						}
 					</script>
-						<input id="pn" required class="form-control" type="text" name="pretty_name" placeholder="Mod name" value="<?php echo $mod['pretty_name'] ?>" />
-						<br />
-						<input id="slug" required pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" class="form-control" type="text" name="name" placeholder="Mod slug" value="<?php echo $mod['name'] ?>" /><br />
 						<input class="form-control" type="text" name="version" placeholder="Mod Version" value="<?php echo $mod['version'] ?>"><br />
 						<input class="form-control" type="text" name="author" placeholder="Mod Author" value="<?php echo $mod['author'] ?>"><br />
 						<input class="form-control" type="url" name="link" placeholder="Mod Website" value="<?php echo $mod['link'] ?>"><br />
@@ -2587,8 +2824,6 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<input class="form-control" type="url" name="url" placeholder="File URL" value="<?php echo $mod['url'] ?>"><br />
 						<input class="form-control" type="text" name="md5" placeholder="File md5 Hash" value="<?php echo $mod['md5'] ?>"><br />
 						<input class="form-control" required type="text" name="mcversion" placeholder="Minecraft Version" value="<?php echo $mod['mcversion'] ?>"><br />
-
-						<textarea class="form-control" type="text" name="description" placeholder="Mod description"><?php echo $mod['description'] ?></textarea><br />
 						<input type="submit" name="submit" value="Save" class="btn btn-success">
 						<input type="submit" name="submit" value="Save and close" class="btn btn-success">
 				</form>
