@@ -2470,7 +2470,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					request.onreadystatechange = function() {
 						$("#mod-row-"+id).remove();
 					}
-					request.open("GET", "./functions/delete-mod.php?id="+id);
+					request.open("GET", "./functions/delete-modv.php?id="+id);
 					request.send();
 				}
 			</script>
@@ -2526,7 +2526,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									<td scope="row"><?php echo $mod['pretty_name'] ?></td>
 									<td>
 										<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
+											<button onclick="window.location = './file?id=<?php echo $mod['id'] ?>'" data-toggle="modal" data-target="#infoMod" class="btn btn-primary">Info</button>
 											<button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
+											<button onclick="window.location = '<?php echo $mod['url'] ?>'" class="btn btn-secondary">Download</button>
 										</div>
 									</td>
 								</tr>
@@ -2556,6 +2558,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			    </div>
 			  </div>
 			</div>
+
 		</div>
 
 		<script type="text/javascript">
@@ -2662,6 +2665,63 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			});
 		</script>
 		<?php
+		}
+		else if(uri("/file")) {
+			function formatSizeUnits($bytes) {
+				if ($bytes >= 1073741824) {
+				$bytes = number_format($bytes / 1073741824, 2) . ' GB';
+				}
+				elseif ($bytes >= 1048576) {
+				$bytes = number_format($bytes / 1048576, 2) . ' MB';
+				}
+				elseif ($bytes >= 1024) {
+				$bytes = number_format($bytes / 1024, 2) . ' KB';
+				}
+				elseif ($bytes > 1) {
+				$bytes = $bytes . ' bytes';
+				}
+				elseif ($bytes == 1) {
+				$bytes = $bytes . ' byte';
+				}
+				else {
+				$bytes = '0 bytes';
+			}
+
+			return $bytes;
+			}
+			$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
+			$file = mysqli_fetch_array($mres);
+			?>
+			<script>
+				document.title = 'Solder.cf - File - <?php echo addslashes($file['name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
+				$(document).ready(function(){
+					$("#nav-mods").trigger('click');
+				});
+			</script>
+			<div class="main">
+				<div class="card">
+					<button onclick="window.location = './lib-other'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
+					<h2><?php echo $file['filename'] ?></h2>
+					<hr>
+					<p>MD5: <?php echo $file['md5'] ?><br >
+					Size: <?php echo formatSizeUnits(filesize('./others/'.$file['filename'])) ?></p>
+					<h3>Files:</h3>
+					<ul>
+						<?php
+						$zip = zip_open('./others/'.$file['filename']);
+
+						if ($zip) {
+							while ($zip_entry = zip_read($zip)) {
+								echo "<li>" . zip_entry_name($zip_entry) . "</li>";
+							}
+
+							zip_close($zip);
+						}
+						?>
+					</ul>
+				</div>
+			</div>
+			<?php
 		}
 		else if(uri("/mod")) {
 		?>
