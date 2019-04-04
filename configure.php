@@ -149,11 +149,12 @@ if(!isset($_GET['reconfig'])) {
 					</div>
 					<div class="form-group">
 						<label for="email">Database</label>
+						<small class="form-text text-muted">If you already have installed the original version of solder, do not use the same database. You can migrate your data later. It's recommended to use an empty database.</small>
 						<input required name="db-host" type="text" class="form-control" id="db-host" placeholder="Database IP" value="127.0.0.1"><br />
 						<input required name="db-user" type="text" class="form-control" id="db-user" placeholder="Database username"><br />
 						<input required name="db-name" type="text" class="form-control" id="db-name" placeholder="Database name"><br />
 						<input required name="db-pass" type="password" class="form-control" id="db-pass" placeholder="Database password">
-						<small id="errtext" class="form-text text-muted">Five tables will be created.</small>
+						<small id="errtext" class="form-text text-muted">Five tables will be created: users, clients, modpacks, builds, mods</small>
 					</div>
 					<div class="form-group">
 						<label for="email">Installation details</label>

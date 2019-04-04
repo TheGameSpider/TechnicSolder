@@ -927,8 +927,57 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						</div>
 					</div>
 					<br />
+					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseMigr" role="button" aria-expanded="false" aria-controls="collapseMigr">Database migration</button>
+					<div class="collapse" id="collapseMigr">
+						<br>
+						<p>Fill out this form to migrate data from an existing local original solder v0.8 installation to this installation.</p>
+						<hr>
+						<div id="dbform">
+							<input type="text" class="form-control" id="orighost" value="127.0.0.1" placeholder="Address of the database you want to migrate from"><br>
+							<input type="text" class="form-control" id="origdatabase" placeholder="Name of the database"><br>
+							<input type="text" class="form-control" id="origname" placeholder="Username for the databse"><br>
+							<input type="password" class="form-control" id="origpass" placeholder="Password for the database"><br>
+							<button class="btn btn-primary" id="submitdbform">Connect</button>
+						</div>
+						<p id="errtext"></p>
+						<div id="migrating" style="display:none">
+							<input type="text" class="form-control" id="origdir" placeholder="Path to original solder install directory (ex. /var/www/solder)"><br>
+							<button class="btn btn-primary" id="submitmigration">Start Migration</button> <-- TODO: ADD FUNCTIONALITY
+						</div>
+						<script type="text/javascript">
+							$("#submitdbform").click(function() {
+								$("#submitdbform").attr("disabled", true);
+								$("#submitdbform").text("Connecting...");
+								var http = new XMLHttpRequest();
+								var params = 'db-pass='+ $("#origpass").val() +'&db-name='+ $("#origdatabase").val() +'&db-user='+ $("#origname").val() +'&db-host='+ $("#orighost").val() ;
+								http.open('POST', './functions/conntest.php');
+								http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+								http.onreadystatechange = function() {
+									if(http.readyState == 4 && http.status == 200) {
+										if(http.responseText == "error") {
+											$("#errtext").text("Cannot connect to database");
+											$("#errtext").removeClass("text-muted text-success");
+											$("#errtext").addClass("text-danger");
+											$("#submitdbform").attr("disabled", false);
+											$("#submitdbform").text("Connect");
+										} else {
+											$("#errtext").text("Connected to database");
+											$("#errtext").removeClass("text-muted text-danger");
+											$("#errtext").addClass("text-success");
+											$("#dbform").hide();
+											$("#migrating").show();
+										}
+									}
+								}
+								http.send(params);
+							});				
+						</script>
+						<hr>
+						<p>If you are using v1.0.0.rc4 or higher, <a href="./functions/upgrade100rc4.php">Click here</a> to upgrade your database to be compatible with v1.0.0.rc1 or higher</p>
+					</div>
+					<br />
 					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseAnno" role="button" aria-expanded="false" aria-controls="collapseAnno">Public Announcements</button>
-					<div class="collapse show" id="collapseAnno">
+					<div class="collapse" id="collapseAnno">
 						<?php
 						echo $newversion['warns'];
 						?>
