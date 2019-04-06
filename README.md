@@ -11,7 +11,9 @@ Solder also interfaces with the Technic Platform using an API key you can genera
 
 -- Technic
 
-# Installation
+TechnicSolder was originaly developed by Technic using the Laravel Framework. However, the application is difficult to install and use. Technic Solder - Solder.cf by TheGameSpider runs on pure PHP with zip and MySQL extensions and it's very easy to use. To install, you just need to install zip extension, setup MySQL database and extract Solder to your root folder (No composer needed). And the usage is even easier! Just Drag n' Drop your mods.
+
+# Detailed Installation
 > ***Note: If you already have a working web server with mysql and zip extensions and enabled rewrite mod, you can [skip to step 6.](https://github.com/TheGameSpider/TechnicSolder#cloning-technicsolder-repository)***
 
 **1. Install Ubuntu Server 18.04 (https://www.ubuntu.com/download/server)** <br />
