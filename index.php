@@ -930,21 +930,46 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseMigr" role="button" aria-expanded="false" aria-controls="collapseMigr">Database migration</button>
 					<div class="collapse" id="collapseMigr">
 						<br>
-						<p>Fill out this form to migrate data from an existing local original solder v0.8 installation to this installation.</p>
+						<p>Fill out this form to migrate data from an existing local original solder v0.8 installation to this installation. <span class="text-danger"><b>WARNING!</b> This will rewrite your current Solder.cf database!</span></p>
 						<hr>
 						<div id="dbform">
-							<input type="text" class="form-control" id="orighost" value="127.0.0.1" placeholder="Address of the database you want to migrate from"><br>
+							<input type="text" class="form-control" id="orighost" placeholder="Address of the database you want to migrate from (e.g. 127.0.0.1)"><br>
 							<input type="text" class="form-control" id="origdatabase" placeholder="Name of the database"><br>
-							<input type="text" class="form-control" id="origname" placeholder="Username for the databse"><br>
-							<input type="password" class="form-control" id="origpass" placeholder="Password for the database"><br>
+							<input autocomplete="off" type="text" class="form-control" id="origname" placeholder="Username for the databse"><br>
+							<input autocomplete="off" type="password" class="form-control" id="origpass" placeholder="Password for the database"><br>
 							<button class="btn btn-primary" id="submitdbform">Connect</button>
 						</div>
 						<p id="errtext"></p>
 						<div id="migrating" style="display:none">
 							<input type="text" class="form-control" id="origdir" placeholder="Path to original solder install directory (ex. /var/www/solder)"><br>
-							<button class="btn btn-primary" id="submitmigration">Start Migration</button> <-- TODO: ADD FUNCTIONALITY
+							<button class="btn btn-primary" id="submitmigration">Start Migration</button>
 						</div>
 						<script type="text/javascript">
+							$("#submitmigration").click(function(){
+								$("#submitmigration").attr('disabled',true);
+								$("#submitmigration").text('Migrating...');
+								var http = new XMLHttpRequest();
+								var params = 'db-pass='+ $("#origpass").val() +'&db-name='+ $("#origdatabase").val() +'&db-user='+ $("#origname").val() +'&db-host='+ $("#orighost").val() +'&solder-orig='+$("#origdir").val() ;
+								http.open('POST', './functions/migrate.php');
+								http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+								http.onreadystatechange = function() {
+									if(http.readyState == 4 && http.status == 200) {
+										if(http.responseText == "error") {
+											$("#errtext").text("Migration failed!");
+											$("#errtext").removeClass("text-muted text-success");
+											$("#errtext").addClass("text-danger");
+											$("#submitmigration").attr('disabled',false);
+											$("#submitmigration").text('Start Migration');
+										} else {
+											$("#errtext").text("Migration was successful!");
+											$("#errtext").removeClass("text-muted text-danger");
+											$("#errtext").addClass("text-success");
+											$("#submitmigration").text("Done");
+										}
+									}
+								}
+								http.send(params);
+							});
 							$("#submitdbform").click(function() {
 								$("#submitdbform").attr("disabled", true);
 								$("#submitdbform").text("Connecting...");
