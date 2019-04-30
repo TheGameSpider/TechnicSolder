@@ -89,7 +89,13 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<script src="./resources/bootstrap/bootstrap-sortable.js"></script>
 		<link rel="stylesheet" href="./resources/bootstrap/bootstrap-sortable.css" type="text/css">
 		<style type="text/css">
-
+			.menu-bars {
+				vertical-align: middle;
+				font-size: 34px;
+				color: #2789C9;
+				display: none;
+				cursor: pointer;
+			}
 			.nav-tabs .nav-link {
 				border: 1px solid transparent;
 				border-top-left-radius: .25rem;
@@ -249,12 +255,15 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				}
 			}
 			@media only screen and (max-width: 1000px) {
+				.menu-bars {
+					display: inline-block;
+				}
 				#logindiv {
 					width: auto;
 					margin-top:5em;
 				}
 				#techniclogo {
-					cursor: pointer;
+					display: none!important;
 				}
 				#dropdownMenuButton, #solderinfo, #welcome {
 					display: none;
@@ -329,7 +338,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<!--End of Tawk.to Script-->
 	<?php } ?>
 		<nav class="navbar <?php if($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
-  			<span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
+  			<span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"><i id="menuopen" class="fas fa-bars menu-bars"></i> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
   			<span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	  			<?php if($_SESSION['user']!==$config['mail']) { ?>
 	  			<img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php 
@@ -348,7 +357,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			</span>
 		</nav>
 		<script type="text/javascript">
-			$("#techniclogo").click(function(){
+			$(".navbar-brand").click(function(){
 				$("#sidenav").toggleClass("sidenavexpand");
 			});
 		</script>
@@ -1673,6 +1682,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				}
 				$minecraft = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_POST['versions'])));
 				mysqli_query($conn, "UPDATE `builds` SET `minecraft` = '".$minecraft['mcversion']."', `java` = '".mysqli_real_escape_string($conn,$_POST['java'])."', `memory` = '".mysqli_real_escape_string($conn,$_POST['memory'])."', `public` = ".$ispublic." WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+				$lpq = mysqli_query($conn, "SELECT `name`,`modpack`,`public` FROM `builds` WHERE `public` = 1 AND `modpack` = ".$user['modpack']." ORDER BY `id` DESC");
+				$latest_public = mysqli_fetch_array($lpq);
+				mysqli_query($conn, "UPDATE `modpacks` SET `latest` = '".$latest_public['name']."' WHERE `id` = ".$user['modpack']);
 			}
 			
 			$bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
@@ -1816,11 +1828,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 								if(!compatible) {
 									$("#mod-"+name).removeClass("table-warning");
 									$("#warn-incompatible-"+name).hide();
-									$("#bmversions-"+name).children().each(function(){
+									/*$("#bmversions-"+name).children().each(function(){
 										if(this.value == mod) {
 											this.remove();
 										}
-									});
+									});*/
 								}
 								console.log("Change "+mod+" to "+id);
 								$("#bmversions-"+name).attr("onchange","changeversion(this.value,"+id+",'"+name+"',true)");
@@ -1852,7 +1864,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 										$modq = mysqli_query($conn,"SELECT * FROM `mods` WHERE `id` = ".$bmod);
 										$moda = mysqli_fetch_array($modq);
 										array_push($modsluglist, $moda['name']);
-										$modvq = mysqli_query($conn,"SELECT `version`,`id` FROM `mods` WHERE `name` = '".$moda['name']."' AND (`mcversion` = '".$user['minecraft']."' OR `id` = ".$bmod.")");
+										if($_SESSION['showall']==true) {
+											$modvq = mysqli_query($conn,"SELECT `version`,`id` FROM `mods` WHERE `name` = '".$moda['name']."'");
+										} else {
+											$modvq = mysqli_query($conn,"SELECT `version`,`id` FROM `mods` WHERE `name` = '".$moda['name']."' AND (`mcversion` = '".$user['minecraft']."' OR `id` = ".$bmod.")");
+										}
+										
 										?>
 									<tr <?php if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'class="table-warning"';} ?> id="mod-<?php echo $moda['name'] ?>">
 										<td scope="row"><?php echo $moda['pretty_name']; if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo ' <span id="warn-incompatible-'.$moda['name'].'">(For Minecraft '.$moda['mcversion'].' - May not be compatible!)</span>';}?></td>
@@ -1895,11 +1912,33 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					</div>
 					<?php if(substr($_SESSION['perms'],1,1)=="1") { ?>
 					<div class="card">
-						<h2>Mods for Minecraft <?php echo $user['minecraft'] ?></h2>
+						<h2>Mods <?php if($_SESSION['showall']!=true){ ?> for Minecraft <?php echo $user['minecraft'];} ?></h2>
 						<hr>
 						<button onclick="window.location.href = window.location.href" class="btn btn-primary">Refresh</button>
 						<br />
 						<input id="search" type="text" placeholder="Search..." class="form-control">
+						<br />
+						<div class="custom-control custom-checkbox">
+							<input <?php if($_SESSION['showall']==true){echo "checked";} ?> type="checkbox" name="showall" class="custom-control-input" id="showall">
+							<label class="custom-control-label" for="showall">Show all</label>
+						</div>
+						<script type="text/javascript">
+							$('#showall').change(function() {
+								
+									var request = new XMLHttpRequest();
+									request.onreadystatechange = function() {
+										if (this.readyState == 4 && this.status == 200) {
+											window.location.reload();
+										}
+									};
+									if( $('#showall').is(':checked') ) {
+										request.open("GET", "./functions/change_show_all.php?showall=true");
+									} else {
+										request.open("GET", "./functions/change_show_all.php?showall=false");
+									}
+									request.send();
+							});
+						</script>
 						<br />
 						<table id="modstable" class="table table-striped sortable">
 							<thead>
@@ -1912,7 +1951,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							</thead>
 							<tbody>
 							<?php
-							$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'mod' AND `mcversion` = '".$user['minecraft']."'");
+							if($_SESSION['showall'] == true) {
+								$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'mod'");
+							} else {
+								$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'mod' AND `mcversion` = '".$user['minecraft']."'");
+							}
+							
 							if(mysqli_num_rows($mres)!==0) {
 								?>
 								<script type="text/javascript">
@@ -1982,7 +2026,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									$modsi = Array();
 									$modslugs = Array();
 									while($mod = mysqli_fetch_array($mres)){
-										$modversionsq = mysqli_query($conn, "SELECT `id`,`version` FROM `mods` WHERE `type` = 'mod' AND `name` = '".$mod['name']."' AND `mcversion` = '".$user['minecraft']."' ORDER BY `version` DESC");
+										if($_SESSION['showall'] == true) {
+											$modversionsq = mysqli_query($conn, "SELECT `id`,`version` FROM `mods` WHERE `type` = 'mod' AND `name` = '".$mod['name']."' ORDER BY `version` DESC");
+										} else {
+											$modversionsq = mysqli_query($conn, "SELECT `id`,`version` FROM `mods` WHERE `type` = 'mod' AND `name` = '".$mod['name']."' AND `mcversion` = '".$user['minecraft']."' ORDER BY `version` DESC");
+										}
+										
 										$modversions = Array();
 										if(!in_array($mod['name'], $modsluglist)) {
 											while($modversionsa = mysqli_fetch_array($modversionsq)) {
