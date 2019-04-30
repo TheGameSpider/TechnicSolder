@@ -25,6 +25,9 @@ mysqli_query($conn, "INSERT INTO builds(`name`,`minecraft`,`java`,`mods`,`modpac
 $lb = mysqli_fetch_array(mysqli_query($conn, "SELECT `id` FROM `builds` ORDER BY `id` DESC LIMIT 1"))['id'];
 mysqli_query($conn, "UPDATE `builds` SET `name` = '".mysqli_real_escape_string($conn, $_GET['newname'])."' WHERE `id` = ".$lb);
 mysqli_query($conn, "UPDATE `builds` SET `modpack` = '".mysqli_real_escape_string($conn, $_GET['id'])."' WHERE `id` = ".$lb);
-mysqli_query($conn, "UPDATE `modpacks` SET `latest` = '".mysqli_real_escape_string($conn, $name['name'])."' WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
+//mysqli_query($conn, "UPDATE `modpacks` SET `latest` = '".mysqli_real_escape_string($conn, $name['name'])."' WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
+$lpq = mysqli_query($conn, "SELECT `name`,`modpack`,`public` FROM `builds` WHERE `public` = 1 AND `modpack` = ".mysqli_real_escape_string($conn, $_GET['id'])." ORDER BY `id` DESC");
+$latest_public = mysqli_fetch_array($lpq);
+mysqli_query($conn, "UPDATE `modpacks` SET `latest` = '".$latest_public['name']."' WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
 header("Location: ".$config['dir']."modpack?id=".$_GET['id']);
 exit();

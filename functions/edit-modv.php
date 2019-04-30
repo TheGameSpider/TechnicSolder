@@ -3,7 +3,7 @@ session_start();
 $config = require("./config.php");
 require("dbconnect.php");
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("Unauthorized require or login session has expired!");
+	die("Unauthorized request or login session has expired!");
 }
 if(substr($_SESSION['perms'],4,1)!=="1") {
 	echo 'Insufficient permission!';
@@ -26,7 +26,7 @@ if($mod['donlink']!==$_POST['donlink']){
 if($mod['version']!==$_POST['version']){
 	mysqli_query($conn, "UPDATE `mods` SET `version` = '".mysqli_real_escape_string($conn, $_POST['version'])."' WHERE `id` = ".$_GET['id']);
 }
-if($mod['mcversion']!==$_POST['version']){
+if($mod['mcversion']!==$_POST['mcversion']){
 	mysqli_query($conn, "UPDATE `mods` SET `mcversion` = '".mysqli_real_escape_string($conn, $_POST['mcversion'])."' WHERE `id` = ".$_GET['id']);
 }
 if($mod['url']!==$_POST['url']){
