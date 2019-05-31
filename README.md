@@ -3,15 +3,15 @@
 ![Latest Stable Version](https://img.shields.io/badge/dynamic/json.svg?label=Latest%20Stable%20Version&url=https%3A%2F%2Fraw.githubusercontent.com%2FTheGameSpider%2FTechnicSolder%2Fmaster%2Fapi%2Fversion.json&query=version&colorB=brightgreen)
 ![Latest Dev Version](https://img.shields.io/badge/dynamic/json.svg?label=Latest%20Dev%20Version&url=https%3A%2F%2Fraw.githubusercontent.com%2FTheGameSpider%2FTechnicSolder%2FDev%2Fapi%2Fversion.json&query=version&colorB=orange)
 
-TechnicSolder is an API that sits between a modpack repository and the Technic Launcher. It allows you to easily manage multiple modpacks in one single location.
+>TechnicSolder is an API that sits between a modpack repository and the Technic Launcher. It allows you to easily manage multiple modpacks in one single location.
 
-Using Solder also means your packs will download each mod individually. This means the launcher can check MD5's against each version of a mod and if it hasn't changed, use the cached version of the mod instead. What does this mean? Small incremental updates to your modpack doesn't mean redownloading the whole thing every time!
+>Using Solder also means your packs will download each mod individually. This means the launcher can check MD5's against each version of a mod and if it hasn't changed, use the cached version of the mod instead. What does this mean? Small incremental updates to your modpack doesn't mean redownloading the whole thing every time!
 
-Solder also interfaces with the Technic Platform using an API key you can generate through your account there. When Solder has this key it can directly interact with your Platform account. When creating new modpacks you will be able to import any packs you have registered in your Solder install. It will also create detailed mod lists on your Platform page! (assuming you have the respective data filled out in Solder) Neat huh?
+>Solder also interfaces with the Technic Platform using an API key you can generate through your account there. When Solder has this key it can directly interact with your Platform account. When creating new modpacks you will be able to import any packs you have registered in your Solder install. It will also create detailed mod lists on your Platform page! (assuming you have the respective data filled out in Solder) Neat huh?
 
 -- Technic
 
-TechnicSolder was originaly developed by Technic using the Laravel Framework. However, the application is difficult to install and use. Technic Solder - Solder.cf by TheGameSpider runs on pure PHP with zip and MySQL extensions and it's very easy to use. To install, you just need to install zip extension, setup MySQL database and extract Solder to your root folder (No composer needed). And the usage is even easier! Just Drag n' Drop your mods.
+TechnicSolder was originaly developed by Technic using the Laravel Framework. However, the application is difficult to install and use. Technic Solder - Solder.cf by TheGameSpider runs on pure PHP with zip and MySQL extensions and it's very easy to use. To install, you just need to install zip extension, setup MySQL database and download Solder to your server (No composer needed). And the usage is even easier! Just Drag n' Drop your mods.
 
 # Detailed Installation
 > ***Note: If you already have a working web server with mysql and zip extensions and enabled rewrite mod, you can [skip to step 6.](https://github.com/TheGameSpider/TechnicSolder#cloning-technicsolder-repository)***
@@ -32,7 +32,7 @@ Login as root <br />
 ```bash
 apt update
 apt -y install apache2 php libapache2-mod-php mysql-server php-mysql php-dev zlib1g-dev
-```
+``
 The above command can take a while to complete. Now, you need to install PHP ZIP extension.<br />
 ```bash
 cd /
