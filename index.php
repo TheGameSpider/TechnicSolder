@@ -1467,7 +1467,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							}
 							?>
 						<select required="" id="mplist" class="form-control">
-							<option value=null>Plase select a modpack..</option>
+							<option value=null>Please select a modpack..</option>
 							<?php
 							foreach ($mps as $pack) {
 								echo "<option value='".$pack['id']."'>".$pack['name']."</option>";
