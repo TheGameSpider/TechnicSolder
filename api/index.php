@@ -22,7 +22,7 @@ function uri($url, $uri) {
     return (substr($url, -$length) === $uri);
 }
 if(uri($url,"api/")){
-	print '{"api":"Solder.cf","version":"v1.2.1","stream":"Release"}';
+	print '{"api":"Solder.cf","version":"v1.3.0","stream":"Dev"}';
 	exit();
 } 
 if(uri($url,"api/verify")){
@@ -191,36 +191,70 @@ while($modpack=mysqli_fetch_array($result)){
 						if($mod !== "") {
 							$modsres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".$mod);
 							$modinfo=mysqli_fetch_array($modsres);
-							if(isset($_GET['include'])){
-								if($_GET['include']=="mods") {
-									$mods[$modnumber] = array(
-										"name" => $modinfo['name'],
-										"version" => $modinfo['version'],
-										"md5" => $modinfo['md5'],
-										"url" => $modinfo['url'],
-										"pretty_name" => $modinfo['pretty_name'],
-										"author" => $modinfo['author'],
-										"description" => $modinfo['description'],
-										"link" => $modinfo['link'],
-										"donate" => $modinfo['donlink']
-									);
+							if($modinfo['name']!== null && $modinfo['type'] !== null) {
+								if(isset($_GET['include'])){
+									if($_GET['include']=="mods") {
+										if(!$modinfo['url']) {
+											$mods[$modnumber] = array(
+												"name" => $modinfo['name'],
+												"version" => $modinfo['version'],
+												"md5" => $modinfo['md5'],
+												"url" => "http://".$config['host'].$config['dir'].$modinfo['type']."s/".$modinfo['filename'],
+												"pretty_name" => $modinfo['pretty_name'],
+												"author" => $modinfo['author'],
+												"description" => $modinfo['description'],
+												"link" => $modinfo['link'],
+												"donate" => $modinfo['donlink']
+											);
+										} else {
+											$mods[$modnumber] = array(
+												"name" => $modinfo['name'],
+												"version" => $modinfo['version'],
+												"md5" => $modinfo['md5'],
+												"url" => $modinfo['url'],
+												"pretty_name" => $modinfo['pretty_name'],
+												"author" => $modinfo['author'],
+												"description" => $modinfo['description'],
+												"link" => $modinfo['link'],
+												"donate" => $modinfo['donlink']
+											);
+										}
+									} else {
+										if(!$modinfo['url']) {
+											$mods[$modnumber] = array(
+												"name" => $modinfo['name'],
+												"version" => $modinfo['version'],
+												"md5" => $modinfo['md5'],
+												"url" => "http://".$config['host'].$config['dir'].$modinfo['type']."s/".$modinfo['filename']
+											);
+										} else {
+											$mods[$modnumber] = array(
+												"name" => $modinfo['name'],
+												"version" => $modinfo['version'],
+												"md5" => $modinfo['md5'],
+												"url" => $modinfo['url']
+											);
+										}
+									}
 								} else {
-									$mods[$modnumber] = array(
-										"name" => $modinfo['name'],
-										"version" => $modinfo['version'],
-										"md5" => $modinfo['md5'],
-										"url" => $modinfo['url']
-									);
+									if(!$modinfo['url']) {
+										$mods[$modnumber] = array(
+											"name" => $modinfo['name'],
+											"version" => $modinfo['version'],
+											"md5" => $modinfo['md5'],
+											"url" => "http://".$config['host'].$config['dir'].$modinfo['type']."s/".$modinfo['filename']
+										);
+									} else {
+										$mods[$modnumber] = array(
+											"name" => $modinfo['name'],
+											"version" => $modinfo['version'],
+											"md5" => $modinfo['md5'],
+											"url" => $modinfo['url']
+										);
+									}
 								}
-							} else {
-								$mods[$modnumber] = array(
-									"name" => $modinfo['name'],
-									"version" => $modinfo['version'],
-									"md5" => $modinfo['md5'],
-									"url" => $modinfo['url']
-								);
+								$modnumber++;
 							}
-							$modnumber++;
 						}
 					}
 					$response = array(
