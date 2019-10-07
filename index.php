@@ -1038,7 +1038,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							});				
 						</script>
 						<hr>
-						<p>If you are using v1.0.0.rc4 or higher, <a href="./functions/upgrade100rc4.php">Click here</a> to upgrade your database to be compatible with v1.0.0.rc1 or higher</p>
+						<p>If you are using v1.0.0.rc4 or higher, <a href="./functions/upgrade100rc4.php">Click here</a> to upgrade your database to be compatible with v1.0.0.rc1 or higher, if created in a version lower than v1.0.0.rc1</p>
 					</div>
 					<br />
 					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseAnno" role="button" aria-expanded="false" aria-controls="collapseAnno">Public Announcements</button>
@@ -2209,7 +2209,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					</form>
 				</div>
 			</div>
-			<p class="ml-3"><a href="./add-mods"><i class="fas fa-plus-circle"></i> Add remote mods</a></p>
+			 <?php if(substr($_SESSION['perms'],3,1)=="1") { ?><p class="ml-3"><a href="./add-mods"><i class="fas fa-plus-circle"></i> Add remote mods</a></p><?php } ?>
 			<div style="display: none" id="u-mods" class="card">
 				<h2>New Mods</h2>
 				<table class="table">
@@ -2573,7 +2573,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							<tr id="mod-row-<?php echo $mod['id'] ?>">
 								<td scope="row"><?php echo $mod['mcversion'] ?></td>
 								<td><?php echo $mod['version'] ?></td>
-								<td><button  onclick="remove_box(<?php echo $mod['id'].",'".$mod['pretty_name']." ".$mod['version']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger btn-sm">Remove</button></td>
+								<td> <?php if(substr($_SESSION['perms'],5,1)=="1") { ?><button  onclick="remove_box(<?php echo $mod['id'].",'".$mod['pretty_name']." ".$mod['version']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger btn-sm">Remove</button><?php } ?></td>
 								<td><i style="display: none" class="fas fa-cog fa-spin fa-sm"></i></td>
 							</tr>
 							<?php
@@ -2720,13 +2720,24 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<div class="upload-mods">
 							<center>
 								<div>
-									Drag n' Drop .zip files here.
-									<br />
-									<i class="fas fa-upload fa-4x"></i>
-								</div>									
-							</center>
-							<input type="file" name="fiels" multiple accept=".zip" />
-						</div>
+									<?php
+										if(substr($_SESSION['perms'],3,1)=="1") {
+											echo "
+											Drag n' Drop .zip files here.
+											<br />
+											<i class='fas fa-upload fa-4x'></i>
+											";
+										} else {
+											echo "
+											Insufficient permissions!
+											<br />
+											<i class='fas fa-times fa-4x'></i>
+											";
+										} ?>
+									</div>									
+								</center>
+								<input <?php if(substr($_SESSION['perms'],3,1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple accept=".zip" />
+							</div>
 					</form>
 				</div>
 				<p>These files will be extracted to modpack's root directory. (e.g. Config files, worlds, resource packs....)</p>
@@ -2766,7 +2777,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									<td>
 										<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
 											<button onclick="window.location = './file?id=<?php echo $mod['id'] ?>'" data-toggle="modal" data-target="#infoMod" class="btn btn-primary">Info</button>
-											<button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
+											 <?php if(substr($_SESSION['perms'],3,1)=="1") { ?><button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button><?php } ?>
 											<button onclick="window.location = '<?php echo $mod['url'] ?>'" class="btn btn-secondary">Download</button>
 										</div>
 									</td>
