@@ -942,30 +942,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					</div>
 					<br />
 				<?php } ?>
-					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseInst" role="button" aria-expanded="false" aria-controls="collapseInst">How to create a modpack?</button>
-					<div class="collapse" id="collapseInst">
-						<br />
-						<p>With Solder.cf, you can create a modpack in three simple steps:</p>
-						<div style="margin-left: 25px">
-							
-							<h5>1. Upload your mods and select Forge version.</h5>
-							<p>On the side panel, click the book icon <i class="fas fa-book"></i> and click Mods Library. Then, just Drag n' Drop your mods to the upload box.</p>
-							<p>Under the Mods Library, click Forge Versions. Click the blue button Fetch Forge Versions and wait until versions are loaded. Then spimply add to database versions you want.</p>
-							<h5>2. Add modpack do the database.</h5>
-							<p>On the side panel, click the packs icon <i class="fas fa-boxes"></i> and click Add Modpack. Rename your modpack and click Save.</p>
-							<h5>3. Create a new build.</h5>
-							<p>On the side panel, click on your modpack. Create a new empty build and in builds table click Edit. 	Select minecraft versions and click green button Save and Refresh.</p>
-							<p>Now, you can add mods to your modpack.</p>
-							<p>The final step is to go back to your modpack and in builds table click green button Set reccommended.</p>
-							<hr />
-							<h5>4. When you are done creating the modpack.</h5>
-							<a href="https://www.technicpack.net/modpack/create/solder" target="_blank"><button class="btn btn-primary">Import</button></a> your modpack to technicpack.net
-							<h5>5. (Optional)</h5>
-							<p>The author will be happy if you add this Markdown code to your platform page:</p>
-							<pre>[![](http://<?php echo $config['host'].$config['dir'] ?>resources/solderBanner.png)](https://solder.cf)</pre>
-							<img src="./resources/solderBanner.png">
-						</div>
-					</div>
+					<a target="_blank" href="https://github.com/TheGameSpider/TechnicSolder/wiki/"><button class="btn btn-secondary btn-block" >Documentation</button></a>
 					<br />
 					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseMigr" role="button" aria-expanded="false" aria-controls="collapseMigr">Database migration</button>
 					<div class="collapse" id="collapseMigr">
