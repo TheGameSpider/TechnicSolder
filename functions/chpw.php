@@ -8,7 +8,11 @@ if(!$_SESSION['user']||$_SESSION['user']=="") {
 if(empty($_POST['pass'])) {
 	die("Password not specified.");
 }
-$pass = $_POST['pass'];
+if(!isset($config['encrypted'])||$config['encrypted']==false) {
+	$pass = $_POST['pass'];
+} else {
+	$pass = hash("sha256",$_POST['pass']."Solder.cf");
+}
 $sql = mysqli_query($conn,"UPDATE `users` SET `pass` = '".$pass."' WHERE `name` = '".$_SESSION['user']."'");
 echo mysqli_error($conn);
 header("Location: ".$config['dir']."user");

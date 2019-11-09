@@ -44,10 +44,11 @@ if(!isset($_GET['reconfig'])) {
 				}
 				if(isset($_POST['host'])) {
 					$cf = '<?php return array( "configured" => true, ';
-
+					$_POST['pass'] = hash("sha256",$_POST['pass']."Solder.cf");
+					$_POST['encrypted'] = true;
 					foreach ($_POST as $key => $value) {
 						$cf .= '"'.$key.'" => "'.$value.'"';
-						if($key !== "api_key") {
+						if($key !== "encrypted") {
 							$cf .= ",";
 						}
 					}
@@ -153,7 +154,7 @@ if(!isset($_GET['reconfig'])) {
 						<input required name="db-host" type="text" class="form-control" id="db-host" placeholder="Database IP" value="127.0.0.1"><br />
 						<input required name="db-user" type="text" class="form-control" id="db-user" placeholder="Database username"><br />
 						<input required name="db-name" type="text" class="form-control" id="db-name" placeholder="Database name"><br />
-						<input required name="db-pass" type="password" class="form-control" id="db-pass" placeholder="Database password">
+						<input name="db-pass" type="password" class="form-control" id="db-pass" placeholder="Database password">
 						<small id="errtext" class="form-text text-muted">Five tables will be created: users, clients, modpacks, builds, mods</small>
 					</div>
 					<div class="form-group">

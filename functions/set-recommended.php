@@ -6,7 +6,7 @@ if(empty($_GET['id'])){
 	die("Build not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("Unauthorized require or login session has expired!");
+	die("Unauthorized request or login session has expired!");
 }
 if(substr($_SESSION['perms'],2,1)!=="1") {
 	echo 'Insufficient permission!';

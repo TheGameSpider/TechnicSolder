@@ -14,27 +14,8 @@ if(empty($_GET['id'])){
 }
 $result = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".$_GET['id']);
 $mod = mysqli_fetch_array($result);
-if($mod['link']!==$_POST['link']){
-	mysqli_query($conn, "UPDATE `mods` SET `link` = '".mysqli_real_escape_string($conn, $_POST['link'])."' WHERE `id` = ".$_GET['id']);
-}
-if($mod['author']!==$_POST['author']){
-	mysqli_query($conn, "UPDATE `mods` SET `author` = '".mysqli_real_escape_string($conn, $_POST['author'])."' WHERE `id` = ".$_GET['id']);
-}
-if($mod['donlink']!==$_POST['donlink']){
-	mysqli_query($conn, "UPDATE `mods` SET `donlink` = '".mysqli_real_escape_string($conn, $_POST['donlink'])."' WHERE `id` = ".$_GET['id']);
-}
-if($mod['version']!==$_POST['version']){
-	mysqli_query($conn, "UPDATE `mods` SET `version` = '".mysqli_real_escape_string($conn, $_POST['version'])."' WHERE `id` = ".$_GET['id']);
-}
-if($mod['mcversion']!==$_POST['mcversion']){
-	mysqli_query($conn, "UPDATE `mods` SET `mcversion` = '".mysqli_real_escape_string($conn, $_POST['mcversion'])."' WHERE `id` = ".$_GET['id']);
-}
-if($mod['url']!==$_POST['url']){
-	mysqli_query($conn, "UPDATE `mods` SET `url` = '".mysqli_real_escape_string($conn, $_POST['url'])."' WHERE `id` = ".$_GET['id']);
-}
-if($mod['md5']!==$_POST['md5']){
-	mysqli_query($conn, "UPDATE `mods` SET `md5` = '".mysqli_real_escape_string($conn, $_POST['md5'])."' WHERE `id` = ".$_GET['id']);
-}
+mysqli_query($conn, "UPDATE `mods` SET `link` = '".mysqli_real_escape_string($conn, $_POST['link'])."',`author` = '".mysqli_real_escape_string($conn, $_POST['author'])."', `donlink` = '".mysqli_real_escape_string($conn, $_POST['donlink'])."', `version` = '".mysqli_real_escape_string($conn, $_POST['version'])."', `mcversion` = '".mysqli_real_escape_string($conn, $_POST['mcversion'])."', `url` = '".mysqli_real_escape_string($conn, $_POST['url'])."', `md5` = '".mysqli_real_escape_string($conn, $_POST['md5'])."' WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
+
 if($_POST['submit']=="Save and close") {
 	header("Location: ".$config['dir']."mod?id=".$mod['name']);
 	exit();

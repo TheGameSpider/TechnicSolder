@@ -12,7 +12,7 @@ if(empty($_GET['newname'])){
 	die("New name not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("Unauthorized require or login session has expired!");
+	die("Unauthorized request or login session has expired!");
 }
 $sql = mysqli_query($conn, "SELECT `name` FROM `builds` WHERE `id` = " .mysqli_real_escape_string($conn, $_GET['build']));
 $name = mysqli_fetch_array($sql);

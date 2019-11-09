@@ -28,7 +28,10 @@ function slugify($text) {
   }
   return $text;
 }
-$fileName = slugify($fileName).".jar";
+$fileName = explode("-",slugify($fileName));
+array_pop($fileName);
+$fileName = implode("-",$fileName).".jar";
+
 if(!file_exists("../mods/mods-".$fileName)) {
 	mkdir("../mods/mods-".$fileName);
 } else {
@@ -60,9 +63,9 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 			if(mysqli_num_rows($fq)==1){
 				echo '{"status":"info","message":"This mod is already in the database.","modid":'.mysqli_fetch_array($fq)['id'].'}';
 			} else {
-				$result = file_get_contents("zip://../mods/mods-".$fileName."/".$fileName."#mcmod.info");
-				if($result) {
-					$mcmod = json_decode($result,true)[0];
+				$result = file_get_contents("zip://".realpath("../mods/mods-".$fileName."/".$fileName)."#mcmod.info");
+				if($result) {	
+					$mcmod = json_decode(preg_replace('/\r|\n/','',trim($result)),true)[0];
 					if(!$mcmod['modid']||!$mcmod['name']||!$mcmod['description']||!$mcmod['version']||!$mcmod['mcversion']||!$mcmod['url']||!$mcmod['authorList']) {
 						$warn['b'] = true;
 						$warn['level'] = "info";
@@ -93,8 +96,8 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 				$version = $mcmod['version'];
 				$mcversion = $mcmod['mcversion'];
 				$md5 = md5_file("../mods/".$fileInfo['filename'].".zip");
-				$url = "http://".$config['host'].$config['dir']."mods/".$fileInfo['filename'].".zip";
-				$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','".$url."','".$link."','".$author."','".$description."','".$version."','".$mcversion."','".$fileInfo['filename'].".zip','mod')");
+				//$url = "http://".$config['host'].$config['dir']."mods/".$fileInfo['filename'].".zip";
+				$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','','".$link."','".$author."','".$description."','".$version."','".$mcversion."','".$fileInfo['filename'].".zip','mod')");
 				if($res) {
 					if($warn['b']==true) {
 						if($warn['level']=="info") {
@@ -114,9 +117,9 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 			
 		}
 	} else {
-		$result = file_get_contents("zip://../mods/mods-".$fileName."/".$fileName."#mcmod.info");
-		if($result) {
-			$mcmod = json_decode($result,true)[0];
+		$result = file_get_contents("zip://".realpath("../mods/mods-".$fileName."/".$fileName)."#mcmod.info");
+		if($result) {	
+			$mcmod = json_decode(preg_replace('/\r|\n/','',trim($result)),true)[0];
 			if(!$mcmod['modid']||!$mcmod['name']||!$mcmod['description']||!$mcmod['version']||!$mcmod['mcversion']||!$mcmod['url']||!$mcmod['authorList']) {
 				$warn['b'] = true;
 				$warn['level'] = "info";
@@ -161,8 +164,8 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 		$version = $mcmod['version'];
 		$mcversion = $mcmod['mcversion'];
 		$md5 = md5_file("../mods/".$fileInfo['filename'].".zip");
-		$url = "http://".$config['host'].$config['dir']."mods/".$fileInfo['filename'].".zip";
-		$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','".$url."','".$link."','".$author."','".$description."','".$version."','".$mcversion."','".$fileInfo['filename'].".zip','mod')");
+		//$url = "http://".$config['host'].$config['dir']."mods/".$fileInfo['filename'].".zip";
+		$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','','".$link."','".$author."','".$description."','".$version."','".$mcversion."','".$fileInfo['filename'].".zip','mod')");
 		if($res) {
 			if($warn['b']==true) {
 				if($warn['level']=="info") {
@@ -179,6 +182,6 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 		}
 	}
 } else {
-    echo '{"status":"error","message":"Permission denied! Open SSH and run chown -R www-data '.dirname(dirname(get_included_files()[0])).'"}';
+    echo '{"status":"error","message":"Permission denied! Open SSH and run chown -R www-data '.addslashes(dirname(dirname(get_included_files()[0]))).'"}';
 }
 ?>

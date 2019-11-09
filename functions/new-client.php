@@ -9,7 +9,7 @@ if(empty($_GET['uuid'])){
 	die("UUID not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("Unauthorized require or login session has expired!");
+	die("Unauthorized request or login session has expired!");
 }
 if(substr($_SESSION['perms'],6,1)!=="1") {
 	echo 'Insufficient permission!';

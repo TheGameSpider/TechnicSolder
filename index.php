@@ -35,23 +35,44 @@ if(isset($_GET['logout'])){
 	}
 }
 if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== ""){
-	if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']){
-		
-		$_SESSION['user'] = $_POST['email'];
-		$_SESSION['name'] = $config['author'];
-		$_SESSION['perms'] = "1111111";
-	} else {
-		$user = mysqli_query($conn, "SELECT * FROM `users` WHERE `name` = '". addslashes($_POST['email']) ."'");
-		$user = mysqli_fetch_array($user);
-		if($user['pass']==$_POST['password']) {
+	if(!isset($config['encrypted'])||$config['encrypted']==false) {
+		if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']){
+			
 			$_SESSION['user'] = $_POST['email'];
-			$_SESSION['name'] = $user['display_name'];
-			$_SESSION['perms'] = $user['perms'];
+			$_SESSION['name'] = $config['author'];
+			$_SESSION['perms'] = "1111111";
 		} else {
-			header("Location: ".$config['dir']."login?ic");
-			exit();
+			$user = mysqli_query($conn, "SELECT * FROM `users` WHERE `name` = '". addslashes($_POST['email']) ."'");
+			$user = mysqli_fetch_array($user);
+			if($user['pass']==$_POST['password']) {
+				$_SESSION['user'] = $_POST['email'];
+				$_SESSION['name'] = $user['display_name'];
+				$_SESSION['perms'] = $user['perms'];
+			} else {
+				header("Location: ".$config['dir']."login?ic");
+				exit();
+			}
+			
 		}
-		
+	} else {
+		if($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']){
+			
+			$_SESSION['user'] = $_POST['email'];
+			$_SESSION['name'] = $config['author'];
+			$_SESSION['perms'] = "1111111";
+		} else {
+			$user = mysqli_query($conn, "SELECT * FROM `users` WHERE `name` = '". addslashes($_POST['email']) ."'");
+			$user = mysqli_fetch_array($user);
+			if($user['pass']==hash("sha256",$_POST['password']."Solder.cf")) {
+				$_SESSION['user'] = $_POST['email'];
+				$_SESSION['name'] = $user['display_name'];
+				$_SESSION['perms'] = $user['perms'];
+			} else {
+				header("Location: ".$config['dir']."login?ic");
+				exit();
+			}
+			
+		}
 	}
 }
 function uri($uri) {
@@ -667,6 +688,16 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						</div>
 					</div>
 				<?php } ?>
+				
+				<?php
+					if((!isset($config['encrypted'])||$config['encrypted']==false)&&$_SESSION['user']==$config['mail']) {
+						?>
+						<div class="card alert-warning">
+							<p><b>Warning!</b> You password is not encrypted and it's visible to everyone who has access to your files and database. It's recommended to encrypt your passwords. <a href="./functions/passencrypt.php">Click here to proceed</a></p>
+						</div>
+						<?php
+					}
+				?>
 				<div class="card">
 					<center>
 						<p class="display-4"><span id="welcome" >Welcome to </span>Solder<span class="text-muted">.cf</span></p>
@@ -911,30 +942,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					</div>
 					<br />
 				<?php } ?>
-					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseInst" role="button" aria-expanded="false" aria-controls="collapseInst">How to create a modpack?</button>
-					<div class="collapse" id="collapseInst">
-						<br />
-						<p>With Solder.cf, you can create a modpack in three simple steps:</p>
-						<div style="margin-left: 25px">
-							
-							<h5>1. Upload your mods and select Forge version.</h5>
-							<p>On the side panel, click the book icon <i class="fas fa-book"></i> and click Mods Library. Then, just Drag n' Drop your mods to the upload box.</p>
-							<p>Under the Mods Library, click Forge Versions. Click the blue button Fetch Forge Versions and wait until versions are loaded. Then spimply add to database versions you want.</p>
-							<h5>2. Add modpack do the database.</h5>
-							<p>On the side panel, click the packs icon <i class="fas fa-boxes"></i> and click Add Modpack. Rename your modpack and click Save.</p>
-							<h5>3. Create a new build.</h5>
-							<p>On the side panel, click on your modpack. Create a new empty build and in builds table click Edit. 	Select minecraft versions and click green button Save and Refresh.</p>
-							<p>Now, you can add mods to your modpack.</p>
-							<p>The final step is to go back to your modpack and in builds table click green button Set reccommended.</p>
-							<hr />
-							<h5>4. When you are done creating the modpack.</h5>
-							<a href="https://www.technicpack.net/modpack/create/solder" target="_blank"><button class="btn btn-primary">Import</button></a> your modpack to technicpack.net
-							<h5>5. (Optional)</h5>
-							<p>The author will be happy if you add this Markdown code to your platform page:</p>
-							<pre>[![](http://<?php echo $config['host'].$config['dir'] ?>resources/solderBanner.png)](https://solder.cf)</pre>
-							<img src="./resources/solderBanner.png">
-						</div>
-					</div>
+					<a target="_blank" href="https://github.com/TheGameSpider/TechnicSolder/wiki/"><button class="btn btn-secondary btn-block" >Documentation</button></a>
 					<br />
 					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseMigr" role="button" aria-expanded="false" aria-controls="collapseMigr">Database migration</button>
 					<div class="collapse" id="collapseMigr">
@@ -1007,7 +1015,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							});				
 						</script>
 						<hr>
-						<p>If you are using v1.0.0.rc4 or higher, <a href="./functions/upgrade100rc4.php">Click here</a> to upgrade your database to be compatible with v1.0.0.rc1 or higher</p>
+						<p>If you are using v1.0.0.rc4 or higher, <a href="./functions/upgrade100rc4.php">Click here</a> to upgrade your database to be compatible with v1.0.0.rc1 or higher, if created in a version lower than v1.0.0.rc1</p>
 					</div>
 					<br />
 					<button class="btn btn-secondary" data-toggle="collapse" href="#collapseAnno" role="button" aria-expanded="false" aria-controls="collapseAnno">Public Announcements</button>
@@ -1834,7 +1842,6 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 										}
 									});*/
 								}
-								console.log("Change "+mod+" to "+id);
 								$("#bmversions-"+name).attr("onchange","changeversion(this.value,"+id+",'"+name+"',true)");
 								$("#spinner-"+name).show();
 								var request = new XMLHttpRequest();
@@ -1874,7 +1881,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									<tr <?php if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'class="table-warning"';} ?> id="mod-<?php echo $moda['name'] ?>">
 										<td scope="row"><?php echo $moda['pretty_name']; if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo ' <span id="warn-incompatible-'.$moda['name'].'">(For Minecraft '.$moda['mcversion'].' - May not be compatible!)</span>';}?></td>
 										<td>
-											<?php if($moda['type'] == "forge") {
+											<?php if($moda['type'] == "forge" || $moda['type'] == "other") {
 												echo $moda['version'];
 											} else { ?>
 												<select class="form-control" onchange="changeversion(this.value,<?php echo $moda['id'] ?>,'<?php echo $moda['name'] ?>',<?php if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'false';} else { echo 'true'; } ?>);" name="bmversions" id="bmversions-<?php echo $moda['name'] ?>"><?php 
@@ -2084,8 +2091,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<table class="table table-striped sortable">
 							<thead>
 								<tr>
-									<th scope="col" style="width: 40%" data-defaultsign="AZ">Mod Name</th>
-									<th scope="col" style="width: 25%" data-defaultsign="_19">Version</th>
+									<th scope="col" style="width: 40%" data-defaultsign="AZ">File Name</th>
 									<th scope="col" style="width: 30%" data-defaultsort="disabled"></th>
 									<th scope="col" style="width: 5%" data-defaultsort="disabled"></th>
 								</tr>
@@ -2116,7 +2122,6 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 										?>
 										<tr>
 											<td scope="row"><?php echo $mod['pretty_name'] ?></td>
-											<td><?php echo $mod['version'] ?></td>
 											<td><button id="btn-add-o-<?php echo $mod['id'] ?>" onclick="add_o(<?php echo $mod['id'] ?>)" class="btn btn-primary">Add to Build</button></td>
 											<td><i id="cog-o-<?php echo $mod['id'] ?>" style="display:none" class="fas fa-cog fa-spin fa-2x"></i><i id="check-o-<?php echo $mod['id'] ?>" style="display:none" class="text-success fas fa-check fa-2x"></i></td>
 										</tr>
@@ -2181,6 +2186,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					</form>
 				</div>
 			</div>
+			 <?php if(substr($_SESSION['perms'],3,1)=="1") { ?><p class="ml-3"><a href="./add-mods"><i class="fas fa-plus-circle"></i> Add remote mods</a></p><?php } ?>
 			<div style="display: none" id="u-mods" class="card">
 				<h2>New Mods</h2>
 				<table class="table">
@@ -2410,6 +2416,74 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		</script>
 		<?php
 		}
+		else if(uri('/add-mods')) {
+		?>
+		<div class="main">
+			<?php
+			$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+			if($mres) {
+				$mod = mysqli_fetch_array($mres);
+			}
+			?>
+			<script>document.title = 'Solder.cf - Add Mod - <?php echo addslashes($_SESSION['name']) ?>';</script>
+			<div class="card">
+				<button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
+				<h3>Add Mod</h3>
+				<form method="POST" action="./functions/add-modv.php">
+
+					
+					<input id="pn" required class="form-control" type="text" name="pretty_name" placeholder="Mod name" />
+					<br />
+					<input id="slug" required pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" class="form-control" type="text" name="name" placeholder="Mod slug" /><br />
+					<textarea class="form-control" type="text" name="description" placeholder="Mod description"></textarea><br />
+					<input required class="form-control" type="text" name="version" placeholder="Mod Version"><br />
+					<input class="form-control" type="text" name="author" id="author-input" placeholder="Mod Author">
+					<br />
+					<input class="form-control" type="url" name="link" id="link-input" placeholder="Mod Website">
+					<br />
+					<input class="form-control" type="url" name="donlink"  id="donlink-input" placeholder="Author's Website">
+					<br />
+					<div class="input-group">
+						<input required class="form-control" type="url" name="url" placeholder="File URL (this must be a .zip file with the right structure)">
+						<div class="input-group-append" style="cursor:pointer"><span class="input-group-text" data-toggle="popover" title="Solder .zip structure" data-content='The .zip file must include a "mods" folder, within which you place the .jar or .zip original mod file. For example, if you are including the bibliocraft mod, you must place the bibliocraft.jar (the name of the file is irrelevant) inside a "mods" directory. Then you must zip the mods directory and upload this .zip file to a server. Paste your direct link to this file here.'><i class="fas fa-question-circle"></i></span></div>
+					</div>
+					<br />
+					<input required class="form-control" type="text" name="md5" placeholder="File md5 Hash"><br />
+					<input required class="form-control" required type="text" name="mcversion" placeholder="Minecraft Version"><br />
+					<input type="submit" name="submit" value="Save" class="btn btn-success">
+				</form>
+				<script type="text/javascript">
+						$("#pn").on("keyup", function(){
+							var slug = slugify($(this).val());
+							console.log(slug);
+							$("#slug").val(slug);
+						});
+						function slugify (str) {
+							str = str.replace(/^\s+|\s+$/g, '');
+							str = str.toLowerCase();
+							var from = "àáãäâèéëêìíïîòóöôùúüûñç·/_,:;";
+							var to = "aaaaaeeeeiiiioooouuuunc------";
+							for (var i=0, l=from.length ; i<l ; i++) {
+								str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+							}
+							str = str.replace(/[^a-z0-9 -]/g, '')
+								.replace(/\s+/g, '-')
+								.replace(/-+/g, '-');
+							return str;
+						}
+					</script>
+			</div>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$("#nav-mods").trigger('click');
+				$(function () {
+					$('[data-toggle="popover"]').popover()
+				})
+			});
+		</script>
+		<?php
+		}
 		else if(uri('/lib-forges')) {
 		?>
 		<script>document.title = 'Solder.cf - Forge Versions - <?php echo addslashes($_SESSION['name']) ?>';</script>
@@ -2476,7 +2550,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							<tr id="mod-row-<?php echo $mod['id'] ?>">
 								<td scope="row"><?php echo $mod['mcversion'] ?></td>
 								<td><?php echo $mod['version'] ?></td>
-								<td><button  onclick="remove_box(<?php echo $mod['id'].",'".$mod['pretty_name']." ".$mod['version']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger btn-sm">Remove</button></td>
+								<td> <?php if(substr($_SESSION['perms'],5,1)=="1") { ?><button  onclick="remove_box(<?php echo $mod['id'].",'".$mod['pretty_name']." ".$mod['version']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger btn-sm">Remove</button><?php } ?></td>
 								<td><i style="display: none" class="fas fa-cog fa-spin fa-sm"></i></td>
 							</tr>
 							<?php
@@ -2491,6 +2565,28 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			<span id="info" class="text-danger"></span>
 			<div class="card" id="fetched-mods" style="display: none">
 				<script type="text/javascript">
+					var nof = 0;
+					var fiq = 0;
+					function chf(link,name,id,mc) {
+						var chf = new XMLHttpRequest();
+						chf.open('GET', "./functions/chf.php?link="+link);
+						chf.onreadystatechange = function() {
+							if (chf.readyState == 4) {
+								if(chf.status == 200) {
+									fiq++;
+									if(chf.response == "OK") {
+										$("#fetched-mods").show();
+										$("#forge-table").append('<tr id="forge-'+id+'"><td scope="row">'+mc+'</td><td>'+name+'</td><td><a href="'+link+'">'+link+'</a></td><td><button id="button-add-'+id+'" onclick="add(\''+name+'\',\''+link+'\',\''+mc+'\',\''+id+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><i id="cog-'+id+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></i><i id="check-'+id+'" style="display:none" class="text-success fas fa-check fa-2x"></i><i id="times-'+id+'" style="display:none" class="text-danger fas fa-times fa-2x"></i></td></tr>');
+										if(fiq==nof) {
+											$("#fetch").hide();
+											$("#save").show();
+										}
+									}
+								}
+							}
+						}
+						chf.send();
+					}
 					function fetch() {
 						$("#fetch").attr("disabled",true);
 						$("#fetch").html("Fetching...<i class='fas fa-cog fa-spin fa-sm'></i>");
@@ -2499,13 +2595,10 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						request.onreadystatechange = function() {
 							if (request.readyState == 4) {
 								if (request.status == 200) {
-									$("#fetched-mods").show();
 									response = JSON.parse(this.response);
-									console.log(response);
-									$("#fetch").hide();
-									$("#save").show();
 									for (var key in response) {
-										$("#forge-table").append('<tr id="forge-'+response[key]["id"]+'"><td scope="row">'+response[key]["mc"]+'</td><td>'+response[key]["name"]+'</td><td><a href="'+response[key]["link"]+'">'+response[key]["link"]+'</a></td><td><button id="button-add-'+response[key]["id"]+'" onclick="add(\''+response[key]["name"]+'\',\''+response[key]["link"]+'\',\''+response[key]["mc"]+'\',\''+response[key]["id"]+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><i id="cog-'+response[key]["id"]+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></i><i id="check-'+response[key]["id"]+'" style="display:none" class="text-success fas fa-check fa-2x"></i><i id="times-'+response[key]["id"]+'" style="display:none" class="text-danger fas fa-times fa-2x"></i></td></tr>');
+										nof++;
+										chf(response[key]["link"],response[key]["name"],response[key]["id"],response[key]["mc"]);
 									}
 								}
 							}
@@ -2604,13 +2697,24 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						<div class="upload-mods">
 							<center>
 								<div>
-									Drag n' Drop .zip files here.
-									<br />
-									<i class="fas fa-upload fa-4x"></i>
-								</div>									
-							</center>
-							<input type="file" name="fiels" multiple accept=".zip" />
-						</div>
+									<?php
+										if(substr($_SESSION['perms'],3,1)=="1") {
+											echo "
+											Drag n' Drop .zip files here.
+											<br />
+											<i class='fas fa-upload fa-4x'></i>
+											";
+										} else {
+											echo "
+											Insufficient permissions!
+											<br />
+											<i class='fas fa-times fa-4x'></i>
+											";
+										} ?>
+									</div>									
+								</center>
+								<input <?php if(substr($_SESSION['perms'],3,1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple accept=".zip" />
+							</div>
 					</form>
 				</div>
 				<p>These files will be extracted to modpack's root directory. (e.g. Config files, worlds, resource packs....)</p>
@@ -2650,7 +2754,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									<td>
 										<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
 											<button onclick="window.location = './file?id=<?php echo $mod['id'] ?>'" data-toggle="modal" data-target="#infoMod" class="btn btn-primary">Info</button>
-											<button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
+											 <?php if(substr($_SESSION['perms'],3,1)=="1") { ?><button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button><?php } ?>
 											<button onclick="window.location = '<?php echo $mod['url'] ?>'" class="btn btn-secondary">Download</button>
 										</div>
 									</td>
@@ -2819,7 +2923,68 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				document.title = 'Solder.cf - File - <?php echo addslashes($file['name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
 				$(document).ready(function(){
 					$("#nav-mods").trigger('click');
+					
+									var paths = [];
+				<?php
+					$zip = zip_open('./others/'.$file['filename']);
+
+					if ($zip) {
+						while ($zip_entry = zip_read($zip)) {
+							echo 'paths.push("' . zip_entry_name($zip_entry) . '".replace(/\/+$/,\'\'));';
+						}
+
+						zip_close($zip);
+					}
+				?>
+				paths = paths.map(function(path) { return path.split('/'); });
+				$("#files_ul").html(stringify(structurize(paths)).join("\n"));
+				$("#loadingfiles").hide();
 				});
+
+
+
+function structurize(paths) {
+    var items = [];
+    for(var i = 0, l = paths.length; i < l; i++) {
+        var path = paths[i];
+        var name = path[0];
+        var rest = path.slice(1);
+        var item = null;
+        for(var j = 0, m = items.length; j < m; j++) {
+            if(items[j].name === name) {
+                item = items[j];
+                break;
+            }
+        }
+        if(item === null) {
+            item = {name: name, children: []};
+            items.push(item);
+        }
+        if(rest.length > 0) {
+            item.children.push(rest);
+        }
+    }
+    for(i = 0, l = items.length; i < l; i++) {
+        item = items[i];
+        item.children = structurize(item.children);
+    }
+    return items;
+}
+
+function stringify(items) {
+    var lines = [];
+    for(var i = 0, l = items.length; i < l; i++) {
+        var item = items[i];
+        lines.push(item.name);
+        var subLines = stringify(item.children);
+        for(var j = 0, m = subLines.length; j < m; j++) {
+            lines.push("    " + subLines[j]);
+        }
+    }
+    return lines;
+}
+
+
 			</script>
 			<div class="main">
 				<div class="card">
@@ -2829,19 +2994,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					<p>MD5: <?php echo $file['md5'] ?><br >
 					Size: <?php echo formatSizeUnits(filesize('./others/'.$file['filename'])) ?></p>
 					<h3>Files:</h3>
-					<ul>
-						<?php
-						$zip = zip_open('./others/'.$file['filename']);
-
-						if ($zip) {
-							while ($zip_entry = zip_read($zip)) {
-								echo "<li>" . zip_entry_name($zip_entry) . "</li>";
-							}
-
-							zip_close($zip);
-						}
-						?>
-					</ul>
+					<pre id="files_ul">
+					</pre>
+					<h4 id="loadingfiles"><i class="fas fa-cog fa-spin"></i> Loading...</h4>
 				</div>
 			</div>
 			<?php
@@ -2897,7 +3052,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 									<button onclick="window.location = './modv?id=<?php echo $mod['id'] ?>'" class="btn btn-primary">Edit</button>
 									<button onclick="remove_box(<?php echo $mod['id'].",'".$mod['version']."','".$mod['filename']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
 									<button onclick="window.location = '<?php echo $mod['url']; ?>'" class="btn btn-secondary"><i class="fas fa-file-download"></i> .zip</button>
-											<button onclick="window.location = './functions/mod_extract.php?id=<?php echo $mod['id']; ?>'" class="btn btn-secondary"><i class="fas fa-file-download"></i> .jar</button>
+									<?php if(!empty($mod['filename'])) { ?><button onclick="window.location = './functions/mod_extract.php?id=<?php echo $mod['id']; ?>'" class="btn btn-secondary"><i class="fas fa-file-download"></i> .jar</button><?php } ?>
 								</div>
 							</td>
 						</tr>
@@ -3000,13 +3155,29 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 							return str;
 						}
 					</script>
-						<input class="form-control" type="text" name="version" placeholder="Mod Version" value="<?php echo $mod['version'] ?>"><br />
-						<input class="form-control" type="text" name="author" placeholder="Mod Author" value="<?php echo $mod['author'] ?>"><br />
-						<input class="form-control" type="url" name="link" placeholder="Mod Website" value="<?php echo $mod['link'] ?>"><br />
-						<input class="form-control" type="url" name="donlink" placeholder="Author's Website" value="<?php echo $mod['donlink'] ?>"><br />
-						<input class="form-control" type="url" name="url" placeholder="File URL" value="<?php echo $mod['url'] ?>"><br />
-						<input class="form-control" type="text" name="md5" placeholder="File md5 Hash" value="<?php echo $mod['md5'] ?>"><br />
-						<input class="form-control" required type="text" name="mcversion" placeholder="Minecraft Version" value="<?php echo $mod['mcversion'] ?>"><br />
+						<input required class="form-control" type="text" name="version" placeholder="Mod Version" value="<?php echo $mod['version'] ?>"><br />
+						<div class="input-group">
+							<input class="form-control" type="text" name="author" id="author-input" placeholder="Mod Author" value="<?php echo $mod['author'] ?>">
+							<div class="input-group-append">
+								<button class="btn btn-primary" type="button" id="author-save" onclick="authorsave()">Set for all versions</button>
+							</div>
+						</div><br />
+						
+						<div class="input-group">
+							<input class="form-control" type="url" name="link" id="link-input" placeholder="Mod Website" value="<?php echo $mod['link'] ?>">
+							<div class="input-group-append">
+								<button class="btn btn-primary" type="button" id="link-save" onclick="linksave()">Set for all versions</button>
+							</div>
+						</div><br />
+						<div class="input-group">
+							<input class="form-control" type="url" name="donlink"  id="donlink-input" placeholder="Author's Website" value="<?php echo $mod['donlink'] ?>">
+							<div class="input-group-append">
+								<button class="btn btn-primary" type="button" id="donlink-save" onclick="donlinksave()">Set for all versions</button>
+							</div>
+						</div><br />
+						<input class="form-control" type="url" name="url" <?php if(!empty($mod['url'])) { echo 'placeholder="File URL" value="'.$mod['url'].'" required'; } else { echo 'disabled placeholder="File URL (This is a local mod)"'; } ?>><br />
+						<input required class="form-control" type="text" name="md5" placeholder="File md5 Hash" value="<?php echo $mod['md5'] ?>"><br />
+						<input required class="form-control" required type="text" name="mcversion" placeholder="Minecraft Version" value="<?php echo $mod['mcversion'] ?>"><br />
 						<input type="submit" name="submit" value="Save" class="btn btn-success">
 						<input type="submit" name="submit" value="Save and close" class="btn btn-success">
 				</form>
@@ -3015,7 +3186,57 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<script type="text/javascript">
 			$(document).ready(function(){
 				$("#nav-mods").trigger('click');
+				$("#author-input").on("keyup",function(){
+					$("#author-save").html("Set for all versions").attr("disabled",false);
+				});
+				$("#link-input").on("keyup",function(){
+					$("#link-save").html("Set for all versions").attr("disabled",false);
+				});
+				$("#donlink-input").on("keyup",function(){
+					$("#donlink-save").html("Set for all versions").attr("disabled",false);
+				});
+
 			});
+			function authorsave() {
+				$("#author-save").html("<i class='fas fa-cog fa-spin'></i>").attr("disabled",true);
+				var request = new XMLHttpRequest();
+				request.open('POST', './functions/authorsave.php');
+				request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				request.onreadystatechange = function() {
+					if(request.readyState == 4) {
+						$("#author-save").html("<i class='fas fa-check text-success'></i>");
+					}
+				}
+				var value = encodeURIComponent($("#author-input").val());
+				request.send("id=<?php echo $mod['name'] ?>&value="+value);
+			}
+			function linksave() {
+				$("#link-save").html("<i class='fas fa-cog fa-spin'></i>").attr("disabled",true);
+				var request = new XMLHttpRequest();
+				request.open('POST', './functions/linksave.php');
+				request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				request.onreadystatechange = function() {
+					if(request.readyState == 4) {
+						$("#link-save").html("<i class='fas fa-check text-success'></i>");
+					}
+				}
+				var value = encodeURIComponent($("#link-input").val());
+				request.send("id=<?php echo $mod['name'] ?>&value="+value);
+			}
+			function donlinksave() {
+				$("#donlink-save").html("<i class='fas fa-cog fa-spin'></i>").attr("disabled",true);
+				var request = new XMLHttpRequest();
+				
+				request.open('POST', './functions/donlinksave.php');
+				request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				request.onreadystatechange = function() {
+					if(request.readyState == 4) {
+						$("#donlink-save").html("<i class='fas fa-check text-success'></i>");
+					}
+				}
+				var value = encodeURIComponent($("#donlink-input").val());
+				request.send("id=<?php echo $mod['name'] ?>&value="+value);
+			}
 		</script>
 		<?php
 		}
