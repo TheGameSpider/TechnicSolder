@@ -117,7 +117,7 @@ service apache2 restart
 If you don't have remote access to the server (SSH), you can just download the master branch extract it to your document root folder<br />
 Installation is complete. Now you need to confige TechnicSolder before using it.
 # If you are using nginx:
-*there is an example for nging configuration"*
+*there is an example for nginx configuration"*
 ```nginx
 	location / {
         try_files   $uri $uri/ /index.php?$query_string;
