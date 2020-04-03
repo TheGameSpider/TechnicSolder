@@ -147,6 +147,4 @@ Go to `http://your_server_IP_address` and fill out the form. If you followed the
 
 The final step is to set your Solder URL in Solder Configuration (In your https://technicpack.net profile)
 
-Click **Link solder**<br />
-
 That's it. You have successfully installed and configured TechnicSolder. It's ready to use!
