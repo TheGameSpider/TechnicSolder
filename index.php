@@ -343,21 +343,6 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		} else {
 			$filecontents = file_get_contents('./api/version.json');
 		?>
-		<?php if($settings['use_tawkto']=="on") { ?>
-		<!--Start of Tawk.to Script-->
-		<script type="text/javascript">
-		var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-		(function(){
-		var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-		s1.async=true;
-		s1.src='https://embed.tawk.to/5ba262e0c666d426648ae9ee/default';
-		s1.charset='UTF-8';
-		s1.setAttribute('crossorigin','*');
-		s0.parentNode.insertBefore(s1,s0);
-		})();
-		</script>
-		<!--End of Tawk.to Script-->
-	<?php } ?>
 		<nav class="navbar <?php if($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
   			<span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"><i id="menuopen" class="fas fa-bars menu-bars"></i> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
   			<span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
