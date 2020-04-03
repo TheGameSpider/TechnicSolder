@@ -3910,10 +3910,6 @@ function stringify(items) {
 						<input <?php if($settings['use_verifier']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_verifier" id="use_verifier">
 						<label class="custom-control-label" for="use_verifier">Enable Solder Verifier - uses cookies</label>
 					</div>
-					<div class="custom-control custom-switch">
-						<input <?php if($settings['use_tawkto']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_tawkto" id="use_tawkto">
-						<label class="custom-control-label" for="use_tawkto">Enable Tawk.to - uses cookies</label>
-					</div>
 					<br>
 					<i>It might take a few moments to take effect.</i>
 					<br><br>
