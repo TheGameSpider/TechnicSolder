@@ -338,7 +338,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<?php
 		} else {
 			$filecontents = file_get_contents('./api/version.json');
-		}
+
 		?>
 		<nav class="navbar <?php if($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
   			<span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"><i id="menuopen" class="fas fa-bars menu-bars"></i> Technic Solder <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
