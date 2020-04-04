@@ -2586,7 +2586,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						$("#sub-button").attr("disabled","true")
 						$("#sub-button")[0].innerHTML = "<i class='fas fa-cog fa-spin'></i>"
 						let packager = new XMLHttpRequest();
-						packager.open('GET', './functions/package-fabric.php?version='+$("#ver").children("option:selected").val()+"&loader="+$("#lod").children("option:selected").val())
+						packager.open('GET', './functions/package-fabric.php?version='+encodeURIComponent($("#ver").children("option:selected").val())+"&loader="+encodeURIComponent($("#lod").children("option:selected").val()))
 						packager.onreadystatechange = () => {
 							if (packager.readyState === 4) {
 								if (packager.status === 200) {
