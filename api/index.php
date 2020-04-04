@@ -258,7 +258,7 @@ while($modpack=mysqli_fetch_array($result)){
 						}
 					}
 					$response = array(
-						"minecraft" => $build['minecraft'],
+						"minecraft" => str_replace("f", "", $build['minecraft']),
 						"java" => $build['java'],
 						"memory" => $build['memory'],
 						"forge" => null,
