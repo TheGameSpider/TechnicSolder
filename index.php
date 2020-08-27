@@ -430,7 +430,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 								if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
 									$info = $cache[$modpack['name']]['info'];
 								} else {
-									if($info = json_decode(file_get_contents("https://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
+									if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
 										$cache[$modpack['name']]['time'] = time();
 										$cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
 										$cache[$modpack['name']]['info'] = $info;
@@ -1169,7 +1169,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
 					$info = $cache[$modpack['name']]['info'];
 				} else {
-					if($info = json_decode(file_get_contents("https://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
+					if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
 						$cache[$modpack['name']]['time'] = time();
 						$cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
 						$cache[$modpack['name']]['info'] = $info;
@@ -2586,7 +2586,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						$("#sub-button").attr("disabled","true")
 						$("#sub-button")[0].innerHTML = "<i class='fas fa-cog fa-spin'></i>"
 						let packager = new XMLHttpRequest();
-						packager.open('GET', './functions/package-fabric.php?version='+$("#ver").children("option:selected").val()+"&loader="+$("#lod").children("option:selected").val())
+						packager.open('GET', './functions/package-fabric.php?version='+encodeURIComponent($("#ver").children("option:selected").val())+"&loader="+encodeURIComponent($("#lod").children("option:selected").val()))
 						packager.onreadystatechange = () => {
 							if (packager.readyState === 4) {
 								if (packager.status === 200) {
