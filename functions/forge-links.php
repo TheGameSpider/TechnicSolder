@@ -15,7 +15,7 @@ foreach(json_decode($forge_data, true)['promos'] as $forge => $ff) {
                 $fext=$file[0];
                 if($fext=="zip"||$fext=="jar") {
                     $fn = str_replace("latest", $fvs, $forge);
-                    if($fv == "1.12.2" || $fv == "1.12.1"|| $fv == "1.12" || $fv == "1.11.2" || $fv == "1.11.1" || $fv == "1.11" || $fv == "1.10.2"|| $fv == "1.10" || $fv == "1.9.4" || $fv == "1.9" || $fv == "1.8.9" || $fv == "1.8.8" || $fv == "1.8" || $fv == "1.7.10" || $fv == "1.7.2" || $fv == "1.6.4" || $fv == "1.6.3" || $fv == "1.6.2" || $fv == "1.6.1" || $fv == "1.5.2" || $fv == "1.1"){
+                    if($fv == "1.12.1"|| $fv == "1.12" || $fv == "1.11.2" || $fv == "1.11.1" || $fv == "1.11" || $fv == "1.10.2"|| $fv == "1.10" || $fv == "1.9.4" || $fv == "1.9" || $fv == "1.8.9" || $fv == "1.8.8" || $fv == "1.8" || $fv == "1.7.10" || $fv == "1.7.2" || $fv == "1.6.4" || $fv == "1.6.3" || $fv == "1.6.2" || $fv == "1.6.1" || $fv == "1.5.2" || $fv == "1.1"){
                         $versions[$fv] = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/".$fn."/forge-".$fn."-universal.".$fext;
                     } else {
                         $versions[$fv] = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/".$fn."/forge-".$fn."-installer.".$fext;
