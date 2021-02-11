@@ -140,7 +140,7 @@ exit
 **Configure TechnicSolder** <br />
 
 ```bash
-chown -R www-data TechnicSolder
+chown -R www-data html
 ```
 
 Go to `http://your_server_IP_address` and fill out the form. If you followed these instructions, database name and username is `solder` <br />
