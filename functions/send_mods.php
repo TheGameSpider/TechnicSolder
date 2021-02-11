@@ -71,6 +71,18 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 						$warn['level'] = "info";
 						$warn['message'] = "There is some information missing in mcmod.info.";
 					}
+				} elseif (file_get_contents("zip://".realpath("../mods/mods-".$fileName."/".$fileName)."#fabric.mod.json")) {
+					$result = file_get_contents("zip://".realpath("../mods/mods-".$fileName."/".$fileName)."#fabric.mod.json");
+					$q =  json_decode(preg_replace('/\r|\n/','',trim($result)),true);
+					$mcmod = $q;
+					$mcmod["modid"] = $mcmod["id"];
+					$mcmod["url"] = $mcmod["contact"]["sources"];
+                                        if(!$mcmod['modid']||!$mcmod['name']||!$mcmod['description']||!$mcmod['version']||!$mcmod['mcversion']||!$mcmod['url']||!$mcmod['authorList']) {
+                                                $warn['b'] = true;
+                                                $warn['level'] = "info";
+                                                $warn['message'] = "There is some information missing in fabric.mod.json.";
+                                        }
+
 				} else {
 					$warn['b'] = true;
 					$warn['level'] = "warn";
@@ -125,6 +137,19 @@ if(move_uploaded_file($fileTmpLoc, "../mods/mods-".$fileName."/".$fileName)){
 				$warn['level'] = "info";
 				$warn['message'] = "There is some information missing in mcmod.info.";
 			}
+                 } elseif (file_get_contents("zip://".realpath("../mods/mods-".$fileName."/".$fileName)."#fabric.mod.json")) {
+                        $result = file_get_contents("zip://".realpath("../mods/mods-".$fileName."/".$fileName)."#fabric.mod.json");
+                        $q =  json_decode(preg_replace('/\r|\n/','',trim($result)),true);
+                        $mcmod = $q;
+                        $mcmod["modid"] = $mcmod["id"];
+			$mcmod["authorList"] = $mcmod["authors"];
+                        $mcmod["url"] = $mcmod["contact"]["sources"];
+			$mcmod["mcversion"] = "f1.15.2";
+                        if(!$mcmod['modid']||!$mcmod['name']||!$mcmod['description']||!$mcmod['version']||!$mcmod['mcversion']||!$mcmod['url']||!$mcmod['authorList']) {
+                        	$warn['b'] = true;
+                        	$warn['level'] = "info";
+                                $warn['message'] = "There is some information missing in fabric.mod.json.";
+                        }
 		} else {
 			$warn['b'] = true;
 			$warn['level'] = "warn";
