@@ -36,6 +36,7 @@ if(isset($_GET['logout'])){
 }
 if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== ""){
 	if(!isset($config['encrypted'])||$config['encrypted']==false||!isset($config['betterencryption'])||$config['betterencryption']==false) {
+		// Passwords are not encrypted.
 		if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']){
 			$_SESSION['user'] = $_POST['email'];
 			$_SESSION['name'] = $config['author'];
@@ -52,15 +53,34 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
 				exit();
 			}
 		}
-	} else {
-		if($_POST['email']==$config['mail'] && password_verify(hash("sha256",$_POST['password']."Solder.cf"), $config['pass']){
+	} elseif((isset($config['encrypted'])||$config['encrypted']==true)&&(!isset($config['betterencryption'])||$config['betterencryption']==false)){
+		// Passwords are encrypted, but betterencryption is not used.
+		if($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']){
 			$_SESSION['user'] = $_POST['email'];
 			$_SESSION['name'] = $config['author'];
 			$_SESSION['perms'] = "1111111";
 		} else {
 			$user = mysqli_query($conn, "SELECT * FROM `users` WHERE `name` = '". addslashes($_POST['email']) ."'");
 			$user = mysqli_fetch_array($user);
-			if(password_verify(hash("sha256",$_POST['password']."Solder.cf"), $user['pass']) {
+			if(hash("sha256",$_POST['password']."Solder.cf")==$user['pass'])) {
+				$_SESSION['user'] = $_POST['email'];
+				$_SESSION['name'] = $user['display_name'];
+				$_SESSION['perms'] = $user['perms'];
+			} else {
+				header("Location: ".$config['dir']."login?ic");
+				exit();
+			}
+		}
+	} else {
+		// Passwords are encrypted and use betterencryption.
+		if($_POST['email']==$config['mail'] && password_verify(hash("sha256",$_POST['password']."Solder.cf"), $config['pass'])){
+			$_SESSION['user'] = $_POST['email'];
+			$_SESSION['name'] = $config['author'];
+			$_SESSION['perms'] = "1111111";
+		} else {
+			$user = mysqli_query($conn, "SELECT * FROM `users` WHERE `name` = '". addslashes($_POST['email']) ."'");
+			$user = mysqli_fetch_array($user);
+			if(password_verify(hash("sha256",$_POST['password']."Solder.cf"), $user['pass'])) {
 				$_SESSION['user'] = $_POST['email'];
 				$_SESSION['name'] = $user['display_name'];
 				$_SESSION['perms'] = $user['perms'];
@@ -675,7 +695,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					if((!isset($config['encrypted'])||$config['encrypted']==false||!isset($config['betterencryption'])||$config['betterencryption']==false)&&$_SESSION['user']==$config['mail']) {
 						?>
 						<div class="card alert-danger">
-							<p><b>Warning!</b> You password is not encrypted or is encrypted using a flawed encryption method and it's visible to everyone who has access to your files and database. It's recommended to encrypt your passwords using the proper method. <a href="./functions/passencrypt.php">Click here to proceed</a></p>
+							<p><b>Warning!</b> You password is not encrypted or is encrypted using a dangerously flawed encryption method. It can be visible to anyone who has access to your files and/or database. It's recommended to encrypt your passwords using the proper method. <a href="./functions/passencrypt.php">Click here to proceed</a></p>
 						</div>
 						<?php
 					}
