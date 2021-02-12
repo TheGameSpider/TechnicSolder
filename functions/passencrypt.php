@@ -20,7 +20,7 @@ if(!isset($config['encrypted'])||$config['encrypted']==false||!isset($config['be
 		}
 		$mainpass = password_hash(hash("sha256",$config['pass']."Solder.cf"), PASSWORD_DEFAULT);
 		$cf = '<?php return array( "configured" => true, "author" => "'.$config['author'].'","mail" => "'.$config['mail'].'","pass" => "'.$mainpass.'","db-host" => "'.$config['db-host'].'","db-user" => "'.$config['db-user'].'","db-name" => "'.$config['db-name'].'","db-pass" => "'.$config['db-pass'].'","host" => "'.$config['host'].'","dir" => "'.$config['dir'].'","api_key" => "'.$config['api_key'].'", "encrypted" => true, "betterencryption" => true ';
-		$alreadydone = true
+		$alreadydone = true;
 		file_put_contents("./config.php", $cf." );");
 		header("Location: ../");
 	}
