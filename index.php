@@ -35,7 +35,7 @@ if(isset($_GET['logout'])){
 	}
 }
 if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== ""){
-	if(!isset($config['encrypted'])||$config['encrypted']==false||!isset($config['betterencryption'])||$config['betterencryption']==false) {
+	if((!isset($config['encrypted'])||$config['encrypted']==false)&&(!isset($config['betterencryption'])||$config['betterencryption']==false)) {
 		// Passwords are not encrypted.
 		if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']){
 			$_SESSION['user'] = $_POST['email'];
