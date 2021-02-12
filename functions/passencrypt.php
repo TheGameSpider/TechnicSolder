@@ -11,7 +11,7 @@ if($_SESSION['user']!==$config['mail']) {
 //$sql = mysqli_query($conn,"UPDATE `users` SET `display_name` = '".$_POST['display_name']."', `perms` = '".$_POST['perms']."' WHERE `name` = '".$_POST['name']."'");
 if(!isset($config['encrypted'])||$config['encrypted']==false||!isset($config['betterencryption'])||$config['betterencryption']==false) {
 	$users = mysqli_query($conn,"SELECT * FROM `users`");
-	$alreadydone = false
+	$alreadydone = false;
 	// If better encryption isnt used and passwords arent already using encryption.
 	if((!isset($config['betterencryption'])||$config['betterencryption']==false)&&(!isset($config['encrypted'])||$config['encrypted']==false)){
 		error_log("Upgrading from no encryption at all.");
