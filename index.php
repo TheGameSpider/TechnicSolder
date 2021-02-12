@@ -695,7 +695,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					if((!isset($config['encrypted'])||$config['encrypted']==false||!isset($config['betterencryption'])||$config['betterencryption']==false)&&$_SESSION['user']==$config['mail']) {
 						?>
 						<div class="card alert-danger">
-							<p><b>Warning!</b> You password is not encrypted or is encrypted using a dangerously flawed encryption method. It can be visible to anyone who has access to your files and/or database. It's recommended to encrypt your passwords using the proper method. <a href="./functions/passencrypt.php">Click here to proceed</a></p>
+							<p><b>Danger! Encrypt Your Passwords Now!</b> You password is not encrypted or is encrypted using a dangerously flawed encryption method. It can be visible to anyone who has access to your files and/or database. It's recommended to encrypt your passwords using the proper method. <a href="./functions/passencrypt.php">Click here to proceed</a></p>
 						</div>
 						<?php
 					}
