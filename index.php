@@ -37,6 +37,7 @@ if(isset($_GET['logout'])){
 if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== ""){
 	if((!isset($config['encrypted'])||$config['encrypted']==false)&&(!isset($config['betterencryption'])||$config['betterencryption']==false)) {
 		// Passwords are not encrypted.
+		error_log("Password was not encrypted at all.");
 		if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']){
 			$_SESSION['user'] = $_POST['email'];
 			$_SESSION['name'] = $config['author'];
@@ -55,6 +56,7 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
 		}
 	} elseif((isset($config['encrypted'])||$config['encrypted']==true)&&(!isset($config['betterencryption'])||$config['betterencryption']==false)){
 		// Passwords are encrypted, but betterencryption is not used.
+		error_log("Password was using old encryption.");
 		if($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']){
 			$_SESSION['user'] = $_POST['email'];
 			$_SESSION['name'] = $config['author'];
@@ -73,6 +75,7 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
 		}
 	} else {
 		// Passwords are encrypted and use betterencryption.
+		error_log("Password was using newer encryption.");
 		if($_POST['email']==$config['mail'] && password_verify(hash("sha256",$_POST['password']."Solder.cf"), $config['pass'])){
 			$_SESSION['user'] = $_POST['email'];
 			$_SESSION['name'] = $config['author'];

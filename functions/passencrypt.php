@@ -13,6 +13,7 @@ if(!isset($config['encrypted'])||$config['encrypted']==false||!isset($config['be
 	$users = mysqli_query($conn,"SELECT * FROM `users`");
 	// If better encryption isnt used and passwords arent already using encryption.
 	if((!isset($config['betterencryption'])||$config['betterencryption']==false)&&(!isset($config['encrypted'])||$config['encrypted']==false)){
+		error_log("Upgrading from no encryption at all.");
 		while ($user = mysqli_fetch_array($users)) {
 			mysqli_query($conn,"UPDATE `users` SET `pass` = '".password_hash(hash("sha256",$user['pass']."Solder.cf"), PASSWORD_DEFAULT)."' WHERE `name` = '".$user['name']."'");
 		}
@@ -23,6 +24,7 @@ if(!isset($config['encrypted'])||$config['encrypted']==false||!isset($config['be
 	}
 	// If better encryption isnt used, but passwords already are encrypted.
 	if((!isset($config['betterencryption'])||$config['betterencryption']==false)&&(isset($config['encrypted'])||$config['encrypted']==true)){
+		error_log("Upgrading from old encryption.");
 		while ($user = mysqli_fetch_array($users)) {
 			mysqli_query($conn,"UPDATE `users` SET `pass` = '".password_hash($user['pass'], PASSWORD_DEFAULT)."' WHERE `name` = '".$user['name']."'");
 		}
