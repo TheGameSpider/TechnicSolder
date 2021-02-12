@@ -62,7 +62,7 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
 		} else {
 			$user = mysqli_query($conn, "SELECT * FROM `users` WHERE `name` = '". addslashes($_POST['email']) ."'");
 			$user = mysqli_fetch_array($user);
-			if(hash("sha256",$_POST['password']."Solder.cf")==$user['pass'])) {
+			if(hash("sha256",$_POST['password']."Solder.cf")==$user['pass']) {
 				$_SESSION['user'] = $_POST['email'];
 				$_SESSION['name'] = $user['display_name'];
 				$_SESSION['perms'] = $user['perms'];
