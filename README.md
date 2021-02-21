@@ -77,7 +77,7 @@ Save and close the file
 **6. Clone TechnicSolder repository** 
 ```bash
 cd /var/www/
-git clone https://github.com/TheGameSpider/TechnicSolder.git html
+git clone https://github.com/TheGameSpider/TechnicSolder.git TechnicSolder
 ```
 Installation is complete. Now you need to confige TechnicSolder before using it.
 # If you are using nginx:
