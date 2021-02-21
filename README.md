@@ -77,7 +77,7 @@ Save and close the file
 **6. Clone TechnicSolder repository** 
 ```bash
 cd /var/www/
-git clone https://github.com/TheGameSpider/TechnicSolder.git html
+git clone https://github.com/TheGameSpider/TechnicSolder.git TechnicSolder
 ```
 Installation is complete. Now you need to confige TechnicSolder before using it.
 # If you are using nginx:
@@ -140,7 +140,7 @@ exit
 **Configure TechnicSolder** <br />
 
 ```bash
-chown -R www-data html
+chown -R www-data TechnicSolder
 ```
 
 Go to `http://your_server_IP_address` and fill out the form. If you followed these instructions, database name and username is `solder` <br />
