@@ -22,7 +22,7 @@ function uri($url, $uri) {
     return (substr($url, -$length) === $uri);
 }
 if(uri($url,"api/")){
-	print '{"api":"Solder.cf","version":"v1.3.2","stream":"Release"}';
+	print '{"api":"Solder.cf","version":"v1.3.2a","stream":"Release"}';
 	exit();
 } 
 if(uri($url,"api/verify")){
@@ -267,7 +267,7 @@ while($modpack=mysqli_fetch_array($result)){
 					print(json_encode($response));
 					exit();
 				} else {
-					print '{"error":"\n\r This build is private. Use Solder.cf to create private builds and modpacks :) www.solder.cf\n\r Please contact '.$config['author'].' for more information."}';
+					print '{"error":"\n\r This build is private. \n\r Please contact '.$config['author'].' for more information."}';
 					exit();
 				}
 			}
