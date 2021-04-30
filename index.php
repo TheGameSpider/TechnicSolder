@@ -448,7 +448,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 								if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
 									$info = $cache[$modpack['name']]['info'];
 								} else {
-									if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
+									if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=610"),true)) {
 										$cache[$modpack['name']]['time'] = time();
 										$cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
 										$cache[$modpack['name']]['info'] = $info;
@@ -1187,7 +1187,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
 					$info = $cache[$modpack['name']]['info'];
 				} else {
-					if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
+					if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=610"),true)) {
 						$cache[$modpack['name']]['time'] = time();
 						$cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
 						$cache[$modpack['name']]['info'] = $info;
