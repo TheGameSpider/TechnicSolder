@@ -52,6 +52,7 @@ if(!file_exists("../mods/mods-".$fileNameShort)) {
 
 function processFile($zipExists, $md5) { 
 	global $fileName;
+	global $fileNameZip;
 	global $fileNameShort;
 	global $fileJarInFolderLocation;
 	global $fileZipLocation;
@@ -163,7 +164,7 @@ function processFile($zipExists, $md5) {
 		$md5 = md5_file("../mods/".$fileInfo['filename'].".zip");
 	}
 	//$url = "http://".$config['host'].$config['dir']."mods/".$fileInfo['filename'].".zip";
-	$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','','".$link."','".$author."','".$description."','".$version."','".$mcversion."','".$fileInfo['filename'].".zip','mod')");
+	$res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('".$name."','".$pretty_name."','".$md5."','','".$link."','".$author."','".$description."','".$version."','".$mcversion."','".$fileNameZip."','mod')");
 	if($res) {
 		if(@$warn['b']==true) {
 			if($warn['level']=="info") {
