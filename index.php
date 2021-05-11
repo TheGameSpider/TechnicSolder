@@ -1959,7 +1959,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 											echo $moda['pretty_name']; 
 											
 											if ($versionMismatch) {
-												error_log($userVersion.': '.$firstVersion.','.$lastVersion);
+												//error_log($userVersion.': '.$firstVersion.','.$lastVersion);
 												echo ' <span id="warn-incompatible-'.$moda['name'].'">(For Minecraft '.$moda['mcversion'].' - May not be compatible!)</span>';
 											}
 											
@@ -2583,7 +2583,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					request.onreadystatechange = function() {
 						$("#mod-row-"+id).remove();
 					}
-					request.open("GET", "./functions/delete-mod.php?id="+id);
+					request.open("GET", "./functions/delete-modv.php?id="+id);
 					request.send();
 				}
 			</script>
