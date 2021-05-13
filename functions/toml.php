@@ -6,15 +6,11 @@ Limitation: only gets the first dependency. TODO: split dependency.* into it's o
 
 MIT License, see LICENSE file, with the difference of:
 Copyright 2021 Henry Gross-Hellsen
-
 */
-
-
 function p1($inputToml) {
 	$fileContents=$inputToml;
 	$fileArray = explode("[[", $fileContents);
 	$c=0;
-	
 	foreach ($fileArray as $fileElement) {
 	    if ($c > 0) {
                $fileArray[$c]='[['.$fileElement;
@@ -23,7 +19,6 @@ function p1($inputToml) {
        }
 	return $fileArray;
 }
-
 function p2($inputArray) {
 	$lines=array();
 	$cc=0;
@@ -34,7 +29,6 @@ function p2($inputArray) {
 			continue;
 		}
 		$tmp=explode("\n", $block);
-
 		$c=0;
 		foreach ($tmp as $line) {
 			$line=ltrim($line);
@@ -49,9 +43,7 @@ function p2($inputArray) {
 		 $cc=$cc+1;
 	}
     return $lines;
-	
 }
-
 function p3($inputArray) {
 	$c=0;
 	foreach ($inputArray as $lineBlock) {
@@ -64,7 +56,6 @@ function p3($inputArray) {
 	}
 	return $inputArray;
 }
-
 function p4($inputArray) {
 	$keys=array_keys($inputArray);
 	$c=0;
@@ -75,14 +66,10 @@ function p4($inputArray) {
 			$rowArray=explode('=', $row);
 			$left=$rowArray[0];
 			$right=end($rowArray);
-			
 			$left=explode('#', $left)[0];
 			$right=explode('#', $right)[0];
-			
 			$left=trim(trim(str_replace("\t", ' ', $left), ' '), '"');
 			$right=trim(trim(str_replace("\t", ' ', $right), ' '), '"');
-			
-			
 			//echo $left.' = "'.$right.'"<br/>';
 			unset($inputArray[$keys[$c]][$keys2[$c2]]);
 			if (ctype_alpha($left)) {
@@ -91,19 +78,16 @@ function p4($inputArray) {
 				$inputArray[$keys[$c]][$left]=$right;
 			}
 			$c2++;
-
 		}
 		$c++;
 	}
 	return $inputArray;
 }
-
 function parseToml($tomlData) {
 	return p4(p3(p2(p1($tomlData))));
 }
-
-if ($_GET['a']=='test') {
-	header('content-type: application/json');
-	echo json_encode(parseToml(file_get_contents('../test.toml')), JSON_UNESCAPED_SLASHES);
-}
+//if ($_GET['a']=='test') {
+//	header('content-type: application/json');
+//	echo json_encode(parseToml(file_get_contents('../test.toml')), JSON_UNESCAPED_SLASHES);
+//}
 ?>
