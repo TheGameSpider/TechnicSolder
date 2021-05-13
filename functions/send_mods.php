@@ -17,8 +17,7 @@ if (!$fileJarInTmpLocation) {
     exit();
 }
 
-require_once '../vendor/autoload.php';
-use Yosymfony\Toml\Toml;
+include('toml.php');
 
 function slugify($text) {
   $text = preg_replace('~[^\pL\d]+~u', '-', $text);
@@ -83,8 +82,9 @@ function processFile($zipExists, $md5) {
 		}
 	} else { # is 1.14+ mod
 		$legacy=false;
-		$mcmod = Toml::Parse($result);
-		if(!$mcmod['mods'][0]['modId']||!$mcmod['mods'][0]['displayName']||!$mcmod['mods'][0]['description']||!$mcmod['mods'][0]['version']||!$mcmod['mods'][0]['displayURL']||!($mcmod['mods'][0]['author'] && $mcmod['mods'][0]['authors'])) {
+		$mcmod = parseToml($result);
+		
+		if(!$mcmod['mods']['modId']||!$mcmod['mods']['displayName']||!$mcmod['mods']['description']||!$mcmod['mods']['version']||!$mcmod['mods']['displayURL']||!($mcmod['mods']['author'] && $mcmod['mods']['authors'])) {
 			$warn['b'] = true;
 			$warn['level'] = "info";
 			$warn['message'] = "There is some information missing in mcmod.info.";
@@ -125,32 +125,33 @@ function processFile($zipExists, $md5) {
 		$version = $mcmod['version'];
 		$mcversion = $mcmod['mcversion'];
 	} else {
-		if(!$mcmod['mods'][0]['displayName']) {
+		if(!$mcmod['mods']['displayName']) {
 			$pretty_name = mysqli_real_escape_string($conn, $fileNameShort);
 		} else {
-			$pretty_name = mysqli_real_escape_string($conn, $mcmod['mods'][0]['displayName']);
+			$pretty_name = mysqli_real_escape_string($conn, $mcmod['mods']['displayName']);
 		}
-		if(!$mcmod['mods'][0]['modId']) {
+		if(!$mcmod['mods']['modId']) {
 			$name = slugify($pretty_name);
 		} else {
-			if(preg_match("^[a-z0-9]+(?:-[a-z0-9]+)*$", $mcmod['mods'][0]['modId'])) {
-				$name = $mcmod['mods'][0]['modId'];
+			if(preg_match("^[a-z0-9]+(?:-[a-z0-9]+)*$", $mcmod['mods']['modId'])) {
+				$name = $mcmod['mods']['modId'];
 			} else {
-				$name = slugify($mcmod['mods'][0]['modId']);
+				$name = slugify($mcmod['mods']['modId']);
 			}
 		}
-		$link = empty($mcmod['mods'][0]['displayURL'])? $mcmod['displayURL'] : $mcmod['mods'][0]['displayURL'];
-		$authorRoot=empty($mcmod['authors'])? $mcmod['author'] : $mcmod['authors'];
-		$authorMods=empty($mcmod['mods'][0]['authors'])? $mcmod['mods'][0]['author'] : $mcmod['mods'][0]['authors'];
+		$link = empty($mcmod['mods']['displayURL'])? $mcmod[0]['displayURL'] : $mcmod['mods']['displayURL'];
+		$authorRoot=empty($mcmod[0]['authors'])? $mcmod[0]['author'] : $mcmod[0]['authors'];
+		$authorMods=empty($mcmod['mods']['authors'])? $mcmod['mods']['author'] : $mcmod['mods']['authors'];
 		$author = mysqli_real_escape_string($conn, empty($authorRoot)? $authorMods : $authorRoot);
-		$description = mysqli_real_escape_string($conn, $mcmod['mods'][0]['description']);
+		$description = mysqli_real_escape_string($conn, $mcmod['mods']['description']);
 		$mcversion=''; // There is no mcversion field any more. We have to parse all dependencies.modId until we get a modId='minecraft' and it's associated versionRange.
-		foreach ($mcmod['dependencies'][$mcmod['mods'][0]['modId']] as $mcmodArrayElement) { 
-			if ($mcmodArrayElement['modId'] == 'minecraft') {
-				$mcversion=$mcmodArrayElement['versionRange'];
-			}
-		}
-		$version = $mcmod['mods'][0]['version'];
+		// foreach ($mcmod['dependencies'][$mcmod['mods']['modId']] as $mcmodArrayElement) { 
+			// if ($mcmodArrayElement['modId'] == 'minecraft') {
+				// $mcversion=$mcmodArrayElement['versionRange'];
+			// }
+		// }
+		$mcversion=$mcmod['dependencies.'.$mcmod['mods']['modId']]['versionRange'];
+		$version = $mcmod['mods']['version'];
 		if ($version == "\${file.jarVersion}" ) {
 			$tmpFilename=explode('-', $fileNameShort);
 			array_shift($tmpFilename);
