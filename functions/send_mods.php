@@ -16,7 +16,9 @@ if (!$fileJarInTmpLocation) {
     echo '{"status":"error","message":"File is too big! Check your post_max_size (current value '.ini_get('post_max_size').') andupload_max_filesize (current value '.ini_get('upload_max_filesize').') values in '.php_ini_loaded_file().'"}';
     exit();
 }
+
 include('toml.php');
+
 function slugify($text) {
   $text = preg_replace('~[^\pL\d]+~u', '-', $text);
   //$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
@@ -29,20 +31,24 @@ function slugify($text) {
   }
   return $text;
 }
+
 $fileNameTmp = explode("-",slugify($fileName));
 array_pop($fileNameTmp);
 $fileNameShort=implode("-",$fileNameTmp);
 $fileNameZip=$fileNameShort.".zip";
 $fileName=$fileNameShort.".jar";
+
 $fileJarInFolderLocation="../mods/mods-".$fileNameShort."/".$fileName;
 $fileZipLocation="../mods/".$fileNameZip;
 $fileInfo=array();
+
 if(!file_exists("../mods/mods-".$fileNameShort)) {
 	mkdir("../mods/mods-".$fileNameShort);
 } else {
 	echo '{"status":"error","message":"Folder mods-'.$fileNameShort.' already exists!"}';
 	exit();
 }
+
 function processFile($zipExists, $md5) { 
 	global $fileName;
 	global $fileNameZip;
@@ -52,6 +58,7 @@ function processFile($zipExists, $md5) {
 	global $conn;
 	global $warn;
 	global $fileInfo;
+	
 	$legacy=false;
 	$mcmod=array();
 	$result = @file_get_contents("zip://".realpath($fileJarInFolderLocation)."#META-INF/mods.toml"); 
@@ -76,7 +83,7 @@ function processFile($zipExists, $md5) {
 	} else { # is 1.14+ mod
 		$legacy=false;
 		$mcmod = parseToml($result);
-		error_log(json_encode($mcmod, JSON_PRETTY_PRINT));
+		
 		if(!$mcmod['mods']['modId']||!$mcmod['mods']['displayName']||!$mcmod['mods']['description']||!$mcmod['mods']['version']||!$mcmod['mods']['displayURL']||!($mcmod['mods']['author'] && $mcmod['mods']['authors'])) {
 			$warn['b'] = true;
 			$warn['level'] = "info";
@@ -137,23 +144,19 @@ function processFile($zipExists, $md5) {
 		$authorMods=empty($mcmod['mods']['authors'])? $mcmod['mods']['author'] : $mcmod['mods']['authors'];
 		$author = mysqli_real_escape_string($conn, empty($authorRoot)? $authorMods : $authorRoot);
 		$description = mysqli_real_escape_string($conn, $mcmod['mods']['description']);
+		$mcversion=''; // There is no mcversion field any more. We have to parse all dependencies.modId until we get a modId='minecraft' and it's associated versionRange.
+		// foreach ($mcmod['dependencies'][$mcmod['mods']['modId']] as $mcmodArrayElement) { 
+			// if ($mcmodArrayElement['modId'] == 'minecraft') {
+				// $mcversion=$mcmodArrayElement['versionRange'];
+			// }
+		// }
 		$mcversion=$mcmod['dependencies.'.$mcmod['mods']['modId']]['versionRange'];
-		if (empty($mcversion)) { //if there is no dependency specified, get from filename
-			// THIS SHOULD NEVER BE NECESSARY, BUT SOME MODS (OptiFine) DON'T HAVE A MINECRAFT DEPENDENCY LISTED
-			$divideDash=explode('-', $fileNameShort);
-			$mcversion=$divideDash[1].'.'.$divideDash[2]; // we get modname-1-16-5-1-1-1.jar. we don't know if it is 1-16 or 1-16-5, so it's safer to assume 1-16
-		}
 		$version = $mcmod['mods']['version'];
 		if ($version == "\${file.jarVersion}" ) {
 			$tmpFilename=explode('-', $fileNameShort);
 			array_shift($tmpFilename);
 			$tmpFilename = implode('.', $tmpFilename);
 			$version=$tmpFilename;
-		}
-		if (empty($version)) { //if there is no dependency specified, get from filename
-			// THIS SHOULD NEVER BE NECESSARY, BUT SOME MODS (OptiFine) DON'T HAVE A MINECRAFT DEPENDENCY LISTED
-			$divideDash=explode('-', $fileNameShort);
-			$version=end($divideDash); // we get modname-1-16-5-1-1-1.jar. just take the last - as we don't know.
 		}
 	}
 	if ($zipExists) {
