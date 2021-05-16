@@ -13,7 +13,7 @@ function p1($inputToml) {
 	$counter=0;
 	foreach (explode("\n", $inputToml) as $line) {
 		$line=ltrim($line);
-		if (!empty($line)) if ($line[0] == '#') continue;
+		if ($line[0] == '#') continue;
 		$lines[$counter]=$line;
 		$counter++;
 	}
@@ -148,7 +148,6 @@ function p5($inputArray) {
 		
 		$counter++;
 	}
-	
 	//echo "\n\n";
 	//print_r($newArray);
 	return $inputArray;
@@ -156,17 +155,16 @@ function p5($inputArray) {
 
 function parseToml($tomlData) {
 	// one large call to all the functions.
+	$tomlData=str_replace("\r", '', $tomlData);
+	//error_log(json_encode($tomlData, JSON_PRETTY_PRINT));
 	return p5(p4(p3(p2(p1($tomlData)))));
 }
 
 // test.toml is a mods.toml pulled from a mod.jar/META-INF.
 // parseToml is called with toml file data as an argument..
-
-if (isset($_GET['a'])) {
-	if ($_GET['a']=='test') {
-		header('content-type: application/json');
-		echo json_encode(parseToml(file_get_contents('../test.toml')), JSON_UNESCAPED_SLASHES);
-	}
-}
+// if ($_GET['a']=='test') {
+	// header('content-type: application/json');
+	// echo json_encode(parseToml(file_get_contents('../test.toml')), JSON_UNESCAPED_SLASHES);
+// }
 
 ?>

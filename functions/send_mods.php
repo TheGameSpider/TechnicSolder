@@ -76,7 +76,7 @@ function processFile($zipExists, $md5) {
 	} else { # is 1.14+ mod
 		$legacy=false;
 		$mcmod = parseToml($result);
-		error_log(json_encode($mcmod, JSON_PRETTY_PRINT));
+		//error_log(json_encode($mcmod, JSON_PRETTY_PRINT));
 		if(!$mcmod['mods']['modId']||!$mcmod['mods']['displayName']||!$mcmod['mods']['description']||!$mcmod['mods']['version']||!$mcmod['mods']['displayURL']||!($mcmod['mods']['author'] && $mcmod['mods']['authors'])) {
 			$warn['b'] = true;
 			$warn['level'] = "info";
