@@ -16,7 +16,9 @@ if (!$fileJarInTmpLocation) {
     echo '{"status":"error","message":"File is too big! Check your post_max_size (current value '.ini_get('post_max_size').') andupload_max_filesize (current value '.ini_get('upload_max_filesize').') values in '.php_ini_loaded_file().'"}';
     exit();
 }
+
 include('toml.php');
+
 function slugify($text) {
   $text = preg_replace('~[^\pL\d]+~u', '-', $text);
   //$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
@@ -29,20 +31,24 @@ function slugify($text) {
   }
   return $text;
 }
+
 $fileNameTmp = explode("-",slugify($fileName));
 array_pop($fileNameTmp);
 $fileNameShort=implode("-",$fileNameTmp);
 $fileNameZip=$fileNameShort.".zip";
 $fileName=$fileNameShort.".jar";
+
 $fileJarInFolderLocation="../mods/mods-".$fileNameShort."/".$fileName;
 $fileZipLocation="../mods/".$fileNameZip;
 $fileInfo=array();
+
 if(!file_exists("../mods/mods-".$fileNameShort)) {
 	mkdir("../mods/mods-".$fileNameShort);
 } else {
 	echo '{"status":"error","message":"Folder mods-'.$fileNameShort.' already exists!"}';
 	exit();
 }
+
 function processFile($zipExists, $md5) { 
 	global $fileName;
 	global $fileNameZip;
@@ -52,6 +58,7 @@ function processFile($zipExists, $md5) {
 	global $conn;
 	global $warn;
 	global $fileInfo;
+	
 	$legacy=false;
 	$mcmod=array();
 	$result = @file_get_contents("zip://".realpath($fileJarInFolderLocation)."#META-INF/mods.toml"); 
@@ -76,6 +83,7 @@ function processFile($zipExists, $md5) {
 	} else { # is 1.14+ mod
 		$legacy=false;
 		$mcmod = parseToml($result);
+		
 		if(!$mcmod['mods']['modId']||!$mcmod['mods']['displayName']||!$mcmod['mods']['description']||!$mcmod['mods']['version']||!$mcmod['mods']['displayURL']||!($mcmod['mods']['author'] && $mcmod['mods']['authors'])) {
 			$warn['b'] = true;
 			$warn['level'] = "info";
