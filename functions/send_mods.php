@@ -138,11 +138,12 @@ function processFile($zipExists, $md5) {
 		$author = mysqli_real_escape_string($conn, empty($authorRoot)? $authorMods : $authorRoot);
 		$description = mysqli_real_escape_string($conn, $mcmod['mods']['description']);
 		$mcversion=$mcmod['dependencies.'.$mcmod['mods']['modId']]['versionRange'];
-		if (empty($mcversion)) { //if there is no dependency specified, get from filename
+		// let the user fill in if not absolutely certain.
+		/* if (empty($mcversion)) { //if there is no dependency specified, get from filename
 			// THIS SHOULD NEVER BE NECESSARY, BUT SOME MODS (OptiFine) DON'T HAVE A MINECRAFT DEPENDENCY LISTED
 			$divideDash=explode('-', $fileNameShort);
 			$mcversion=$divideDash[1].'.'.$divideDash[2]; // we get modname-1-16-5-1-1-1.jar. we don't know if it is 1-16 or 1-16-5, so it's safer to assume 1-16
-		}
+		} */
 		$version = $mcmod['mods']['version'];
 		if ($version == "\${file.jarVersion}" ) {
 			$tmpFilename=explode('-', $fileNameShort);
@@ -150,11 +151,12 @@ function processFile($zipExists, $md5) {
 			$tmpFilename = implode('.', $tmpFilename);
 			$version=$tmpFilename;
 		}
-		if (empty($version)) { //if there is no dependency specified, get from filename
+		// let the user fill in if not absolutely certain. (except for above if)
+		/* if (empty($version)) { //if there is no dependency specified, get from filename
 			// THIS SHOULD NEVER BE NECESSARY, BUT SOME MODS (OptiFine) DON'T HAVE A MINECRAFT DEPENDENCY LISTED
 			$divideDash=explode('-', $fileNameShort);
 			$version=end($divideDash); // we get modname-1-16-5-1-1-1.jar. just take the last - as we don't know.
-		}
+		} */
 	}
 	if ($zipExists) {
 		// cached zip, use given md5. (md5 is not checked empty(); should always be given if cached!)
