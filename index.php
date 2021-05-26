@@ -11,7 +11,7 @@ $config = require("./functions/config.php");
 $cache = json_decode(file_get_contents("./functions/cache.json"),true);
 $dbcon = require("./functions/dbconnect.php");
 $url = $_SERVER['REQUEST_URI'];
-$SOLDER_BUILD='700';
+$SOLDER_BUILD='999';
 if(strpos($url, '?') !== false) {
 	$url = substr($url, 0, strpos($url, "?"));
 }
