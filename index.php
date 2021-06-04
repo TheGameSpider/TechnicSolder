@@ -11,6 +11,7 @@ $config = require("./functions/config.php");
 $cache = json_decode(file_get_contents("./functions/cache.json"),true);
 $dbcon = require("./functions/dbconnect.php");
 $url = $_SERVER['REQUEST_URI'];
+$SOLDER_BUILD='999';
 if(strpos($url, '?') !== false) {
 	$url = substr($url, 0, strpos($url, "?"));
 }
@@ -448,7 +449,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 								if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
 									$info = $cache[$modpack['name']]['info'];
 								} else {
-									if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
+									if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=".$SOLDER_BUILD),true)) {
 										$cache[$modpack['name']]['time'] = time();
 										$cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
 										$cache[$modpack['name']]['info'] = $info;
@@ -1187,7 +1188,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
 					$info = $cache[$modpack['name']]['info'];
 				} else {
-					if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=600"),true)) {
+					if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=".$SOLDER_BUILD),true)) {
 						$cache[$modpack['name']]['time'] = time();
 						$cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
 						$cache[$modpack['name']]['info'] = $info;
@@ -1877,9 +1878,93 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 											$modvq = mysqli_query($conn,"SELECT `version`,`id` FROM `mods` WHERE `name` = '".$moda['name']."' AND (`mcversion` = '".$user['minecraft']."' OR `id` = ".$bmod.")");
 										}
 										
+										// VERSION COMPARISON BLOCK // 
+										$versionMismatch = false; // THIS SHOULD BE REFERENCED TO DETERMINE MISMATCH! 
+										$versionNotEqual = false; 
+										$versionNotInRange = false;
+										if ($moda['type']=="mod") {
+											$gt = false;
+											$gte = false;
+											$lt = false;
+											$lte = false;
+											if (empty($moda['mcversion'])) {
+											} else {
+												$mcversionArray = explode(',', str_replace(' ', '', $moda['mcversion']));
+												if (count($mcversionArray) == 1) {
+													if (str_replace('(', '', str_replace('[', '', str_replace(')', '', str_replace(']', '', $moda['mcversion'])))) !== $user['minecraft']) {
+														$versionNotEqual = true;
+													}
+												} else {
+													$firstVersion = $mcversionArray[0];
+													$lastVersion = end($mcversionArray);
+													$userVersion = $user['minecraft'];
+													
+													if ($firstVersion[0] == "(") {
+														$firstVersion = substr($firstVersion, 1);
+														if (empty($firstVersion)) {
+															$firstVersion='0.0.0';
+														}
+														
+														if (version_compare($userVersion, $firstVersion, '>')) {
+															//error_log($userVersion.' > '.$firstVersion);
+															$gt = true;
+														}
+													} else { // inclusive, [ or ''.
+														if ($firstVersion[0] == "[") {
+															$firstVersion = substr($firstVersion, 1);
+														}
+														if (empty($firstVersion)) {
+															$firstVersion='0.0.0';
+														}
+														if (version_compare($userVersion, $firstVersion, '>=')) {
+															//error_log($userVersion.' >= '.$firstVersion);
+															$gte = true;
+														}
+													}
+													if (substr($lastVersion, -1) == ")") {
+														$lastVersion = substr($lastVersion, 0, -1);
+														if (empty($lastVersion)) {
+															$lastVersion='99.99.99';
+														}
+														if (version_compare($userVersion, $lastVersion, '<')) {
+															//error_log($userVersion.' < '.$lastVersion);
+															$lt = true;
+														}
+													} else {  // inclusive, ] or ''.
+														if (substr($lastVersion, -1) == "]") {
+															$lastVersion = substr($lastVersion, 0, -1);
+														}
+														if (empty($lastVersion)) {
+															$lastVersion='99.99.99';
+														}
+														if (version_compare($userVersion, $lastVersion, '<=')) {
+															//error_log($userVersion.' <= '.$lastVersion);
+															$lte = true;
+														}
+													}
+													if (!(($gt || $gte) && ($lt || $lte))) {
+														$versionNotInRange = true;
+													}
+												}
+											}
+										}
+										if ($versionNotEqual || $versionNotInRange) {
+											$versionMismatch = true;
+										}
+										// END VERSION COMPARISON BLOCK //
+										
 										?>
-									<tr <?php if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'class="table-warning"';} ?> id="mod-<?php echo $moda['name'] ?>">
-										<td scope="row"><?php echo $moda['pretty_name']; if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo ' <span id="warn-incompatible-'.$moda['name'].'">(For Minecraft '.$moda['mcversion'].' - May not be compatible!)</span>';}?></td>
+											
+									<tr <?php if($versionMismatch){echo 'class="table-warning"';} ?> id="mod-<?php echo $moda['name'] ?>">
+										<td scope="row"><?php 
+											echo $moda['pretty_name']; 
+											
+											if ($versionMismatch) {
+												//error_log($userVersion.': '.$firstVersion.','.$lastVersion);
+												echo ' <span id="warn-incompatible-'.$moda['name'].'">(For Minecraft '.$moda['mcversion'].' - May not be compatible!)</span>';
+											}
+											
+										?></td>
 										<td>
 											<?php if($moda['type'] == "forge" || $moda['type'] == "other") {
 												echo $moda['version'];
@@ -2499,7 +2584,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					request.onreadystatechange = function() {
 						$("#mod-row-"+id).remove();
 					}
-					request.open("GET", "./functions/delete-mod.php?id="+id);
+					request.open("GET", "./functions/delete-modv.php?id="+id);
 					request.send();
 				}
 			</script>
