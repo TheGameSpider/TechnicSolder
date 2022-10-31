@@ -3,3 +3,6 @@ forges/
 others/
 test.toml
 functions/config.php
+
+# IntelliJ Configs
+.idea/
