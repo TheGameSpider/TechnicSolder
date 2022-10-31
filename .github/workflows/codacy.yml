@@ -19,6 +19,7 @@ on:
     paths-ignore:
       - 'docs/**'
       - 'resources/**'
+      - '.github/**'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ "master" ]
