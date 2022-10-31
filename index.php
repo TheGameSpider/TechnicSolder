@@ -37,9 +37,8 @@ if(isset($_GET['logout'])){
 }
 if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== ""){
 	if(!isset($config['encrypted'])||$config['encrypted']==false) {
-		// Passwords are not encrypted.
-		error_log("Password was not encrypted at all.");
 		if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']){
+			
 			$_SESSION['user'] = $_POST['email'];
 			$_SESSION['name'] = $config['author'];
 			$_SESSION['perms'] = "1111111";
@@ -54,11 +53,11 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
 				header("Location: ".$config['dir']."login?ic");
 				exit();
 			}
+			
 		}
 	} else {
-		// Passwords are encrypted.
-		error_log("Password was using old encryption.");
 		if($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']){
+			
 			$_SESSION['user'] = $_POST['email'];
 			$_SESSION['name'] = $config['author'];
 			$_SESSION['perms'] = "1111111";
@@ -73,6 +72,7 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
 				header("Location: ".$config['dir']."login?ic");
 				exit();
 			}
+			
 		}
 	}
 }
@@ -343,10 +343,24 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		<?php
 		} else {
 			$filecontents = file_get_contents('./api/version.json');
-
 		?>
+		<?php if($settings['use_tawkto']=="on") { ?>
+		<!--Start of Tawk.to Script-->
+		<script type="text/javascript">
+		var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+		(function(){
+		var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+		s1.async=true;
+		s1.src='https://embed.tawk.to/5ba262e0c666d426648ae9ee/default';
+		s1.charset='UTF-8';
+		s1.setAttribute('crossorigin','*');
+		s0.parentNode.insertBefore(s1,s0);
+		})();
+		</script>
+		<!--End of Tawk.to Script-->
+	<?php } ?>
 		<nav class="navbar <?php if($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
-  			<span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"><i id="menuopen" class="fas fa-bars menu-bars"></i> Technic Solder <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
+  			<span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"><i id="menuopen" class="fas fa-bars menu-bars"></i> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
   			<span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	  			<?php if($_SESSION['user']!==$config['mail']) { ?>
 	  			<img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php 
@@ -679,8 +693,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				<?php
 					if((!isset($config['encrypted'])||$config['encrypted']==false)&&$_SESSION['user']==$config['mail']) {
 						?>
-						<div class="card alert-danger">
-							<p><b>Danger! Encrypt Your Passwords Now!</b> Your password is not encrypted. It can be visible to anyone who has access to your files and/or database. It's recommended to encrypt your passwords. <a href="./functions/passencrypt.php">Click here to proceed</a></p>
+						<div class="card alert-warning">
+							<p><b>Warning!</b> You password is not encrypted and it's visible to everyone who has access to your files and database. It's recommended to encrypt your passwords. <a href="./functions/passencrypt.php">Click here to proceed</a></p>
 						</div>
 						<?php
 					}
@@ -1129,7 +1143,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			$modpack = mysqli_fetch_array($mpres);
 
 			?>
-			<script>document.title = 'Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
+			<script>document.title = 'Solder.cf - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<ul class="nav justify-content-end info-versions">
 				<li class="nav-item">
 					<a class="nav-link" href="./dashboard"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $modpack['display_name'] ?></a>
@@ -1693,7 +1707,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			$pack = mysqli_query($conn, "SELECT * FROM `modpacks` WHERE `id` = ".$user['modpack']);
 			$mpack = mysqli_fetch_array($pack);
 			?>
-			<script>document.title = '<?php echo addslashes($mpack['display_name'])." ".addslashes($user['name'])  ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
+			<script>document.title = 'Solder.cf - <?php echo addslashes($mpack['display_name'])." ".addslashes($user['name'])  ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<ul class="nav justify-content-end info-versions">
 				<li class="nav-item">
 					<a class="nav-link" href="./modpack?id=<?php echo $mpack['id'] ?>"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $mpack['display_name'] ?></a>
@@ -1863,94 +1877,95 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 										} else {
 											$modvq = mysqli_query($conn,"SELECT `version`,`id` FROM `mods` WHERE `name` = '".$moda['name']."' AND (`mcversion` = '".$user['minecraft']."' OR `id` = ".$bmod.")");
 										}
-
-                                        // VERSION COMPARISON BLOCK //
-                                        $versionMismatch = false; // THIS SHOULD BE REFERENCED TO DETERMINE MISMATCH!
-                                        $versionNotEqual = false;
-                                        $versionNotInRange = false;
-                                        if ($moda['type']=="mod") {
-                                            $gt = false;
-                                            $gte = false;
-                                            $lt = false;
-                                            $lte = false;
-                                            if (empty($moda['mcversion'])) {
-                                            } else {
-                                                $mcversionArray = explode(',', str_replace(' ', '', $moda['mcversion']));
-                                                if (count($mcversionArray) == 1) {
-                                                    if (str_replace('(', '', str_replace('[', '', str_replace(')', '', str_replace(']', '', $moda['mcversion'])))) !== $user['minecraft']) {
-                                                        $versionNotEqual = true;
-                                                    }
-                                                } else {
-                                                    $firstVersion = $mcversionArray[0];
-                                                    $lastVersion = end($mcversionArray);
-                                                    $userVersion = $user['minecraft'];
-
-                                                    if ($firstVersion[0] == "(") {
-                                                        $firstVersion = substr($firstVersion, 1);
-                                                        if (empty($firstVersion)) {
-                                                            $firstVersion='0.0.0';
-                                                        }
-
-                                                        if (version_compare($userVersion, $firstVersion, '>')) {
-                                                            //error_log($userVersion.' > '.$firstVersion);
-                                                            $gt = true;
-                                                        }
-                                                    } else { // inclusive, [ or ''.
-                                                        if ($firstVersion[0] == "[") {
-                                                            $firstVersion = substr($firstVersion, 1);
-                                                        }
-                                                        if (empty($firstVersion)) {
-                                                            $firstVersion='0.0.0';
-                                                        }
-                                                        if (version_compare($userVersion, $firstVersion, '>=')) {
-                                                            //error_log($userVersion.' >= '.$firstVersion);
-                                                            $gte = true;
-                                                        }
-                                                    }
-                                                    if (substr($lastVersion, -1) == ")") {
-                                                        $lastVersion = substr($lastVersion, 0, -1);
-                                                        if (empty($lastVersion)) {
-                                                            $lastVersion='99.99.99';
-                                                        }
-                                                        if (version_compare($userVersion, $lastVersion, '<')) {
-                                                            //error_log($userVersion.' < '.$lastVersion);
-                                                            $lt = true;
-                                                        }
-                                                    } else {  // inclusive, ] or ''.
-                                                        if (substr($lastVersion, -1) == "]") {
-                                                            $lastVersion = substr($lastVersion, 0, -1);
-                                                        }
-                                                        if (empty($lastVersion)) {
-                                                            $lastVersion='99.99.99';
-                                                        }
-                                                        if (version_compare($userVersion, $lastVersion, '<=')) {
-                                                            //error_log($userVersion.' <= '.$lastVersion);
-                                                            $lte = true;
-                                                        }
-                                                    }
-                                                    if (!(($gt || $gte) && ($lt || $lte))) {
-                                                        $versionNotInRange = true;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if ($versionNotEqual || $versionNotInRange) {
-                                            $versionMismatch = true;
-                                        }
-                                        // END VERSION COMPARISON BLOCK //
-
+										
+										// VERSION COMPARISON BLOCK // 
+										$versionMismatch = false; // THIS SHOULD BE REFERENCED TO DETERMINE MISMATCH! 
+										$versionNotEqual = false; 
+										$versionNotInRange = false;
+										if ($moda['type']=="mod") {
+											$gt = false;
+											$gte = false;
+											$lt = false;
+											$lte = false;
+											if (empty($moda['mcversion'])) {
+											} else {
+												$mcversionArray = explode(',', str_replace(' ', '', $moda['mcversion']));
+												if (count($mcversionArray) == 1) {
+													if (str_replace('(', '', str_replace('[', '', str_replace(')', '', str_replace(']', '', $moda['mcversion'])))) !== $user['minecraft']) {
+														$versionNotEqual = true;
+													}
+												} else {
+													$firstVersion = $mcversionArray[0];
+													$lastVersion = end($mcversionArray);
+													$userVersion = $user['minecraft'];
+													
+													if ($firstVersion[0] == "(") {
+														$firstVersion = substr($firstVersion, 1);
+														if (empty($firstVersion)) {
+															$firstVersion='0.0.0';
+														}
+														
+														if (version_compare($userVersion, $firstVersion, '>')) {
+															//error_log($userVersion.' > '.$firstVersion);
+															$gt = true;
+														}
+													} else { // inclusive, [ or ''.
+														if ($firstVersion[0] == "[") {
+															$firstVersion = substr($firstVersion, 1);
+														}
+														if (empty($firstVersion)) {
+															$firstVersion='0.0.0';
+														}
+														if (version_compare($userVersion, $firstVersion, '>=')) {
+															//error_log($userVersion.' >= '.$firstVersion);
+															$gte = true;
+														}
+													}
+													if (substr($lastVersion, -1) == ")") {
+														$lastVersion = substr($lastVersion, 0, -1);
+														if (empty($lastVersion)) {
+															$lastVersion='99.99.99';
+														}
+														if (version_compare($userVersion, $lastVersion, '<')) {
+															//error_log($userVersion.' < '.$lastVersion);
+															$lt = true;
+														}
+													} else {  // inclusive, ] or ''.
+														if (substr($lastVersion, -1) == "]") {
+															$lastVersion = substr($lastVersion, 0, -1);
+														}
+														if (empty($lastVersion)) {
+															$lastVersion='99.99.99';
+														}
+														if (version_compare($userVersion, $lastVersion, '<=')) {
+															//error_log($userVersion.' <= '.$lastVersion);
+															$lte = true;
+														}
+													}
+													if (!(($gt || $gte) && ($lt || $lte))) {
+														$versionNotInRange = true;
+													}
+												}
+											}
+										}
+										if ($versionNotEqual || $versionNotInRange) {
+											$versionMismatch = true;
+										}
+										// END VERSION COMPARISON BLOCK //
+										
 										?>
-
-                                        <tr <?php if($versionMismatch){echo 'class="table-warning"';} ?> id="mod-<?php echo $moda['name'] ?>">
-                                            <td scope="row"><?php
-                                                echo $moda['pretty_name'];
-
-                                                if ($versionMismatch) {
-                                                    //error_log($userVersion.': '.$firstVersion.','.$lastVersion);
-                                                    echo ' <span id="warn-incompatible-'.$moda['name'].'">(For Minecraft '.$moda['mcversion'].' - May not be compatible!)</span>';
-                                                }
-
-                                                ?></td>
+											
+									<tr <?php if($versionMismatch){echo 'class="table-warning"';} ?> id="mod-<?php echo $moda['name'] ?>">
+										<td scope="row"><?php 
+											echo $moda['pretty_name']; 
+											
+											if ($versionMismatch) {
+												//error_log($userVersion.': '.$firstVersion.','.$lastVersion);
+												echo ' <span id="warn-incompatible-'.$moda['name'].'">(For Minecraft '.$moda['mcversion'].' - May not be compatible!)</span>';
+											}
+											
+										?></td>
+										<td>
 											<?php if($moda['type'] == "forge" || $moda['type'] == "other") {
 												echo $moda['version'];
 											} else { ?>
@@ -2211,7 +2226,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		}
 		else if(uri('/lib-mods')) {
 		?>
-		<script>document.title = 'Mod Library - <?php echo addslashes($_SESSION['name']) ?>';</script>
+		<script>document.title = 'Solder.cf - Mod Library - <?php echo addslashes($_SESSION['name']) ?>';</script>
 		<div class="main">
 		<script type="text/javascript">
 				function remove_box(name) {
@@ -2495,7 +2510,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 				$mod = mysqli_fetch_array($mres);
 			}
 			?>
-			<script>document.title = 'Add Mod - <?php echo addslashes($_SESSION['name']) ?>';</script>
+			<script>document.title = 'Solder.cf - Add Mod - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<div class="card">
 				<button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
 				<h3>Add Mod</h3>
@@ -2556,7 +2571,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		}
 		else if(uri('/lib-forges')) {
 		?>
-		<script>document.title = 'Forge Versions - <?php echo addslashes($_SESSION['name']) ?>';</script>
+		<script>document.title = 'Solder.cf - Forge Versions - <?php echo addslashes($_SESSION['name']) ?>';</script>
 		<div class="main">
 			<script type="text/javascript">
 				function remove_box(id,name) {
@@ -2569,7 +2584,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 					request.onreadystatechange = function() {
 						$("#mod-row-"+id).remove();
 					}
-                    request.open("GET", "./functions/delete-modv.php?id="+id);
+					request.open("GET", "./functions/delete-modv.php?id="+id);
 					request.send();
 				}
 			</script>
@@ -2628,24 +2643,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						}
 						?>
 					</tbody>
-				</table>
+				</table>				
 			</div>
-			<div class="btn-group btn-group-justified btn-block">
-				<button id="fetch-forge" onclick="fetch()" class="btn btn-primary">Fetch Forge Versions</button>
-				<button disabled id="save" onclick="window.location.reload()" style="display:none;" class="btn btn-success">(Forge) Save and Refresh</button>
-				<button id="fetch-fabric" onclick="fetchfabric()" class="btn btn-warning">Fetch Fabric Versions</button>
-			</div>
+			<button id="fetch" onclick="fetch()" class="btn btn-primary btn-block">Fetch Forge Versions from minecraftforge.net</button>
+			<button style="display: none" id="save" onclick="window.location.reload()" class="btn btn-success btn-block">Save Forge Vesions and Refresh</button>
 			<span id="info" class="text-danger"></span>
-			<div class="card" id="fabrics" style="display:none;">
-				<h2>(α) Fabric Installer</h2>
-				<form>
-					<label for="lod">Loader Version</label>
-					<select id="lod"></select><br>
-					<label for="ver">Game Version</label>
-					<select id="ver"></select><br>
-					<button id="sub-button" type="button" onclick="download()" class="btn btn-primary">Install</button>
-				</form>
-			</div>
 			<div class="card" id="fetched-mods" style="display: none">
 				<script type="text/javascript">
 					var nof = 0;
@@ -2661,7 +2663,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 										$("#fetched-mods").show();
 										$("#forge-table").append('<tr id="forge-'+id+'"><td scope="row">'+mc+'</td><td>'+name+'</td><td><a href="'+link+'">'+link+'</a></td><td><button id="button-add-'+id+'" onclick="add(\''+name+'\',\''+link+'\',\''+mc+'\',\''+id+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><i id="cog-'+id+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></i><i id="check-'+id+'" style="display:none" class="text-success fas fa-check fa-2x"></i><i id="times-'+id+'" style="display:none" class="text-danger fas fa-times fa-2x"></i></td></tr>');
 										if(fiq==nof) {
-											$("#fetch-forge").hide();
+											$("#fetch").hide();
 											$("#save").show();
 										}
 									}
@@ -2670,73 +2672,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						}
 						chf.send();
 					}
-					let download = () => {
-						$("#sub-button").attr("disabled","true")
-						$("#sub-button")[0].innerHTML = "<i class='fas fa-cog fa-spin'></i>"
-						let packager = new XMLHttpRequest();
-						packager.open('GET', './functions/package-fabric.php?version='+encodeURIComponent($("#ver").children("option:selected").val())+"&loader="+encodeURIComponent($("#lod").children("option:selected").val()))
-						packager.onreadystatechange = () => {
-							if (packager.readyState === 4) {
-								if (packager.status === 200) {
-									retur = JSON.parse(packager.response)
-									if (retur["status"] === "succ") {
-										$("#sub-button")[0].classList.remove("btn-primary")
-										$("#sub-button")[0].classList.add("btn-success")
-										$("#sub-button")[0].innerHTML = "<i class='fas fa-check'></i> Please reload the page."
-									}
-								}
-							}
-						}
-						packager.send()
-					}
-					let fetchfabric = () => {
-						$("#fetch-fabric").attr("disabled",true)
-						$("#fetch-forge").attr("disabled",true)
-						$("#fetch-fabric").html("Fetching...<i class='fas fa-cog fa-spin fa-sm'></i>")
-						let versions = new XMLHttpRequest()
-						let loaders = new XMLHttpRequest()
-						versions.open('GET','https://meta.fabricmc.net/v2/versions/game')
-						loaders.open('GET','https://meta.fabricmc.net/v2/versions/loader')
-						versions.onreadystatechange = () => {
-							if (versions.readyState === 4) {
-								if (versions.status === 200) {
-									response = JSON.parse(versions.response)
-									for (key in response) {
-										if (response[key]["stable"]) {
-											ver = document.createElement("option")
-											ver.text = response[key]["version"]
-											ver.value = response[key]["version"]
-											$("#ver")[0].add(ver)
-										}
-									}
-								}
-							}
-						}
-						loaders.onreadystatechange = () => {
-							 if (loaders.readyState === 4) {
-                                                                if (loaders.status === 200) {
-                                                                        response = JSON.parse(loaders.response)
-                                                                        for (key in response) {
-                                                                                if (response[key]["stable"]) {
-                                                                                        ver = document.createElement("option")
-                                                                                        ver.text = response[key]["version"]
-                                                                                        ver.value = response[key]["version"]
-                                                                                        $("#lod")[0].add(ver)
-                                                                                }
-                                                                        }
-									$("#fetch-fabric").html("Fetch Fabric Versions")
-									$("#fabrics")[0].style.display = "flex";
-                                                                }
-                                                        }
-						}
-						loaders.send()
-						versions.send()
-					}
-
-					let fetch=()=>{
-						$("#fetch-forge").attr("disabled",true);
-						$("#fetch-fabric").attr("disabled",true);
-						$("#fetch-forge").html("Fetching...<i class='fas fa-cog fa-spin fa-sm'></i>");
+					function fetch() {
+						$("#fetch").attr("disabled",true);
+						$("#fetch").html("Fetching...<i class='fas fa-cog fa-spin fa-sm'></i>");
 						var request = new XMLHttpRequest();
 						request.open('GET', './functions/forge-links.php');
 						request.onreadystatechange = function() {
@@ -2752,7 +2690,6 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						}
 						request.send();
 					}
-
 					function add(v,link,mcv,id) {
 						$("#button-add-"+id).attr("disabled",true);
 						$("#cog-"+id).show();
@@ -2769,6 +2706,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 										$("#times-"+id).show();
 										$("#info").text(response['message']);
 									}
+									
 								}
 							}
 						}
@@ -2820,7 +2758,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 		}
 		else if(uri('/lib-other')) {
 		?>
-		<script>document.title = 'Other Files - <?php echo addslashes($_SESSION['name']) ?>';</script>
+		<script>document.title = 'Solder.cf - Other Files - <?php echo addslashes($_SESSION['name']) ?>';</script>
 		<div class="main">
 		<script type="text/javascript">
 				function remove_box(id,name) {
@@ -3067,7 +3005,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 			$file = mysqli_fetch_array($mres);
 			?>
 			<script>
-				document.title = 'File - <?php echo addslashes($file['name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
+				document.title = 'Solder.cf - File - <?php echo addslashes($file['name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
 				$(document).ready(function(){
 					$("#nav-mods").trigger('click');
 					
@@ -3154,7 +3092,7 @@ function stringify(items) {
 			<?php
 			$mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
 			?>
-			<script>document.title = 'Mod - <?php echo addslashes($_GET['id']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
+			<script>document.title = 'Solder.cf - Mod - <?php echo addslashes($_GET['id']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
 			function remove_box(id,version,name) {
 					$("#mod-name-title").text(name+" "+version);
 					$("#mod-name").text(name+" "+version);
@@ -3276,7 +3214,7 @@ function stringify(items) {
 				$mod = mysqli_fetch_array($mres);
 			}
 			?>
-			<script>document.title = 'Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
+			<script>document.title = 'Solder.cf - Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<div class="card">
 				<button onclick="window.location = './mod?id=<?php echo $mod['name'] ?>'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
 				<h3>Edit <?php echo $mod['pretty_name']." ".$mod['version']; ?></h3>
@@ -3389,7 +3327,7 @@ function stringify(items) {
 		}
 		else if(uri("/about")) {
 			?>
-			<script>document.title = 'About - <?php echo addslashes($_SESSION['name']) ?>';</script>
+			<script>document.title = 'Solder.cf - About - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<center>
@@ -3440,7 +3378,7 @@ function stringify(items) {
 				}
 			}
 		?>
-		<script>document.title = 'Update Checker - <?php echo $version['version'] ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
+		<script>document.title = 'Solder.cf - Update Checker - <?php echo $version['version'] ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
 			<div class="main">
 				<div class="card">
 					<h2>Solder<span class="text-muted">.cf</span> Updater</h2>
@@ -3622,7 +3560,7 @@ function stringify(items) {
 					$('#perm7').prop('checked', false);
 				}
 			</script>
-			<script>document.title = 'My Account - <?php echo addslashes($_SESSION['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - My Account - <?php echo addslashes($_SESSION['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
 			<script type="text/javascript">
 				$(document).ready(function(){
 					$("#nav-settings").trigger('click');
@@ -4017,7 +3955,7 @@ function stringify(items) {
 
 				</script>
 			</div>
-			<script>document.title = 'Admin - <?php echo addslashes($config['author']) ?>';</script>
+			<script>document.title = 'Solder.cf - Admin - <?php echo addslashes($config['author']) ?>';</script>
 			<script type="text/javascript">
 				$(document).ready(function(){
 					$("#nav-settings").trigger('click');
@@ -4057,6 +3995,10 @@ function stringify(items) {
 						<input <?php if($settings['use_verifier']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_verifier" id="use_verifier">
 						<label class="custom-control-label" for="use_verifier">Enable Solder Verifier - uses cookies</label>
 					</div>
+					<div class="custom-control custom-switch">
+						<input <?php if($settings['use_tawkto']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_tawkto" id="use_tawkto">
+						<label class="custom-control-label" for="use_tawkto">Enable Tawk.to - uses cookies</label>
+					</div>
 					<br>
 					<i>It might take a few moments to take effect.</i>
 					<br><br>
@@ -4072,7 +4014,7 @@ function stringify(items) {
 		<?php }
 		else if(uri('/clients')) {
 		?>
-		<script>document.title = 'Clients - <?php echo addslashes($_SESSION['name']) ?>';</script>
+		<script>document.title = 'Solder.cf - Clients - <?php echo addslashes($_SESSION['name']) ?>';</script>
 		<div class="main">
 			<div class="card">
 				<h1>Clients</h1>
@@ -4178,7 +4120,7 @@ function stringify(items) {
 			</script>
 		<?php } else {
 			?>
-		<script>document.title = '404';</script>
+		<script>document.title = 'Solder.cf - 404';</script>
 		<div style="margin-top: 15%" class="main">
 
 				<center><h1>Error 404 :(</h1></center>

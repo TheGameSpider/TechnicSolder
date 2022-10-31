@@ -134,7 +134,7 @@ Create database solder and grant user *solder* access to it.
 CREATE DATABASE solder;
 GRANT ALL ON solder.* TO 'solder'@'localhost';
 FLUSH PRIVILEGES;
-exit
+EXIT;
 ```
 
 **Configure TechnicSolder** <br />

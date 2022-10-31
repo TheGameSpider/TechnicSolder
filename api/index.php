@@ -22,7 +22,7 @@ function uri($url, $uri) {
     return (substr($url, -$length) === $uri);
 }
 if(uri($url,"api/")){
-	print '{"api":"Solder.cf","version":"v1.3.4","stream":"Release"}';
+	print '{"api":"Solder.cf","version":"v1.3.3","stream":"Release"}';
 	exit();
 } 
 if(uri($url,"api/verify")){
@@ -258,7 +258,7 @@ while($modpack=mysqli_fetch_array($result)){
 						}
 					}
 					$response = array(
-						"minecraft" => str_replace("f", "", $build['minecraft']),
+						"minecraft" => $build['minecraft'],
 						"java" => $build['java'],
 						"memory" => $build['memory'],
 						"forge" => null,

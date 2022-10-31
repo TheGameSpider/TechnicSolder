@@ -10,25 +10,24 @@ if(substr($_SESSION['perms'],3,1)!=="1") {
 }
 $config = require("config.php");
 require("dbconnect.php");
-global $conn;
 $fileName = $_FILES["fiels"]["name"];
 $fileJarInTmpLocation = $_FILES["fiels"]["tmp_name"];
 if (!$fileJarInTmpLocation) {
-	echo '{"status":"error","message":"File is too big! Check your post_max_size (current value '.ini_get('post_max_size').') andupload_max_filesize (current value '.ini_get('upload_max_filesize').') values in '.php_ini_loaded_file().'"}';
-	exit();
+    echo '{"status":"error","message":"File is too big! Check your post_max_size (current value '.ini_get('post_max_size').') andupload_max_filesize (current value '.ini_get('upload_max_filesize').') values in '.php_ini_loaded_file().'"}';
+    exit();
 }
 include('toml.php');
 function slugify($text) {
-	$text = preg_replace('~[^\pL\d]+~u', '-', $text);
-	//$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-	$text = preg_replace('~[^-\w]+~', '', $text);
-	$text = trim($text, '-');
-	$text = preg_replace('~-+~', '-', $text);
-	$text = strtolower($text);
-	if (empty($text)) {
-		return 'n-a';
-	}
-	return $text;
+  $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+  //$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+  $text = preg_replace('~[^-\w]+~', '', $text);
+  $text = trim($text, '-');
+  $text = preg_replace('~-+~', '-', $text);
+  $text = strtolower($text);
+  if (empty($text)) {
+    return 'n-a';
+  }
+  return $text;
 }
 $fileNameTmp = explode("-",slugify($fileName));
 array_pop($fileNameTmp);
@@ -44,7 +43,7 @@ if(!file_exists("../mods/mods-".$fileNameShort)) {
 	echo '{"status":"error","message":"Folder mods-'.$fileNameShort.' already exists!"}';
 	exit();
 }
-function processFile($zipExists, $md5) {
+function processFile($zipExists, $md5) { 
 	global $fileName;
 	global $fileNameZip;
 	global $fileNameShort;
@@ -55,11 +54,11 @@ function processFile($zipExists, $md5) {
 	global $fileInfo;
 	$legacy=false;
 	$mcmod=array();
-	$result = @file_get_contents("zip://".realpath($fileJarInFolderLocation)."#META-INF/mods.toml");
-	if (!$result) {
+	$result = @file_get_contents("zip://".realpath($fileJarInFolderLocation)."#META-INF/mods.toml"); 
+	if (!$result) { 
 		# fail 1.14+ mod check
-		$result = file_get_contents("zip://".realpath($fileJarInFolderLocation)."#mcmod.info");
-		if (!$result) {
+		$result = file_get_contents("zip://".realpath($fileJarInFolderLocation)."#mcmod.info"); 
+		if (!$result) { 
 			# fail legacy mod check
 			$warn['b'] = true;
 			$warn['level'] = "warn";
@@ -83,7 +82,7 @@ function processFile($zipExists, $md5) {
 			$warn['level'] = "info";
 			$warn['message'] = "There is some information missing in mcmod.info.";
 		}
-	}
+	} 
 	if ($zipExists) { // while we could put a file check here, it'd be redundant (it's checked before).
 		// cached zip
 	} else {
@@ -173,7 +172,7 @@ function processFile($zipExists, $md5) {
 			} else {
 				echo '{"status":"warn","message":"'.$warn['message'].'","modid":'.mysqli_insert_id($conn).'}';
 			}
-
+			
 		} else {
 			echo '{"status":"succ","message":"Mod has been uploaded and saved.","modid":'.mysqli_insert_id($conn).'}';
 		}
@@ -196,7 +195,7 @@ if(move_uploaded_file($fileJarInTmpLocation, $fileJarInFolderLocation)){
 				echo '{"status":"info","message":"This mod is already in the database.","modid":'.mysqli_fetch_array($fq)['id'].'}';
 			} else {
 				processFile(true, $md5_1); // use existing zip
-			}
+			}	
 		}
 	} else {
 		processFile(false, ''); // create zip
@@ -205,6 +204,6 @@ if(move_uploaded_file($fileJarInTmpLocation, $fileJarInFolderLocation)){
 	rmdir("../mods/mods-".$fileNameShort);
 
 } else {
-	echo '{"status":"error","message":"Permission denied! Please open SSH and run \'chown -R www-data '.addslashes(dirname(dirname(get_included_files()[0]))).'\'"}';
+    echo '{"status":"error","message":"Permission denied! Please open SSH and run \'chown -R www-data '.addslashes(dirname(dirname(get_included_files()[0]))).'\'"}';
 }
 ?>
