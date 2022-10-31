@@ -92,7 +92,8 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
     exit();
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <link rel="icon" href="./resources/wrenchIcon.png" type="image/png" />
         <title>Technic Solder</title>
@@ -200,7 +201,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                 border-radius: 5px;
                 width: 100%;
                 height: 15em;
-                background-color: <?php if ($_SESSION['dark']=="on") {echo "#333";}else{echo "#ddd";} ?>;
+                background-color: <?php if ($_SESSION['dark']=="on") {echo "#333";}else {echo "#ddd";} ?>;
 
                 transition: 0.2s;
             }
@@ -220,7 +221,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                 left: calc( 50% - 10em );
             }
             .upload-mods:hover{
-                background-color: <?php if ($_SESSION['dark']=="on") {echo "#444";}else{echo "#ccc";} ?>;
+                background-color: <?php if ($_SESSION['dark']=="on") {echo "#444";}else {echo "#ccc";} ?>;
             }
             .sidenav {
                 width:20em;
@@ -356,8 +357,8 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
         </script>
         <!--End of Tawk.to Script-->
     <?php } ?>
-        <nav class="navbar <?php if ($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
-            <span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if ($_SESSION['dark']=="on") {echo "W";}?>.svg"><i id="menuopen" class="fas fa-bars menu-bars"></i> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
+        <nav class="navbar <?php if ($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else { echo "navbar-light bg-white sticky-top";}?>">
+            <span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if ($_SESSION['dark']=="on") {echo "W";}?>.svg"><em id="menuopen" class="fas fa-bars menu-bars"></em> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
             <span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <?php if ($_SESSION['user']!==$config['mail']) { ?>
                 <img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php
@@ -383,16 +384,16 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
         <div id="sidenav" class="text-white sidenav">
             <ul class="nav nav-tabs" style="height:100%">
                 <li class="nav-item">
-                    <a class="nav-link " href="./dashboard"><i class="fas fa-tachometer-alt fa-lg"></i></a>
+                    <a class="nav-link " href="./dashboard"><em class="fas fa-tachometer-alt fa-lg"></em></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="#modpacks" data-toggle="tab" role="tab"><i class="fas fa-boxes fa-lg"></i></a>
+                    <a class="nav-link active" href="#modpacks" data-toggle="tab" role="tab"><em class="fas fa-boxes fa-lg"></em></a>
                 </li>
                 <li class="nav-item">
-                    <a id="nav-mods" class="nav-link" href="#mods" data-toggle="tab" role="tab"><i class="fas fa-book fa-lg"></i></a>
+                    <a id="nav-mods" class="nav-link" href="#mods" data-toggle="tab" role="tab"><em class="fas fa-book fa-lg"></em></a>
                 </li>
                 <li class="nav-item">
-                    <a id="nav-settings" class="nav-link" href="#settings" data-toggle="tab" role="tab"><i class="fas fa-sliders-h fa-lg"></i></a>
+                    <a id="nav-settings" class="nav-link" href="#settings" data-toggle="tab" role="tab"><em class="fas fa-sliders-h fa-lg"></em></a>
                 </li>
                 <div style="position:absolute;bottom:5em;left:4em;" class="custom-control custom-switch">
                     <input <?php if ($_SESSION['dark']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="dark" id="dark">
@@ -477,7 +478,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                         ?>
                         <?php if (substr($_SESSION['perms'],0,1)=="1") { ?>
                         <a href="./functions/new-modpack.php"><div class="modpack">
-                            <p><i style="height:25px" class="d-inline-block align-top fas fa-plus-circle"></i> Add Modpack</p>
+                            <p><em style="height:25px" class="d-inline-block align-top fas fa-plus-circle"></em> Add Modpack</p>
                         </div></a>
                     <?php } ?>
                     </div>
@@ -485,13 +486,13 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                 <div class="tab-pane" id="mods" role="tabpanel">
                     <p class="text-muted">LIBRARIES</p>
                     <a href="./lib-mods"><div class="modpack">
-                        <p><i class="fas fa-cubes fa-lg"></i> <span style="margin-left:inherit;">Mod library</span></p>
+                        <p><em class="fas fa-cubes fa-lg"></em> <span style="margin-left:inherit;">Mod library</span></p>
                     </div></a>
                     <a href="./lib-forges"><div class="modpack">
-                        <p><i class="fas fa-database fa-lg"></i> <span style="margin-left:inherit;">Forge versions</span> </p>
+                        <p><em class="fas fa-database fa-lg"></em> <span style="margin-left:inherit;">Forge versions</span> </p>
                     </div></a>
                     <a href="./lib-other"><div class="modpack">
-                        <p><i class="far fa-file-archive fa-lg"></i> <span style="margin-left:inherit;">Other files</span></p>
+                        <p><em class="far fa-file-archive fa-lg"></em> <span style="margin-left:inherit;">Other files</span></p>
                     </div></a>
                 </div>
                 <div class="tab-pane" id="settings" role="tabpanel">
@@ -499,32 +500,32 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                         <p class="text-muted">SETTINGS</p>
                         <?php if ($_SESSION['user']==$config['mail']) { ?>
                         <a href="./settings"><div class="modpack">
-                            <p><i class="fas fa-cog fa-lg"></i> <span style="margin-left:inherit;">Quick settings</span></p>
+                            <p><em class="fas fa-cog fa-lg"></em> <span style="margin-left:inherit;">Quick settings</span></p>
                         </div></a>
                         <a href="./configure.php?reconfig"><div class="modpack">
-                            <p><i class="fas fa-cogs fa-lg"></i> <span style="margin-left:inherit;">Solder Configuration</span></p>
+                            <p><em class="fas fa-cogs fa-lg"></em> <span style="margin-left:inherit;">Solder Configuration</span></p>
                         </div></a>
                         <a href="./admin"><div class="modpack">
-                            <p><i class="fas fa-user-tie fa-lg"></i> <span style="margin-left:inherit;">Admin</span></p>
+                            <p><em class="fas fa-user-tie fa-lg"></em> <span style="margin-left:inherit;">Admin</span></p>
                         </div></a>
                     <?php } else { ?>
                         <a href="./user"><div class="modpack">
-                            <p><i class="fas fa-user fa-lg"></i> <span style="margin-left:inherit;">My Account</span></p>
+                            <p><em class="fas fa-user fa-lg"></em> <span style="margin-left:inherit;">My Account</span></p>
                         </div></a>
                     <?php } ?>
                     <?php if (substr($_SESSION['perms'],6,1)=="1") { ?>
                         <a href="./clients"><div class="modpack">
-                            <p><i class="fas fa-users fa-lg"></i> <span style="margin-left:inherit;">Clients</span></p>
+                            <p><em class="fas fa-users fa-lg"></em> <span style="margin-left:inherit;">Clients</span></p>
                         </div></a>
                         <?php } ?>
                         <a href="./about"><div class="modpack">
-                            <p><i class="fas fa-info-circle fa-lg"></i> <span style="margin-left:inherit;">About Solder.cf</span></p>
+                            <p><em class="fas fa-info-circle fa-lg"></em> <span style="margin-left:inherit;">About Solder.cf</span></p>
                         </div></a>
                         <a href="./update"><div class="modpack">
-                            <p><i class="fas fa-arrow-alt-circle-up fa-lg"></i> <span style="margin-left:inherit;">Update</span></p>
+                            <p><em class="fas fa-arrow-alt-circle-up fa-lg"></em> <span style="margin-left:inherit;">Update</span></p>
                         </div></a>
                         <a style="margin-bottom: 3em;" href="?logout=true&logout=true" id="logoutside"><div class="modpack">
-                            <p><i class="fas fa-sign-out-alt fa-lg"></i> <span style="margin-left:inherit;">Logout</span></p>
+                            <p><em class="fas fa-sign-out-alt fa-lg"></em> <span style="margin-left:inherit;">Logout</span></p>
                         </div></a>
                     </div>
                 </div>
@@ -555,21 +556,21 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                 if ($version['version']!==$newversion['version']) {
                 ?>
                 <div class="card alert-info <?php if ($_SESSION['dark']=="on"){echo "text-white";} ?>">
-                    <p>Version <b><?php echo $newversion['version'] ?></b> is now available!</p>
+                    <p>Version <strong><?php echo $newversion['version'] ?></strong> is now available!</p>
                     <p><?php echo $newversion['ltcl']; ?></p>
                 </div>
             <?php }
             if (!$checked) {
                 ?>
                 <div class="card alert-warning">
-                    <b>Warning! </b>Cannot check for updates!
+                    <strong>Warning! </strong>Cannot check for updates!
                 </div>
                 <?php
             }
             if (isset($notechnic) && $notechnic) {
             ?>
                 <div class="card alert-warning">
-                    <b>Warning! </b>Cannot connect to Technic!
+                    <strong>Warning! </strong>Cannot connect to Technic!
                 </div>
                 <?php
             } else {
@@ -656,8 +657,8 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                 <div class="card-header">Total Runs</div>
                                 <div class="card-body">
                                     <center>
-                                        <h1 class="display-2 w-lg"><i class="fas fa-play d-icon"></i><span class="w-text"><?php echo $runsbig ?></span></h1>
-                                        <h1 class="display-4 w-sm"><i class="fas fa-play d-icon"></i><?php echo $runssmall ?></h1>
+                                        <h1 class="display-2 w-lg"><em class="fas fa-play d-icon"></em><span class="w-text"><?php echo $runsbig ?></span></h1>
+                                        <h1 class="display-4 w-sm"><em class="fas fa-play d-icon"></em><?php echo $runssmall ?></h1>
                                     </center>
                                 </div>
                             </div>
@@ -667,8 +668,8 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                 <div class="card-header">Total Downloads</div>
                                 <div class="card-body">
                                     <center>
-                                        <h1 class="display-2 w-lg"><i class="d-icon fas fa-download"></i><span class="w-text"><?php echo $downloadsbig ?></span></h1>
-                                        <h1 class="display-4 w-sm"><i class="d-icon fas fa-download"></i><?php echo $downloadssmall ?></h1>
+                                        <h1 class="display-2 w-lg"><em class="d-icon fas fa-download"></em><span class="w-text"><?php echo $downloadsbig ?></span></h1>
+                                        <h1 class="display-4 w-sm"><em class="d-icon fas fa-download"></em><?php echo $downloadssmall ?></h1>
                                     </center>
                                 </div>
                             </div>
@@ -678,8 +679,8 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                 <div class="card-header">Total Likes</div>
                                 <div class="card-body">
                                     <center>
-                                        <h1 class="display-2 w-lg"><i class="fas fa-heart d-icon"></i><span class="w-text"><?php echo $likesbig ?></span></h1>
-                                        <h1 class="display-4 w-sm"><i class="fas fa-heart d-icon"></i><?php echo $likessmall ?></h1>
+                                        <h1 class="display-2 w-lg"><em class="fas fa-heart d-icon"></em><span class="w-text"><?php echo $likesbig ?></span></h1>
+                                        <h1 class="display-4 w-sm"><em class="fas fa-heart d-icon"></em><?php echo $likessmall ?></h1>
                                     </center>
                                 </div>
                             </div>
@@ -786,13 +787,13 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                                     echo "
                                                     Drag n' Drop .jar files here.
                                                     <br />
-                                                    <i class='fas fa-upload fa-4x'></i>
+                                                    <em class='fas fa-upload fa-4x'></em>
                                                     ";
                                                 } else {
                                                     echo "
                                                     Insufficient permissions!
                                                     <br />
-                                                    <i class='fas fa-times fa-4x'></i>
+                                                    <em class='fas fa-times fa-4x'></em>
                                                     ";
                                                 } ?>
                                             </div>
@@ -934,7 +935,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                             }
 
                             function showFile(file, i) {
-                                $("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="display:none" class="text-success fas fa-check"></i><i id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></i><i id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></i><i id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
+                                $("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><em id="cog-' + i + '" class="fas fa-cog fa-spin"></em><em id="check-' + i + '" style="display:none" class="text-success fas fa-check"></em><em id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></em><em id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></em><em id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></em> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
                             }
                             $(document).ready(function() {
                                 $(':file').change(function() {
@@ -960,7 +961,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                     <button class="btn btn-secondary" data-toggle="collapse" href="#collapseMigr" role="button" aria-expanded="false" aria-controls="collapseMigr">Database migration</button>
                     <div class="collapse" id="collapseMigr">
                         <br>
-                        <p>Fill out this form to migrate data from an existing local original solder v0.8 installation to this installation. <span class="text-danger"><b>WARNING!</b> This will rewrite your current Solder.cf database!</span></p>
+                        <p>Fill out this form to migrate data from an existing local original solder v0.8 installation to this installation. <span class="text-danger"><strong>WARNING!</strong> This will rewrite your current Solder.cf database!</span></p>
                         <hr>
                         <div id="dbform">
                             <input type="text" class="form-control" id="orighost" placeholder="Address of the database you want to migrate from (e.g. 127.0.0.1)"><br>
@@ -1087,7 +1088,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                     code.innerHTML = response;
                                     responseObj = JSON.parse(response);
                                     if (responseObj.error=="Modpack does not exist") {
-                                        responseDIV.innerHTML = "<b>This modpack does not exists</b>";
+                                        responseDIV.innerHTML = "<strong>This modpack does not exists</strong>";
                                     } else {
                                         if (responseObj.solder!==null) {
                                             solderRequest = new XMLHttpRequest();
@@ -1098,7 +1099,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                                     solderRaw = solderRequest.responseText;
                                                     solder = JSON.parse(solderRaw);
                                                     var solderDIV = document.getElementById("solder");
-                                                    solderDIV.innerHTML = "<b class='text-success'>This modpack is using Solder API - "+solder.api+" "+solder.version+" "+solder.stream+"</b>";
+                                                    solderDIV.innerHTML = "<strong class='text-success'>This modpack is using Solder API - "+solder.api+" "+solder.version+" "+solder.stream+"</strong>";
                                                     console.log(solderRaw);
                                                     console.log("done");
                                                 }
@@ -1107,23 +1108,23 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                             solderRequest.send();
 
                                         } else {
-                                            solderDIV.innerHTML = "<b class='text-danger'>This modpack is not using Solder API</b>";
+                                            solderDIV.innerHTML = "<strong class='text-danger'>This modpack is not using Solder API</strong>";
                                         }
-                                        responseDIV.innerHTML = "<br /><b>Modpack Name: </b>"+responseObj.displayName;
-                                        responseDIV.innerHTML += "<br /><b>Author: </b>"+responseObj.user;
-                                        responseDIV.innerHTML += "<br /><b>Minecraft Version: </b>"+responseObj.minecraft;
-                                        responseDIV.innerHTML += "<br /><b>Downloads: </b>"+responseObj.downloads;
-                                        responseDIV.innerHTML += "<br /><b>Runs: </b>"+responseObj.runs;
-                                        responseDIV.innerHTML += "<br /><b>Official Modpack: </b>"+responseObj.isOfficial;
-                                        responseDIV.innerHTML += "<br /><b>Server Modpack: </b>"+responseObj.isServer;
-                                        responseDIV.innerHTML += "<br /><b>Platform Site: </b><a target='_blank' href='"+responseObj.platformUrl+"'>"+responseObj.platformUrl+"</a>";
+                                        responseDIV.innerHTML = "<br /><strong>Modpack Name: </strong>"+responseObj.displayName;
+                                        responseDIV.innerHTML += "<br /><strong>Author: </strong>"+responseObj.user;
+                                        responseDIV.innerHTML += "<br /><strong>Minecraft Version: </strong>"+responseObj.minecraft;
+                                        responseDIV.innerHTML += "<br /><strong>Downloads: </strong>"+responseObj.downloads;
+                                        responseDIV.innerHTML += "<br /><strong>Runs: </strong>"+responseObj.runs;
+                                        responseDIV.innerHTML += "<br /><strong>Official Modpack: </strong>"+responseObj.isOfficial;
+                                        responseDIV.innerHTML += "<br /><strong>Server Modpack: </strong>"+responseObj.isServer;
+                                        responseDIV.innerHTML += "<br /><strong>Platform Site: </strong><a target='_blank' href='"+responseObj.platformUrl+"'>"+responseObj.platformUrl+"</a>";
                                         if (responseObj.url!==null) {
-                                            responseDIV.innerHTML += "<br /><b>Download Link: </b><a target='_blank' href='"+responseObj.url+"'>"+responseObj.url+"</a>";
+                                            responseDIV.innerHTML += "<br /><strong>Download Link: </strong><a target='_blank' href='"+responseObj.url+"'>"+responseObj.url+"</a>";
                                         }
                                         if (responseObj.solder!==null) {
-                                            responseDIV.innerHTML += "<br /><b>Solder API: </b><a target='_blank' href='"+responseObj.solder+"'>"+responseObj.solder+"</a>";
+                                            responseDIV.innerHTML += "<br /><strong>Solder API: </strong><a target='_blank' href='"+responseObj.solder+"'>"+responseObj.solder+"</a>";
                                         }
-                                        responseDIV.innerHTML += "<br /><b>Description: </b>"+responseObj.description
+                                        responseDIV.innerHTML += "<br /><strong>Description: </strong>"+responseObj.description
                                         if (responseObj.discordServerId!=="") {
                                             responseDIV.innerHTML += "<br /><br /><iframe src='https://discordapp.com/widget?id="+responseObj.discordServerId+"&theme=dark' width='350' height='500' allowtransparency='true' frameborder='0'></iframe>";
                                         }
@@ -1158,7 +1159,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
             <script>document.title = 'Solder.cf - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <ul class="nav justify-content-end info-versions">
                 <li class="nav-item">
-                    <a class="nav-link" href="./dashboard"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $modpack['display_name'] ?></a>
+                    <a class="nav-link" href="./dashboard"><em class="fas fa-arrow-left fa-lg"></em> <?php echo $modpack['display_name'] ?></a>
                 </li>
                 <?php
                 $link = dirname(__FILE__).'/api/mp.php';
@@ -1173,10 +1174,10 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                 }
                 ?>
                 <li <?php if (!$latest){ echo "style='display:none'"; } ?> id="latest-v-li" class="nav-item">
-                    <span class="navbar-text"><i style="color:#2E74B2" class="fas fa-exclamation"></i> Latest: <b id="latest-name"><?php echo $user['name'] ?></b></span>
+                    <span class="navbar-text"><em style="color:#2E74B2" class="fas fa-exclamation"></em> Latest: <strong id="latest-name"><?php echo $user['name'] ?></strong></span>
                 </li>
                 <li <?php if (!$latest){ echo "style='display:none'"; } ?> id="latest-mc-li" class="nav-item">
-                    <span class="navbar-text"><?php if (isset($user['minecraft'])){echo "MC: ";} ?><b id="latest-mc"><?php echo $user['minecraft'] ?></b></span>
+                    <span class="navbar-text"><?php if (isset($user['minecraft'])){echo "MC: ";} ?><strong id="latest-mc"><?php echo $user['minecraft'] ?></strong></span>
                 </li>
                 <div style="width:30px"></div>
                     <?php
@@ -1188,10 +1189,10 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                 }
                 ?>
                 <li <?php if (!$rec){ echo "style='display:none'"; } ?> id="rec-v-li" class="nav-item">
-                    <span class="navbar-text"><i style="color:#329C4E" class="fas fa-check"></i> Recommended: <b id="rec-name"><?php echo $user['name'] ?></b></span>
+                    <span class="navbar-text"><em style="color:#329C4E" class="fas fa-check"></em> Recommended: <strong id="rec-name"><?php echo $user['name'] ?></strong></span>
                 </li>
                 <li <?php if (!$rec){ echo "style='display:none'"; } ?> id="rec-mc-li" class="nav-item">
-                    <span class="navbar-text"><?php if (isset($user['minecraft'])){echo "MC: ";} ?><b id="rec-mc"><?php echo $user['minecraft'] ?></b></span>
+                    <span class="navbar-text"><?php if (isset($user['minecraft'])){echo "MC: ";} ?><strong id="rec-mc"><?php echo $user['minecraft'] ?></strong></span>
                 </li>
                 <div style="width:30px"></div>
             </ul>
@@ -1210,7 +1211,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                         $info = $cache[$modpack['name']]['info'];
                         ?>
                         <div class="card alert-warning">
-                            <b>Warning! </b>Cannot connect to Technic!
+                            <strong>Warning! </strong>Cannot connect to Technic!
                         </div>
                         <?php
                     }
@@ -1225,7 +1226,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                         <br />
                         <input autocomplete="off" id="slug" pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" class="form-control" type="text" name="name" placeholder="Modpack slug" value="<?php echo $modpack['name'] ?>" />
 
-                        <span id="warn_slug" style="display: none" class="text-warning"><b>Warning!</b> Modpack slug have to be the same as on the technic platform</span>
+                        <span id="warn_slug" style="display: none" class="text-warning"><strong>Warning!</strong> Modpack slug have to be the same as on the technic platform</span>
                         <br />
                         <div class="custom-control custom-checkbox">
                             <input <?php if ($modpack['public']==1){echo "checked";} ?> type="checkbox" name="ispublic" class="custom-control-input" id="public">
@@ -1377,8 +1378,8 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                 <div class="card-header">Runs</div>
                                 <div class="card-body">
                                     <center>
-                                        <h1 class="display-2 w-lg"><i class="fas fa-play d-icon"></i><span class="w-text"><?php echo $runsbig ?></span></h1>
-                                        <h1 class="display-4 w-sm"><i class="fas fa-play d-icon"></i><?php echo $runssmall ?></h1>
+                                        <h1 class="display-2 w-lg"><em class="fas fa-play d-icon"></em><span class="w-text"><?php echo $runsbig ?></span></h1>
+                                        <h1 class="display-4 w-sm"><em class="fas fa-play d-icon"></em><?php echo $runssmall ?></h1>
                                     </center>
                                 </div>
                             </div>
@@ -1388,8 +1389,8 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                 <div class="card-header">Downloads</div>
                                 <div class="card-body">
                                     <center>
-                                        <h1 class="display-2 w-lg"><i class="d-icon fas fa-download"></i><span class="w-text"><?php echo $downloadsbig ?></span></h1>
-                                        <h1 class="display-4 w-sm"><i class="d-icon fas fa-download"></i><?php echo $downloadssmall ?></h1>
+                                        <h1 class="display-2 w-lg"><em class="d-icon fas fa-download"></em><span class="w-text"><?php echo $downloadsbig ?></span></h1>
+                                        <h1 class="display-4 w-sm"><em class="d-icon fas fa-download"></em><?php echo $downloadssmall ?></h1>
                                     </center>
                                 </div>
                             </div>
@@ -1399,8 +1400,8 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                 <div class="card-header">Likes</div>
                                 <div class="card-body">
                                     <center>
-                                        <h1 class="display-2 w-lg"><i class="fas fa-heart d-icon"></i><span class="w-text"><?php echo $likesbig ?></span></h1>
-                                        <h1 class="display-4 w-sm"><i class="fas fa-heart d-icon"></i><?php echo $likessmall ?></h1>
+                                        <h1 class="display-2 w-lg"><em class="fas fa-heart d-icon"></em><span class="w-text"><?php echo $likesbig ?></span></h1>
+                                        <h1 class="display-4 w-sm"><em class="fas fa-heart d-icon"></em><?php echo $likessmall ?></h1>
                                     </center>
                                 </div>
                             </div>
@@ -1584,7 +1585,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                     </div>
                                 </td>
                                 <td>
-                                    <i id="cog-<?php echo $user['id'] ?>" style="display:none;margin-top: 0.5rem" class="fas fa-cog fa-lg fa-spin"></i>
+                                    <em id="cog-<?php echo $user['id'] ?>" style="display:none;margin-top: 0.5rem" class="fas fa-cog fa-lg fa-spin"></em>
                                 </td>
                             <?php } ?>
                             </tr>
@@ -1725,14 +1726,14 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
             <script>document.title = 'Solder.cf - <?php echo addslashes($mpack['display_name'])." ".addslashes($user['name'])  ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <ul class="nav justify-content-end info-versions">
                 <li class="nav-item">
-                    <a class="nav-link" href="./modpack?id=<?php echo $mpack['id'] ?>"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $mpack['display_name'] ?></a>
+                    <a class="nav-link" href="./modpack?id=<?php echo $mpack['id'] ?>"><em class="fas fa-arrow-left fa-lg"></em> <?php echo $mpack['display_name'] ?></a>
                 </li>
                 <li <?php if ($mpack['latest']!==$user['name']){ echo "style='display:none'"; } ?> id="latest-v-li" class="nav-item">
-                    <span class="navbar-text"><i style="color:#2E74B2" class="fas fa-exclamation"></i> Latest</span>
+                    <span class="navbar-text"><em style="color:#2E74B2" class="fas fa-exclamation"></em> Latest</span>
                 </li>
                 <div style="width:30px"></div>
                 <li <?php if ($mpack['recommended']!==$user['name']){ echo "style='display:none'"; } ?> id="rec-v-li" class="nav-item">
-                    <span class="navbar-text"><i style="color:#329C4E" class="fas fa-check"></i> Recommended</span>
+                    <span class="navbar-text"><em style="color:#329C4E" class="fas fa-check"></em> Recommended</span>
                 </li>
                 <div style="width:30px"></div>
             </ul>
@@ -2012,7 +2013,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                             ?>
                                         </td>
                                         <td>
-                                            <i style="font-size: 2em;display: none;" class="fas fa-cog fa-spin" id="spinner-<?php echo $moda['name'] ?>"></i>
+                                            <em style="font-size: 2em;display: none;" class="fas fa-cog fa-spin" id="spinner-<?php echo $moda['name'] ?>"></em>
                                         </td>
                                     </tr>
                                     <?php
@@ -2177,7 +2178,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                                 </select>
                                             </td>
                                             <td><button id="btn-add-mod-<?php echo $mod['name'] ?>" onclick="add('<?php echo $mod['name'] ?>')" class="btn btn-primary">Add to Build</button></td>
-                                            <td><i id="cog-<?php echo $mod['name'] ?>" style="display:none" class="fas fa-cog fa-spin fa-2x"></i><i id="check-<?php echo $mod['name'] ?>" style="display:none" class="text-success fas fa-check fa-2x"></i></td>
+                                            <td><em id="cog-<?php echo $mod['name'] ?>" style="display:none" class="fas fa-cog fa-spin fa-2x"></em><em id="check-<?php echo $mod['name'] ?>" style="display:none" class="text-success fas fa-check fa-2x"></em></td>
                                         </tr>
                                     <?php
                                     }
@@ -2227,7 +2228,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                         <tr>
                                             <td scope="row"><?php echo $mod['pretty_name'] ?></td>
                                             <td><button id="btn-add-o-<?php echo $mod['id'] ?>" onclick="add_o(<?php echo $mod['id'] ?>)" class="btn btn-primary">Add to Build</button></td>
-                                            <td><i id="cog-o-<?php echo $mod['id'] ?>" style="display:none" class="fas fa-cog fa-spin fa-2x"></i><i id="check-o-<?php echo $mod['id'] ?>" style="display:none" class="text-success fas fa-check fa-2x"></i></td>
+                                            <td><em id="cog-o-<?php echo $mod['id'] ?>" style="display:none" class="fas fa-cog fa-spin fa-2x"></em><em id="check-o-<?php echo $mod['id'] ?>" style="display:none" class="text-success fas fa-check fa-2x"></em></td>
                                         </tr>
                                         <?php
                                     }
@@ -2275,13 +2276,13 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                         echo "
                                         Drag n' Drop .jar files here.
                                         <br />
-                                        <i class='fas fa-upload fa-4x'></i>
+                                        <em class='fas fa-upload fa-4x'></em>
                                         ";
                                     } else {
                                         echo "
                                         Insufficient permissions!
                                         <br />
-                                        <i class='fas fa-times fa-4x'></i>
+                                        <em class='fas fa-times fa-4x'></em>
                                         ";
                                     } ?>
                                 </div>
@@ -2291,7 +2292,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                     </form>
                 </div>
             </div>
-             <?php if (substr($_SESSION['perms'],3,1)=="1") { ?><p class="ml-3"><a href="./add-mods"><i class="fas fa-plus-circle"></i> Add remote mods</a></p><?php } ?>
+             <?php if (substr($_SESSION['perms'],3,1)=="1") { ?><p class="ml-3"><a href="./add-mods"><em class="fas fa-plus-circle"></em> Add remote mods</a></p><?php } ?>
             <div style="display: none" id="u-mods" class="card">
                 <h2>New Mods</h2>
                 <table class="table">
@@ -2501,7 +2502,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
             }
 
             function showFile(file, i) {
-                $("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="display:none" class="text-success fas fa-check"></i><i id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></i><i id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></i><i id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
+                $("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><em id="cog-' + i + '" class="fas fa-cog fa-spin"></em><em id="check-' + i + '" style="display:none" class="text-success fas fa-check"></em><em id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></em><em id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></em><em id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></em> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
             }
             $(document).ready(function() {
                 $(':file').change(function() {
@@ -2684,7 +2685,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                     fiq++;
                                     if (chf.response == "OK") {
                                         $("#fetched-mods").show();
-                                        $("#forge-table").append('<tr id="forge-'+id+'"><td scope="row">'+mc+'</td><td>'+name+'</td><td><a href="'+link+'">'+link+'</a></td><td><button id="button-add-'+id+'" onclick="add(\''+name+'\',\''+link+'\',\''+mc+'\',\''+id+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><i id="cog-'+id+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></i><i id="check-'+id+'" style="display:none" class="text-success fas fa-check fa-2x"></i><i id="times-'+id+'" style="display:none" class="text-danger fas fa-times fa-2x"></i></td></tr>');
+                                        $("#forge-table").append('<tr id="forge-'+id+'"><td scope="row">'+mc+'</td><td>'+name+'</td><td><a href="'+link+'">'+link+'</a></td><td><button id="button-add-'+id+'" onclick="add(\''+name+'\',\''+link+'\',\''+mc+'\',\''+id+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><em id="cog-'+id+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></em><em id="check-'+id+'" style="display:none" class="text-success fas fa-check fa-2x"></em><em id="times-'+id+'" style="display:none" class="text-danger fas fa-times fa-2x"></em></td></tr>');
                                         if (fiq==nof) {
                                             $("#fetch").hide();
                                             $("#save").show();
@@ -2697,7 +2698,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                     }
                     function fetch() {
                         $("#fetch").attr("disabled",true);
-                        $("#fetch").html("Fetching...<i class='fas fa-cog fa-spin fa-sm'></i>");
+                        $("#fetch").html("Fetching...<em class='fas fa-cog fa-spin fa-sm'></em>");
                         var request = new XMLHttpRequest();
                         request.open('GET', './functions/forge-links.php');
                         request.onreadystatechange = function() {
@@ -2809,13 +2810,13 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                             echo "
                                             Drag n' Drop .zip files here.
                                             <br />
-                                            <i class='fas fa-upload fa-4x'></i>
+                                            <em class='fas fa-upload fa-4x'></em>
                                             ";
                                         } else {
                                             echo "
                                             Insufficient permissions!
                                             <br />
-                                            <i class='fas fa-times fa-4x'></i>
+                                            <em class='fas fa-times fa-4x'></em>
                                             ";
                                         } ?>
                                     </div>
@@ -2975,7 +2976,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
             }
 
             function showFile(file, i) {
-                $("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><i id="cog-' + i + '" class="fas fa-cog fa-spin"></i><i id="check-' + i + '" style="display:none" class="text-success fas fa-check"></i><i id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></i><i id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></i><i id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></i> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
+                $("#table-mods").append('<tr><td scope="row">' + file.name + '</td> <td><em id="cog-' + i + '" class="fas fa-cog fa-spin"></em><em id="check-' + i + '" style="display:none" class="text-success fas fa-check"></em><em id="times-' + i + '" style="display:none" class="text-danger fas fa-times"></em><em id="exc-' + i + '" style="display:none" class="text-warning fas fa-exclamation"></em><em id="inf-' + i + '" style="display:none" class="text-info fas fa-info"></em> <small class="text-muted" id="info-' + i + '"></small></h4><div class="progress"><div id="' + i + '" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></td></tr>');
             }
             $(document).ready(function() {
                 $(':file').change(function() {
@@ -3305,40 +3306,40 @@ function stringify(items) {
 
             });
             function authorsave() {
-                $("#author-save").html("<i class='fas fa-cog fa-spin'></i>").attr("disabled",true);
+                $("#author-save").html("<em class='fas fa-cog fa-spin'></em>").attr("disabled",true);
                 var request = new XMLHttpRequest();
                 request.open('POST', './functions/authorsave.php');
                 request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 request.onreadystatechange = function() {
                     if (request.readyState == 4) {
-                        $("#author-save").html("<i class='fas fa-check text-success'></i>");
+                        $("#author-save").html("<em class='fas fa-check text-success'></em>");
                     }
                 }
                 var value = encodeURIComponent($("#author-input").val());
                 request.send("id=<?php echo $mod['name'] ?>&value="+value);
             }
             function linksave() {
-                $("#link-save").html("<i class='fas fa-cog fa-spin'></i>").attr("disabled",true);
+                $("#link-save").html("<em class='fas fa-cog fa-spin'></em>").attr("disabled",true);
                 var request = new XMLHttpRequest();
                 request.open('POST', './functions/linksave.php');
                 request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 request.onreadystatechange = function() {
                     if (request.readyState == 4) {
-                        $("#link-save").html("<i class='fas fa-check text-success'></i>");
+                        $("#link-save").html("<em class='fas fa-check text-success'></em>");
                     }
                 }
                 var value = encodeURIComponent($("#link-input").val());
                 request.send("id=<?php echo $mod['name'] ?>&value="+value);
             }
             function donlinksave() {
-                $("#donlink-save").html("<i class='fas fa-cog fa-spin'></i>").attr("disabled",true);
+                $("#donlink-save").html("<em class='fas fa-cog fa-spin'></em>").attr("disabled",true);
                 var request = new XMLHttpRequest();
 
                 request.open('POST', './functions/donlinksave.php');
                 request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 request.onreadystatechange = function() {
                     if (request.readyState == 4) {
-                        $("#donlink-save").html("<i class='fas fa-check text-success'></i>");
+                        $("#donlink-save").html("<em class='fas fa-check text-success'></em>");
                     }
                 }
                 var value = encodeURIComponent($("#donlink-input").val());
@@ -4050,7 +4051,7 @@ function stringify(items) {
                         <label class="custom-control-label" for="use_tawkto">Enable Tawk.to - uses cookies</label>
                     </div>
                     <br>
-                    <i>It might take a few moments to take effect.</i>
+                    <em>It might take a few moments to take effect.</em>
                     <br><br>
                     <input type="submit" class="btn btn-primary" name="submit" value="Save">
                 </form>
