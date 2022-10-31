@@ -38,7 +38,6 @@ if(isset($_GET['logout'])){
 if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== ""){
 	if(!isset($config['encrypted'])||$config['encrypted']==false) {
 		if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']){
-			
 			$_SESSION['user'] = $_POST['email'];
 			$_SESSION['name'] = $config['author'];
 			$_SESSION['perms'] = "1111111";
@@ -53,18 +52,20 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
 				header("Location: ".$config['dir']."login?ic");
 				exit();
 			}
-			
 		}
 	} else {
-		if($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']){
-			
+        if ($_POST['email']==$config['mail'] && password_verify($_POST['password'], $config['pass'])) {
+        // OLD PASSWORD AUTH METHOD (INSECURE):
+		//if($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']){
 			$_SESSION['user'] = $_POST['email'];
 			$_SESSION['name'] = $config['author'];
 			$_SESSION['perms'] = "1111111";
 		} else {
 			$user = mysqli_query($conn, "SELECT * FROM `users` WHERE `name` = '". addslashes($_POST['email']) ."'");
 			$user = mysqli_fetch_array($user);
-			if($user['pass']==hash("sha256",$_POST['password']."Solder.cf")) {
+            if (password_verify($_POST['password'], $user['pass'])) {
+            // OLD PASSWORD AUTH METHOD (INSECURE):
+			//if($user['pass']==hash("sha256",$_POST['password']."Solder.cf")) {
 				$_SESSION['user'] = $_POST['email'];
 				$_SESSION['name'] = $user['display_name'];
 				$_SESSION['perms'] = $user['perms'];
@@ -72,7 +73,7 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
 				header("Location: ".$config['dir']."login?ic");
 				exit();
 			}
-			
+
 		}
 	}
 }
@@ -689,12 +690,18 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 						</div>
 					</div>
 				<?php } ?>
-				
+
 				<?php
 					if((!isset($config['encrypted'])||$config['encrypted']==false)&&$_SESSION['user']==$config['mail']) {
 						?>
 						<div class="card alert-warning">
-							<p><b>Warning!</b> You password is not encrypted and it's visible to everyone who has access to your files and database. It's recommended to encrypt your passwords. <a href="./functions/passencrypt.php">Click here to proceed</a></p>
+                            <h2>Warning!</h2>
+							<p>
+                                Your password is not encrypted and will be visible to anyone who has access to your files and database. It is recommended that you encrypt your passwords. <a href="./functions/passencrypt.php">Click here to proceed</a>
+                            </p>
+                            <p>
+                                <b>Note: If this message is still here after clicking the above link, the passwords are still being encrypted. Do not click it again. Instead, refresh the page.</b>
+                            </p>
 						</div>
 						<?php
 					}

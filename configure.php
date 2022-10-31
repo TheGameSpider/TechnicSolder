@@ -44,10 +44,12 @@ if(!isset($_GET['reconfig'])) {
 				}
 				if(isset($_POST['host'])) {
 					$cf = '<?php return array( "configured" => true, ';
-					$_POST['pass'] = hash("sha256",$_POST['pass']."Solder.cf");
+					// OLD HASHING METHOD (INSECURE)
+                    // $_POST['pass'] = hash("sha256",$_POST['pass']."Solder.cf");
+                    $_POST['pass'] = password_hash($_POST['pass'], PASSWORD_DEFAULT);
 					$_POST['encrypted'] = true;
 					foreach ($_POST as $key => $value) {
-						$cf .= '"'.$key.'" => "'.$value.'"';
+                        $cf .= "'".$key."' => '".$value."'";
 						if($key !== "encrypted") {
 							$cf .= ",";
 						}
