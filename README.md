@@ -29,7 +29,7 @@ sudo su -
 This command installs what's known as a LAMP Stack, which includes Apache2, MariaDB, and PHP. Very useful!
 ```bash
 apt update
-apt -y install apache2 php libapache2-mod-php mariadb-server php-mysql php-dev zlib1g-dev libzip4 libzip-dev php-zip
+apt -y install apache2 php7.2 libapache2-mod-php mariadb-server php7.2-mysql php7.2-dev zlib1g-dev libzip4 libzip-dev php7.2-zip
 ```
 The above command can take a while to complete. Once done, restart apache.<br />
 
