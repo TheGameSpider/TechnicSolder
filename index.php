@@ -15,7 +15,7 @@ $SOLDER_BUILD='999';
 if (strpos($url, '?') !== false) {
     $url = substr($url, 0, strpos($url, "?"));
 }
-if (!isset($_SESSION['dark'])){
+if (!isset($_SESSION['dark'])) {
     $_SESSION['dark'] = "off";
 }
 if (isset($_GET['dark'])) {
