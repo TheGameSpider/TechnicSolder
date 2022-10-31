@@ -2,7 +2,7 @@
 error_reporting(E_ALL & ~E_NOTICE);
 session_start();
 $config = include("./functions/config.php");
-if($config['configured']!==true) {
+if ($config['configured']!==true) {
     header("Location: ".$config['dir']."configure.php");
     exit();
 }
@@ -12,39 +12,37 @@ $cache = json_decode(file_get_contents("./functions/cache.json"),true);
 $dbcon = require("./functions/dbconnect.php");
 $url = $_SERVER['REQUEST_URI'];
 $SOLDER_BUILD='999';
-if(strpos($url, '?') !== false) {
+if (strpos($url, '?') !== false) {
     $url = substr($url, 0, strpos($url, "?"));
 }
-if(isset($_GET['dark'])) {
+if (isset($_GET['dark'])) {
     $_SESSION['dark'] = "on";
 }
-if(isset($_GET['light'])) {
+if (isset($_GET['light'])) {
     $_SESSION['dark'] = "off";
 }
-if(substr($url,-1)=="/") {
-    if($_SERVER['QUERY_STRING']!=="") {
+if (substr($url,-1)=="/") {
+    if ($_SERVER['QUERY_STRING']!=="") {
         header("Location: " . rtrim($url,'/') . "?" . $_SERVER['QUERY_STRING']);
     } else {
         header("Location: " . rtrim($url,'/'));
     }
 }
-if(isset($_GET['logout'])) {
-    if($_GET['logout']==true) {
-        session_destroy();
-        header("Location: ".$config['dir']."login");
-        exit();
-    }
+if (isset($_GET['logout']) && $_GET['logout']) {
+    session_destroy();
+    header("Location: ".$config['dir']."login");
+    exit();
 }
-if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== "") {
-    if(!isset($config['encrypted'])||$config['encrypted']==false) {
-        if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']) {
+if (isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== "") {
+    if (!isset($config['encrypted']) || !$config['encrypted']) {
+        if ($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']) {
             $_SESSION['user'] = $_POST['email'];
             $_SESSION['name'] = $config['author'];
             $_SESSION['perms'] = "1111111";
         } else {
             $user = mysqli_query($conn, "SELECT * FROM `users` WHERE `name` = '". addslashes($_POST['email']) ."'");
             $user = mysqli_fetch_array($user);
-            if($user['pass']==$_POST['password']) {
+            if ($user['pass']==$_POST['password']) {
                 $_SESSION['user'] = $_POST['email'];
                 $_SESSION['name'] = $user['display_name'];
                 $_SESSION['perms'] = $user['perms'];
@@ -56,7 +54,7 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
     } else {
         if ($_POST['email']==$config['mail'] && password_verify($_POST['password'], $config['pass'])) {
         // OLD PASSWORD AUTH METHOD (INSECURE):
-        //if($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']) {
+        //if ($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']) {
             $_SESSION['user'] = $_POST['email'];
             $_SESSION['name'] = $config['author'];
             $_SESSION['perms'] = "1111111";
@@ -65,7 +63,7 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
             $user = mysqli_fetch_array($user);
             if (password_verify($_POST['password'], $user['pass'])) {
             // OLD PASSWORD AUTH METHOD (INSECURE):
-            //if($user['pass']==hash("sha256",$_POST['password']."Solder.cf")) {
+            //if ($user['pass']==hash("sha256",$_POST['password']."Solder.cf")) {
                 $_SESSION['user'] = $_POST['email'];
                 $_SESSION['name'] = $user['display_name'];
                 $_SESSION['perms'] = $user['perms'];
@@ -85,13 +83,11 @@ function uri($uri) {
     }
     return (substr($url, -$length) === $uri);
 }
-if(isset($_SESSION['user'])) {
-    if(uri("/login")||uri("/")) {
-        header("Location: ".$config['dir']."dashboard");
-        exit();
-    }
+if (isset($_SESSION['user']) && (uri("/login")||uri("/"))) {
+    header("Location: ".$config['dir']."dashboard");
+    exit();
 }
-if(!isset($_SESSION['user'])&&!uri("/login")) {
+if (!isset($_SESSION['user'])&&!uri("/login")) {
     header("Location: ".$config['dir']."login");
     exit();
 }
@@ -100,7 +96,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
     <head>
         <link rel="icon" href="./resources/wrenchIcon.png" type="image/png" />
         <title>Technic Solder</title>
-        <?php if($_SESSION['dark']=="on") {
+        <?php if ($_SESSION['dark']=="on") {
             echo '<link rel="stylesheet" href="./resources/bootstrap/dark/bootstrap.min.css">';
         } else {
             echo '<link rel="stylesheet" href="./resources/bootstrap/bootstrap.min.css">';
@@ -204,7 +200,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 border-radius: 5px;
                 width: 100%;
                 height: 15em;
-                background-color: <?php if($_SESSION['dark']=="on") {echo "#333";}else{echo "#ddd";} ?>;
+                background-color: <?php if ($_SESSION['dark']=="on") {echo "#333";}else{echo "#ddd";} ?>;
 
                 transition: 0.2s;
             }
@@ -224,7 +220,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 left: calc( 50% - 10em );
             }
             .upload-mods:hover{
-                background-color: <?php if($_SESSION['dark']=="on") {echo "#444";}else{echo "#ccc";} ?>;
+                background-color: <?php if ($_SESSION['dark']=="on") {echo "#444";}else{echo "#ccc";} ?>;
             }
             .sidenav {
                 width:20em;
@@ -307,7 +303,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     display:block;
                 }
             }
-            <?php if($_SESSION['dark']=="on") {?>
+            <?php if ($_SESSION['dark']=="on") {?>
             .custom-file-label::after {
                 background-color: #df691a;
             }
@@ -321,16 +317,16 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
         </style>
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
-    <body style="<?php if($_SESSION['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
+    <body style="<?php if ($_SESSION['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
     <?php
-        if(uri("login")) {
+        if (uri("login")) {
         ?>
         <div class="container">
             <div id="logindiv">
                 <img style="margin:auto;display:block" alt="Technic logo" height="80" src="./resources/wrenchIcon.svg">
                 <legend style="text-align:center;margin:1em 0px">Technic Solder</legend>
                 <form method="POST" action="dashboard">
-                    <?php if(isset($_GET['ic'])) { ?>
+                    <?php if (isset($_GET['ic'])) { ?>
                         <div class="alert alert-danger">
                             Invalid Username/Password
                         </div>
@@ -345,7 +341,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
         } else {
             $filecontents = file_get_contents('./api/version.json');
         ?>
-        <?php if($settings['use_tawkto']=="on") { ?>
+        <?php if ($settings['use_tawkto']=="on") { ?>
         <!--Start of Tawk.to Script-->
         <script type="text/javascript">
         var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -360,10 +356,10 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
         </script>
         <!--End of Tawk.to Script-->
     <?php } ?>
-        <nav class="navbar <?php if($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
-            <span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if($_SESSION['dark']=="on") {echo "W";}?>.svg"><i id="menuopen" class="fas fa-bars menu-bars"></i> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
+        <nav class="navbar <?php if ($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else{ echo "navbar-light bg-white sticky-top";}?>">
+            <span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if ($_SESSION['dark']=="on") {echo "W";}?>.svg"><i id="menuopen" class="fas fa-bars menu-bars"></i> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
             <span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <?php if($_SESSION['user']!==$config['mail']) { ?>
+                <?php if ($_SESSION['user']!==$config['mail']) { ?>
                 <img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php
                         $sql = mysqli_query($conn,"SELECT `icon` FROM `users` WHERE `name` = '".$_SESSION['user']."'");
                         $icon = mysqli_fetch_array($sql);
@@ -373,7 +369,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 <span class="navbar-text"><?php echo $_SESSION['name'] ?> </span>
                 <div style="left: unset;right: 2px;" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="?logout=true&logout=true" onclick="window.location = window.location+'?logout=true&logout=true'">Log Out</a>
-                    <?php if($_SESSION['user']!==$config['mail']) { ?>
+                    <?php if ($_SESSION['user']!==$config['mail']) { ?>
                     <a class="dropdown-item" href="./user" onclick="window.location = './user'">My account</a>
                     <?php } ?>
                 </div>
@@ -399,35 +395,35 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     <a id="nav-settings" class="nav-link" href="#settings" data-toggle="tab" role="tab"><i class="fas fa-sliders-h fa-lg"></i></a>
                 </li>
                 <div style="position:absolute;bottom:5em;left:4em;" class="custom-control custom-switch">
-                    <input <?php if($_SESSION['dark']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="dark" id="dark">
+                    <input <?php if ($_SESSION['dark']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="dark" id="dark">
                     <label class="custom-control-label" for="dark">Dark theme</label>
                 </div>
             </ul>
             <script type="text/javascript">
                 $("#dark").click(function(){
-                    if($("#dark").is(":checked")){
-                        if(window.location.href.indexOf("?light") > -1 || window.location.href.indexOf("&light") > -1) {
-                            if(window.location.href.indexOf("?light") > -1) {
+                    if ($("#dark").is(":checked")){
+                        if (window.location.href.indexOf("?light") > -1 || window.location.href.indexOf("&light") > -1) {
+                            if (window.location.href.indexOf("?light") > -1) {
                                 window.location.href = window.location.href.replace("?light","?dark");
                             } else {
                                 window.location.href = window.location.href.replace("&light","&dark");
                             }
                         } else {
-                            if(window.location.href.indexOf("?") > -1) {
+                            if (window.location.href.indexOf("?") > -1) {
                                 window.location.href = window.location.href+"&dark";
                             } else {
                                 window.location.href = window.location.href+"?dark";
                             }
                         }
                     } else {
-                        if(window.location.href.indexOf("?dark") > -1 || window.location.href.indexOf("&dark") > -1) {
-                            if(window.location.href.indexOf("?dark") > -1) {
+                        if (window.location.href.indexOf("?dark") > -1 || window.location.href.indexOf("&dark") > -1) {
+                            if (window.location.href.indexOf("?dark") > -1) {
                                 window.location.href = window.location.href.replace("?dark","?light");
                             } else {
                                 window.location.href = window.location.href.replace("&dark","&light");
                             }
                         } else {
-                            if(window.location.href.indexOf("?") > -1) {
+                            if (window.location.href.indexOf("?") > -1) {
                                 window.location.href = window.location.href+"&light";
                             } else {
                                 window.location.href = window.location.href+"?light";
@@ -445,12 +441,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                         $totaldownloads=0;
                         $totalruns=0;
                         $totallikes=0;
-                        if(mysqli_num_rows($result)!==0) {
+                        if (mysqli_num_rows($result)!==0) {
                             while($modpack=mysqli_fetch_array($result)){
-                                if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
+                                if (isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
                                     $info = $cache[$modpack['name']]['info'];
                                 } else {
-                                    if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=".$SOLDER_BUILD),true)) {
+                                    if ($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=".$SOLDER_BUILD),true)) {
                                         $cache[$modpack['name']]['time'] = time();
                                         $cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
                                         $cache[$modpack['name']]['info'] = $info;
@@ -461,7 +457,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                         $notechnic = true;
                                     }
                                 }
-                                if(isset($cache[$modpack['name']]['icon'])&&$cache[$modpack['name']]['icon']!=="") {
+                                if (isset($cache[$modpack['name']]['icon'])&&$cache[$modpack['name']]['icon']!=="") {
                                     $info_icon = "data:image/png;base64, ".$cache[$modpack['name']]['icon'];
                                 } else {
                                     $info_icon = $modpack['icon'];
@@ -479,7 +475,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             }
                         }
                         ?>
-                        <?php if(substr($_SESSION['perms'],0,1)=="1") { ?>
+                        <?php if (substr($_SESSION['perms'],0,1)=="1") { ?>
                         <a href="./functions/new-modpack.php"><div class="modpack">
                             <p><i style="height:25px" class="d-inline-block align-top fas fa-plus-circle"></i> Add Modpack</p>
                         </div></a>
@@ -501,7 +497,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 <div class="tab-pane" id="settings" role="tabpanel">
                     <div style="overflow:auto;height: calc( 100% - 62px )">
                         <p class="text-muted">SETTINGS</p>
-                        <?php if($_SESSION['user']==$config['mail']) { ?>
+                        <?php if ($_SESSION['user']==$config['mail']) { ?>
                         <a href="./settings"><div class="modpack">
                             <p><i class="fas fa-cog fa-lg"></i> <span style="margin-left:inherit;">Quick settings</span></p>
                         </div></a>
@@ -516,7 +512,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             <p><i class="fas fa-user fa-lg"></i> <span style="margin-left:inherit;">My Account</span></p>
                         </div></a>
                     <?php } ?>
-                    <?php if(substr($_SESSION['perms'],6,1)=="1") { ?>
+                    <?php if (substr($_SESSION['perms'],6,1)=="1") { ?>
                         <a href="./clients"><div class="modpack">
                             <p><i class="fas fa-users fa-lg"></i> <span style="margin-left:inherit;">Clients</span></p>
                         </div></a>
@@ -535,117 +531,117 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
             </div>
         </div>
         <?php
-        if(uri("/dashboard")){
+        if (uri("/dashboard")){
             ?>
             <script>document.title = 'Solder.cf - Dashboard - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <div class="main">
                 <?php
                 $version = json_decode(file_get_contents("./api/version.json"),true);
-                if($version['stream']=="Dev"||$settings['dev_builds']=="on") {
-                    if($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true)) {
+                if ($version['stream']=="Dev"||$settings['dev_builds']=="on") {
+                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true)) {
                         $checked = true;
                     } else {
                         $checked = false;
                         $newversion = $version;
                     }
                 } else {
-                    if($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true)) {
+                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true)) {
                         $checked = true;
                     } else {
                         $checked = false;
                         $newversion = $version;
                     }
                 }
-                if($version['version']!==$newversion['version']) {
+                if ($version['version']!==$newversion['version']) {
                 ?>
-                <div class="card alert-info <?php if($_SESSION['dark']=="on"){echo "text-white";} ?>">
+                <div class="card alert-info <?php if ($_SESSION['dark']=="on"){echo "text-white";} ?>">
                     <p>Version <b><?php echo $newversion['version'] ?></b> is now available!</p>
                     <p><?php echo $newversion['ltcl']; ?></p>
                 </div>
             <?php }
-            if(!$checked) {
+            if (!$checked) {
                 ?>
                 <div class="card alert-warning">
                     <b>Warning! </b>Cannot check for updates!
                 </div>
                 <?php
             }
-            if(isset($notechnic) && $notechnic) {
+            if (isset($notechnic) && $notechnic) {
             ?>
                 <div class="card alert-warning">
                     <b>Warning! </b>Cannot connect to Technic!
                 </div>
                 <?php
             } else {
-                if($totaldownloads>99999999) {
+                if ($totaldownloads>99999999) {
                     $downloadsbig = number_format($totaldownloads/1000000,0)."M";
                     $downloadssmall = number_format($totaldownloads/1000000000,1)."G";
-                } else if($totaldownloads>9999999) {
+                } elseif ($totaldownloads>9999999) {
                     $downloadsbig = number_format($totaldownloads/1000000,0)."M";
                     $downloadssmall = number_format($totaldownloads/1000000,0)."M";
-                } else if($totaldownloads>999999) {
+                } elseif ($totaldownloads>999999) {
                     $downloadsbig = number_format($totaldownloads/1000000,1)."M";
                     $downloadssmall = number_format($totaldownloads/1000000,1)."M";
-                } else if ($totaldownloads>99999) {
+                } elseif ($totaldownloads>99999) {
                     $downloadsbig = number_format($totaldownloads/1000,0)."K";
                     $downloadssmall = number_format($totaldownloads/1000000,1)."M";
-                } else if ($totaldownloads>9999) {
+                } elseif ($totaldownloads>9999) {
                     $downloadsbig = number_format($totaldownloads/1000,1)."K";
                     $downloadssmall = number_format($totaldownloads/1000,0)."K";
-                } else if ($totaldownloads>999) {
+                } elseif ($totaldownloads>999) {
                     $downloadsbig = number_format($totaldownloads,0);
                     $downloadssmall = number_format($totaldownloads/1000,1)."K";
-                } else if ($totaldownloads>99) {
+                } elseif ($totaldownloads>99) {
                     $downloadsbig = number_format($totaldownloads,0);
                     $downloadssmall = number_format($totaldownloads/1000,1)."K";
                 } else {
                     $downloadsbig = $totaldownloads;
                     $downloadssmall = $totaldownloads;
                 }
-                if($totalruns>99999999) {
+                if ($totalruns>99999999) {
                     $runsbig = number_format($totalruns/1000000,0)."M";
                     $runssmall = number_format($totalruns/1000000000,1)."G";
-                } else if($totalruns>9999999) {
+                } elseif ($totalruns>9999999) {
                     $runsbig = number_format($totalruns/1000000,0)."M";
                     $runssmall = number_format($totalruns/1000000,0)."M";
-                } else if($totalruns>999999) {
+                } elseif ($totalruns>999999) {
                     $runsbig = number_format($totalruns/1000000,1)."M";
                     $runssmall = number_format($totalruns/1000000,1)."M";
-                } else if ($totalruns>99999) {
+                } elseif ($totalruns>99999) {
                     $runsbig = number_format($totalruns/1000,0)."K";
                     $runssmall = number_format($totalruns/1000000,1)."M";
-                } else if ($totalruns>9999) {
+                } elseif ($totalruns>9999) {
                     $runsbig = number_format($totalruns/1000,1)."K";
                     $runssmall = number_format($totalruns/1000,0)."K";
-                } else if ($totalruns>999) {
+                } elseif ($totalruns>999) {
                     $runsbig = number_format($totalruns,0);
                     $runssmall = number_format($totalruns/1000,1)."K";
-                } else if ($totalruns>99) {
+                } elseif ($totalruns>99) {
                     $runsbig = number_format($totalruns,0);
                     $runssmall = number_format($totalruns/1000,1)."K";
                 } else {
                     $runsbig = $totalruns;
                     $runssmall = $totalruns;
                 }
-                if($totallikes>99999999) {
+                if ($totallikes>99999999) {
                     $likesbig = number_format($totallikes/1000000,0)."M";
                     $likessmall = number_format($totallikes/1000000000,1)."G";
-                } else if($totallikes>9999999) {
+                } elseif ($totallikes>9999999) {
                     $likesbig = number_format($totallikes/1000000,0)."M";
                     $likessmall = number_format($totallikes/1000000,0)."M";
-                } else if($totallikes>999999) {
+                } elseif ($totallikes>999999) {
                     $likesbig = number_format($totallikes/1000000,1)."M";
                     $likessmall = number_format($totallikes/1000000,1)."M";
-                } else if ($totallikes>99999) {
+                } elseif ($totallikes>99999) {
                     $likesbig = number_format($totallikes/1000,0)."K";
                     $likessmall = number_format($totallikes/1000000,1)."M";
-                } else if ($totallikes>9999) {
+                } elseif ($totallikes>9999) {
                     $likesbig = number_format($totallikes/1000,1)."K";
                     $likessmall = number_format($totallikes/1000,0)."K";
-                } else if ($totallikes>999) {
+                } elseif ($totallikes>999) {
                     $likesbig = number_format($totallikes,0);
                     $likessmall = number_format($totallikes/1000,1)."K";
-                } else if ($totallikes>99) {
+                } elseif ($totallikes>99) {
                     $likesbig = number_format($totallikes,0);
                     $likessmall = number_format($totallikes/1000,1)."K";
                 } else {
@@ -692,15 +688,20 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 <?php } ?>
 
                 <?php
-                    if((!isset($config['encrypted'])||$config['encrypted']==false)&&$_SESSION['user']==$config['mail']) {
+                    if ((!isset($config['encrypted'])|| !$config['encrypted'])&&$_SESSION['user']==$config['mail']) {
                         ?>
                         <div class="card alert-warning">
                             <h2>Warning!</h2>
                             <p>
-                                Your password is not encrypted and will be visible to anyone who has access to your files and database. It is recommended that you encrypt your passwords. <a href="./functions/passencrypt.php">Click here to proceed</a>
+                                Your password is not encrypted and will be visible to anyone who has access to your
+                                files and database. It is recommended that you encrypt your passwords.
+                                <a href="./functions/passencrypt.php">Click here to proceed</a>
                             </p>
                             <p>
-                                <b>Note: If this message is still here after clicking the above link, the passwords are still being encrypted. Do not click it again. Instead, refresh the page.</b>
+                                <strong>
+                                    Note: If this message is still here after clicking the above link, the passwords are
+                                    still being encrypted. Do not click it again. Instead, refresh the page.
+                                </strong>
                             </p>
                         </div>
                         <?php
@@ -712,7 +713,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                         <p class="display-5">The best Application to create and manage your modpacks.</p>
                     </center>
                     <hr />
-                    <?php if(substr($_SESSION['perms'],0,1)=="1" && substr($_SESSION['perms'],1,1)=="1") { ?>
+                    <?php if (substr($_SESSION['perms'],0,1)=="1" && substr($_SESSION['perms'],1,1)=="1") { ?>
                     <button class="btn btn-success" data-toggle="collapse" href="#collapseMp" role="button" aria-expanded="false" aria-controls="collapseMp">Instant Modpack</button>
                     <div class="collapse" id="collapseMp">
                         <form method="POST" action="./functions/instant-modpack.php">
@@ -723,13 +724,13 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             <br />
                             <label for="java">Select java version</label>
                             <select name="java" class="form-control">
-                                <option <?php if($user['java']=="17"){ echo "selected"; } ?> value="17">17</option>
-                                <option <?php if($user['java']=="16"){ echo "selected"; } ?> value="16">16</option>
-                                <option <?php if($user['java']=="13"){ echo "selected"; } ?> value="13">13</option>
-                                <option <?php if($user['java']=="11"){ echo "selected"; } ?> value="11">11</option>
-                                <option <?php if($user['java']=="1.8"){ echo "selected"; } ?> value="1.8">1.8</option>
-                                <option <?php if($user['java']=="1.7"){ echo "selected"; } ?> value="1.7">1.7</option>
-                                <option <?php if($user['java']=="1.6"){ echo "selected"; } ?> value="1.6">1.6</option>
+                                <option <?php if ($user['java']=="17"){ echo "selected"; } ?> value="17">17</option>
+                                <option <?php if ($user['java']=="16"){ echo "selected"; } ?> value="16">16</option>
+                                <option <?php if ($user['java']=="13"){ echo "selected"; } ?> value="13">13</option>
+                                <option <?php if ($user['java']=="11"){ echo "selected"; } ?> value="11">11</option>
+                                <option <?php if ($user['java']=="1.8"){ echo "selected"; } ?> value="1.8">1.8</option>
+                                <option <?php if ($user['java']=="1.7"){ echo "selected"; } ?> value="1.7">1.7</option>
+                                <option <?php if ($user['java']=="1.6"){ echo "selected"; } ?> value="1.6">1.6</option>
                             </select> <br />
                             <label for="memory">Memory (RAM in MB)</label>
                             <input required class="form-control" type="number" id="memory" name="memory" value="2048" min="1024" max="65536" placeholder="2048" step="512">
@@ -739,9 +740,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             <?php
 
                             $vres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'forge'");
-                            if(mysqli_num_rows($vres)!==0) {
+                            if (mysqli_num_rows($vres)!==0) {
                                 while($version = mysqli_fetch_array($vres)) {
-                                    ?><option <?php if($modslist[0]==$version['id']){ echo "selected"; } ?> value="<?php echo $version['id']?>"><?php echo $version['mcversion'] ?> - Forge <?php echo $version['version'] ?></option><?php
+                                    ?><option <?php if ($modslist[0]==$version['id']){ echo "selected"; } ?> value="<?php echo $version['id']?>"><?php echo $version['mcversion'] ?> - Forge <?php echo $version['version'] ?></option><?php
                                 }
                                 echo "</select>";
                             } else {
@@ -781,7 +782,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                         <center>
                                             <div>
                                                 <?php
-                                                if(substr($_SESSION['perms'],3,1)=="1") {
+                                                if (substr($_SESSION['perms'],3,1)=="1") {
                                                     echo "
                                                     Drag n' Drop .jar files here.
                                                     <br />
@@ -796,7 +797,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                                 } ?>
                                             </div>
                                         </center>
-                                        <input <?php if(substr($_SESSION['perms'],3,1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple/>
+                                        <input <?php if (substr($_SESSION['perms'],3,1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple/>
                                     </div>
                                 </form>
                             </div>
@@ -819,7 +820,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                         <script type="text/javascript">
                             var formdisabled = true;
                             $('#modsform').submit(function() {
-                                if(formDisabled) {
+                                if (formDisabled) {
                                     return false;
                                 } else {
                                     return true;
@@ -852,20 +853,20 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                                 if (request.status == 200) {
                                                     console.log(request.response);
                                                     response = JSON.parse(request.response);
-                                                    if(response.modid) {
-                                                        if(! $('#modlist').val().split(",").includes(response.modid.toString())) {
+                                                    if (response.modid) {
+                                                        if (! $('#modlist').val().split(",").includes(response.modid.toString())) {
                                                             addedmodslist.push(response.modid);
                                                         }
                                                     }
                                                     if ( mn == modcount ) {
-                                                        if(addedmodslist.length > 0) {
-                                                            if($('#modlist').val().length > 0) {
+                                                        if (addedmodslist.length > 0) {
+                                                            if ($('#modlist').val().length > 0) {
                                                                 $('#modlist').val($('#modlist').val() + "," + addedmodslist);
                                                             } else {
                                                                 $('#modlist').val($('#modlist').val() + addedmodslist);
                                                             }
                                                         }
-                                                        if($('#modlist').val().length > 0) {
+                                                        if ($('#modlist').val().length > 0) {
                                                             console.log($('#modlist').val().length);
                                                             $("#submit").attr("disabled",false);
                                                             formdisabled = false;
@@ -982,8 +983,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                 http.open('POST', './functions/migrate.php');
                                 http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                                 http.onreadystatechange = function() {
-                                    if(http.readyState == 4 && http.status == 200) {
-                                        if(http.responseText == "error") {
+                                    if (http.readyState == 4 && http.status == 200) {
+                                        if (http.responseText == "error") {
                                             $("#errtext").text("Migration failed!");
                                             $("#errtext").removeClass("text-muted text-success");
                                             $("#errtext").addClass("text-danger");
@@ -1007,8 +1008,8 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                 http.open('POST', './functions/conntest.php');
                                 http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                                 http.onreadystatechange = function() {
-                                    if(http.readyState == 4 && http.status == 200) {
-                                        if(http.responseText == "error") {
+                                    if (http.readyState == 4 && http.status == 200) {
+                                        if (http.responseText == "error") {
                                             $("#errtext").text("Cannot connect to database");
                                             $("#errtext").removeClass("text-muted text-success");
                                             $("#errtext").addClass("text-danger");
@@ -1037,14 +1038,14 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                         ?>
                     </div>
                     <br />
-                    <?php if($settings['use_verifier']=="on") { ?>
+                    <?php if ($settings['use_verifier']=="on") { ?>
                     <button class="btn btn-secondary" data-toggle="collapse" href="#collapseVerify" role="button" aria-expanded="false" aria-controls="collapseVerify">Solder Verifier</button>
                     <div class="collapse" id="collapseVerify">
                         <br />
                         <div class="input-group">
-                            <input autocomplete="off" class="form-control <?php if($_SESSION['dark']=="on") {echo "border-primary";}?>" type="text" id="link" placeholder="Modpack slug" aria-describedby="search" />
+                            <input autocomplete="off" class="form-control <?php if ($_SESSION['dark']=="on") {echo "border-primary";}?>" type="text" id="link" placeholder="Modpack slug" aria-describedby="search" />
                             <div class="input-group-append">
-                                <button class="<?php if($_SESSION['dark']=="on") { echo "btn btn-primary";} else { echo "btn btn-outline-secondary";} ?>" onclick="get();" type="button" id="search">Search</button>
+                                <button class="<?php if ($_SESSION['dark']=="on") { echo "btn btn-primary";} else { echo "btn btn-outline-secondary";} ?>" onclick="get();" type="button" id="search">Search</button>
                             </div>
                         </div>
                         <pre class="card border-primary" style="white-space: pre-wrap;width: 100%" id="responseRaw">
@@ -1085,10 +1086,10 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                     var solderDIV = document.getElementById("solder");
                                     code.innerHTML = response;
                                     responseObj = JSON.parse(response);
-                                    if(responseObj.error=="Modpack does not exist") {
+                                    if (responseObj.error=="Modpack does not exist") {
                                         responseDIV.innerHTML = "<b>This modpack does not exists</b>";
                                     } else {
-                                        if(responseObj.solder!==null) {
+                                        if (responseObj.solder!==null) {
                                             solderRequest = new XMLHttpRequest();
                                             console.log("Getting info from solder");
                                             solderRequest.onreadystatechange = function() {
@@ -1116,14 +1117,14 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                         responseDIV.innerHTML += "<br /><b>Official Modpack: </b>"+responseObj.isOfficial;
                                         responseDIV.innerHTML += "<br /><b>Server Modpack: </b>"+responseObj.isServer;
                                         responseDIV.innerHTML += "<br /><b>Platform Site: </b><a target='_blank' href='"+responseObj.platformUrl+"'>"+responseObj.platformUrl+"</a>";
-                                        if(responseObj.url!==null) {
+                                        if (responseObj.url!==null) {
                                             responseDIV.innerHTML += "<br /><b>Download Link: </b><a target='_blank' href='"+responseObj.url+"'>"+responseObj.url+"</a>";
                                         }
-                                        if(responseObj.solder!==null) {
+                                        if (responseObj.solder!==null) {
                                             responseDIV.innerHTML += "<br /><b>Solder API: </b><a target='_blank' href='"+responseObj.solder+"'>"+responseObj.solder+"</a>";
                                         }
                                         responseDIV.innerHTML += "<br /><b>Description: </b>"+responseObj.description
-                                        if(responseObj.discordServerId!=="") {
+                                        if (responseObj.discordServerId!=="") {
                                             responseDIV.innerHTML += "<br /><br /><iframe src='https://discordapp.com/widget?id="+responseObj.discordServerId+"&theme=dark' width='350' height='500' allowtransparency='true' frameborder='0'></iframe>";
                                         }
                                         feedDIV.innerHTML = "<br /><h3>Updates: </h3><div class='card-columns' id='cards'></div>"
@@ -1132,7 +1133,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                             i++
                                             document.getElementById("cards").innerHTML += "<div style='padding:0px' class='card'><div class='card-header'><h5><img class='rounded-circle' src='"+element.avatar+"' height='32px' width='32px' /> "+element.user+"</h5></div><div class='card-body'><p>"+element.content+"</p></div></div>";
                                         });
-                                        if(i==0) {
+                                        if (i==0) {
                                             feedDIV.innerHTML = "";
                                         }
                                     }
@@ -1148,9 +1149,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
             </div>
             <?php
         }
-        else if(uri("/modpack")){
+        elseif (uri("/modpack")){
             $mpres = mysqli_query($conn, "SELECT * FROM `modpacks` WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
-            if($mpres) {
+            if ($mpres) {
             $modpack = mysqli_fetch_array($mpres);
 
             ?>
@@ -1166,40 +1167,40 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 $packdata = json_decode($packapi,true);
                 $latest=false;
                 $latestres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".mysqli_real_escape_string($conn, $_GET['id'])." AND `name` = '".$packdata['latest']."'");
-                if(mysqli_num_rows($latestres)!==0) {
+                if (mysqli_num_rows($latestres)!==0) {
                     $latest=true;
                     $user = mysqli_fetch_array($latestres);
                 }
                 ?>
-                <li <?php if($latest==false){ echo "style='display:none'"; } ?> id="latest-v-li" class="nav-item">
+                <li <?php if (!$latest){ echo "style='display:none'"; } ?> id="latest-v-li" class="nav-item">
                     <span class="navbar-text"><i style="color:#2E74B2" class="fas fa-exclamation"></i> Latest: <b id="latest-name"><?php echo $user['name'] ?></b></span>
                 </li>
-                <li <?php if($latest==false){ echo "style='display:none'"; } ?> id="latest-mc-li" class="nav-item">
-                    <span class="navbar-text"><?php if(isset($user['minecraft'])){echo "MC: ";} ?><b id="latest-mc"><?php echo $user['minecraft'] ?></b></span>
+                <li <?php if (!$latest){ echo "style='display:none'"; } ?> id="latest-mc-li" class="nav-item">
+                    <span class="navbar-text"><?php if (isset($user['minecraft'])){echo "MC: ";} ?><b id="latest-mc"><?php echo $user['minecraft'] ?></b></span>
                 </li>
                 <div style="width:30px"></div>
                     <?php
                 $rec=false;
                 $recres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".mysqli_real_escape_string($conn, $_GET['id'])." AND `name` = '".$packdata['recommended']."'");
-                if(mysqli_num_rows($recres)!==0) {
+                if (mysqli_num_rows($recres)!==0) {
                     $rec=true;
                     $user = mysqli_fetch_array($recres);
                 }
                 ?>
-                <li <?php if($rec==false){ echo "style='display:none'"; } ?> id="rec-v-li" class="nav-item">
+                <li <?php if (!$rec){ echo "style='display:none'"; } ?> id="rec-v-li" class="nav-item">
                     <span class="navbar-text"><i style="color:#329C4E" class="fas fa-check"></i> Recommended: <b id="rec-name"><?php echo $user['name'] ?></b></span>
                 </li>
-                <li <?php if($rec==false){ echo "style='display:none'"; } ?> id="rec-mc-li" class="nav-item">
-                    <span class="navbar-text"><?php if(isset($user['minecraft'])){echo "MC: ";} ?><b id="rec-mc"><?php echo $user['minecraft'] ?></b></span>
+                <li <?php if (!$rec){ echo "style='display:none'"; } ?> id="rec-mc-li" class="nav-item">
+                    <span class="navbar-text"><?php if (isset($user['minecraft'])){echo "MC: ";} ?><b id="rec-mc"><?php echo $user['minecraft'] ?></b></span>
                 </li>
                 <div style="width:30px"></div>
             </ul>
             <div class="main">
                 <?php
-                if(isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
+                if (isset($cache[$modpack['name']])&&$cache[$modpack['name']]['time'] > time()-1800) {
                     $info = $cache[$modpack['name']]['info'];
                 } else {
-                    if($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=".$SOLDER_BUILD),true)) {
+                    if ($info = json_decode(file_get_contents("http://api.technicpack.net/modpack/".$modpack['name']."?build=".$SOLDER_BUILD),true)) {
                         $cache[$modpack['name']]['time'] = time();
                         $cache[$modpack['name']]['icon'] = base64_encode(file_get_contents($info['icon']['url']));
                         $cache[$modpack['name']]['info'] = $info;
@@ -1214,7 +1215,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                         <?php
                     }
                 }
-                if(substr($_SESSION['perms'],0,1)=="1") { ?>
+                if (substr($_SESSION['perms'],0,1)=="1") { ?>
                 <div class="card">
                     <h2>Edit Modpack</h2>
                     <hr>
@@ -1227,7 +1228,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                         <span id="warn_slug" style="display: none" class="text-warning"><b>Warning!</b> Modpack slug have to be the same as on the technic platform</span>
                         <br />
                         <div class="custom-control custom-checkbox">
-                            <input <?php if($modpack['public']==1){echo "checked";} ?> type="checkbox" name="ispublic" class="custom-control-input" id="public">
+                            <input <?php if ($modpack['public']==1){echo "checked";} ?> type="checkbox" name="ispublic" class="custom-control-input" id="public">
                             <label class="custom-control-label" for="public">Public Modpack</label>
                         </div><br />
                         <div class="btn-group" role="group" aria-label="Actions">
@@ -1256,9 +1257,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                       </div>
                     </div>
                     <script type="text/javascript">
-                            <?php if(strpos($modpack['name'],"unnamed-modpack-")==false) { ?>
+                            <?php if (!strpos($modpack['name'],"unnamed-modpack-")) { ?>
                                 $("#slug").on("keyup", function(){
-                                    if($("#slug").val()!=="<?php echo $modpack['name'] ?>"){
+                                    if ($("#slug").val()!=="<?php echo $modpack['name'] ?>"){
                                         $("#warn_slug").show();
                                         $("#slug").addClass("border-warning");
                                     } else {
@@ -1270,7 +1271,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                         $("#dn").on("keyup", function(){
                             var slug = slugify($(this).val());
                             console.log(slug);
-                            <?php if(strpos($modpack['name'],"unnamed-modpack-")!==false) { ?>
+                            <?php if (strpos($modpack['name'],"unnamed-modpack-")!==false) { ?>
                                 $("#slug").val(slug);
                             <?php } ?>
                         });
@@ -1293,82 +1294,82 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 $totaldownloads = $info['downloads'];
                 $totalruns = $info['runs'];
                 $totallikes = $info['ratings'];
-                if($totaldownloads>99999999) {
+                if ($totaldownloads>99999999) {
                     $downloadsbig = number_format($totaldownloads/1000000,0)."M";
                     $downloadssmall = number_format($totaldownloads/1000000000,1)."G";
-                } else if($totaldownloads>9999999) {
+                } elseif ($totaldownloads>9999999) {
                     $downloadsbig = number_format($totaldownloads/1000000,0)."M";
                     $downloadssmall = number_format($totaldownloads/1000000,0)."M";
-                } else if($totaldownloads>999999) {
+                } elseif ($totaldownloads>999999) {
                     $downloadsbig = number_format($totaldownloads/1000000,1)."M";
                     $downloadssmall = number_format($totaldownloads/1000000,1)."M";
-                } else if ($totaldownloads>99999) {
+                } elseif ($totaldownloads>99999) {
                     $downloadsbig = number_format($totaldownloads/1000,0)."K";
                     $downloadssmall = number_format($totaldownloads/1000000,1)."M";
-                } else if ($totaldownloads>9999) {
+                } elseif ($totaldownloads>9999) {
                     $downloadsbig = number_format($totaldownloads/1000,1)."K";
                     $downloadssmall = number_format($totaldownloads/1000,0)."K";
-                } else if ($totaldownloads>999) {
+                } elseif ($totaldownloads>999) {
                     $downloadsbig = number_format($totaldownloads,0);
                     $downloadssmall = number_format($totaldownloads/1000,1)."K";
-                } else if ($totaldownloads>99) {
+                } elseif ($totaldownloads>99) {
                     $downloadsbig = number_format($totaldownloads,0);
                     $downloadssmall = number_format($totaldownloads/1000,1)."K";
                 } else {
                     $downloadsbig = $totaldownloads;
                     $downloadssmall = $totaldownloads;
                 }
-                if($totalruns>99999999) {
+                if ($totalruns>99999999) {
                     $runsbig = number_format($totalruns/1000000,0)."M";
                     $runssmall = number_format($totalruns/1000000000,1)."G";
-                } else if($totalruns>9999999) {
+                } elseif ($totalruns>9999999) {
                     $runsbig = number_format($totalruns/1000000,0)."M";
                     $runssmall = number_format($totalruns/1000000,0)."M";
-                } else if($totalruns>999999) {
+                } elseif ($totalruns>999999) {
                     $runsbig = number_format($totalruns/1000000,1)."M";
                     $runssmall = number_format($totalruns/1000000,1)."M";
-                } else if ($totalruns>99999) {
+                } elseif ($totalruns>99999) {
                     $runsbig = number_format($totalruns/1000,0)."K";
                     $runssmall = number_format($totalruns/1000000,1)."M";
-                } else if ($totalruns>9999) {
+                } elseif ($totalruns>9999) {
                     $runsbig = number_format($totalruns/1000,1)."K";
                     $runssmall = number_format($totalruns/1000,0)."K";
-                } else if ($totalruns>999) {
+                } elseif ($totalruns>999) {
                     $runsbig = number_format($totalruns,0);
                     $runssmall = number_format($totalruns/1000,1)."K";
-                } else if ($totalruns>99) {
+                } elseif ($totalruns>99) {
                     $runsbig = number_format($totalruns,0);
                     $runssmall = number_format($totalruns/1000,1)."K";
                 } else {
                     $runsbig = $totalruns;
                     $runssmall = $totalruns;
                 }
-                if($totallikes>99999999) {
+                if ($totallikes>99999999) {
                     $likesbig = number_format($totallikes/1000000,0)."M";
                     $likessmall = number_format($totallikes/1000000000,1)."G";
-                } else if($totallikes>9999999) {
+                } elseif ($totallikes>9999999) {
                     $likesbig = number_format($totallikes/1000000,0)."M";
                     $likessmall = number_format($totallikes/1000000,0)."M";
-                } else if($totallikes>999999) {
+                } elseif ($totallikes>999999) {
                     $likesbig = number_format($totallikes/1000000,1)."M";
                     $likessmall = number_format($totallikes/1000000,1)."M";
-                } else if ($totallikes>99999) {
+                } elseif ($totallikes>99999) {
                     $likesbig = number_format($totallikes/1000,0)."K";
                     $likessmall = number_format($totallikes/1000000,1)."M";
-                } else if ($totallikes>9999) {
+                } elseif ($totallikes>9999) {
                     $likesbig = number_format($totallikes/1000,1)."K";
                     $likessmall = number_format($totallikes/1000,0)."K";
-                } else if ($totallikes>999) {
+                } elseif ($totallikes>999) {
                     $likesbig = number_format($totallikes,0);
                     $likessmall = number_format($totallikes/1000,1)."K";
-                } else if ($totallikes>99) {
+                } elseif ($totallikes>99) {
                     $likesbig = number_format($totallikes,0);
                     $likessmall = number_format($totallikes/1000,1)."K";
                 } else {
                     $likesbig = $totallikes;
                     $likessmall = $totallikes;
                 }
-                if(isset($runsbig)) {
+                if (isset($runsbig)) {
                 ?>
                     <div style="margin-left: 0;margin-right: 0" class="row">
                         <div class="col-4">
@@ -1409,7 +1410,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     }
 
 
-                    if($modpack['public']==false){
+                    if (!$modpack['public']) {
                     $clients = mysqli_query($conn, "SELECT * FROM `clients`");
                 ?>
 
@@ -1419,7 +1420,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     <hr>
                     <form method="GET" action="./functions/change-clients.php">
                     <input hidden name="id" value="<?php echo $_GET['id'] ?>">
-                    <?php if(mysqli_num_rows($clients)<1) {
+                    <?php if (mysqli_num_rows($clients)<1) {
                         ?>
                         <span class="text-danger">There are no clients in the databse. <a href="./clients">You can add them here</a></span>
                         <br />
@@ -1430,16 +1431,17 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     while ($client = mysqli_fetch_array($clients)) {
                         ?>
                         <div class="custom-control custom-checkbox">
-                            <input <?php if(in_array($client['id'],$clientlist)){echo "checked";} ?> type="checkbox" name="client[]" value="<?php echo $client['id'] ?>" class="custom-control-input" id="client-<?php echo $client['id'] ?>">
+                            <input <?php if (in_array($client['id'],$clientlist)){echo "checked";} ?> type="checkbox" name="client[]" value="<?php echo $client['id'] ?>" class="custom-control-input" id="client-<?php echo $client['id'] ?>">
                             <label class="custom-control-label" for="client-<?php echo $client['id'] ?>"><?php echo $client['name']." (".$client['UUID'].")" ?></label>
                         </div><br />
                         <?php
                     }
                     ?>
-                    <?php if(mysqli_num_rows($clients)>0) { ?> <input class="btn btn-primary" type="submit" name="submit" value="Save"> <?php } ?>
+                    <?php if (mysqli_num_rows($clients)>0) { ?> <input class="btn btn-primary" type="submit" name="submit" value="Save"> <?php } ?>
                 </form>
                 </div>
-            <?php }} if(substr($_SESSION['perms'],1,1)=="1") { ?>
+            <?php }
+                } if (substr($_SESSION['perms'],1,1)=="1") { ?>
                 <div class="card">
                     <h2>New Build</h2>
                     <hr>
@@ -1516,13 +1518,13 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             $("#buildlist").children().each(function(){this.remove();});
                             Object.keys(bd).forEach(function(element){
 
-                                if($("#mplist").val() == bd[element]['mpid']) {
+                                if ($("#mplist").val() == bd[element]['mpid']) {
                                     $("#buildlist").append("<option value='"+bd[element]['id']+"'>"+bd[element]['mpname']+" - "+bd[element]['name']+"</option>")
                                 }
                             });
                         });
                         $("#newbname").on("keyup",function(){
-                            if(sbna.indexOf($("#newbname").val())==false) {
+                            if (sbna.indexOf($("#newbname").val())==false) {
                                 $("#newbname").addClass("is-invalid");
                                 $("#warn_newbname").show();
                                 $("#create1").prop("disabled",true);
@@ -1535,7 +1537,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             }
                         });
                         $("#newname").on("keyup",function(){
-                            if(sbna.indexOf($("#newname").val())==false) {
+                            if (sbna.indexOf($("#newname").val())==false) {
                                 $("#newname").addClass("is-invalid");
                                 $("#warn_newname").show();
                                 $("#copybutton").prop("disabled",true);
@@ -1567,16 +1569,18 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             $users = mysqli_query($conn, "SELECT * FROM `builds` WHERE `modpack` = ".mysqli_real_escape_string($conn, $_GET['id'])." ORDER BY `id` DESC");
                             while($user = mysqli_fetch_array($users)) {
                             ?>
-                            <tr rec="<?php if($packdata['recommended']==$user['name']){ echo "true"; } else { echo "false"; } ?>" id="b-<?php echo $user['id'] ?>">
+                            <tr rec="<?php if ($packdata['recommended']==$user['name']){ echo "true"; } else { echo "false"; } ?>" id="b-<?php echo $user['id'] ?>">
                                 <td scope="row"><?php echo $user['name'] ?></td>
                                 <td><?php echo $user['minecraft'] ?></td>
                                 <td><?php echo $user['java'] ?></td>
                                 <td><?php echo count(explode(',', $user['mods'])) ?></td>
                                 <td>
                                     <div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-                                        <?php if(substr($_SESSION['perms'],1,1)=="1") { ?> <button onclick="edit(<?php echo $user['id'] ?>)" class="btn btn-primary">Edit</button>
-                                        <button onclick="remove_box(<?php echo $user['id'] ?>,'<?php echo $user['name'] ?>')" data-toggle="modal" data-target="#removeModal" class="btn btn-danger">Remove</button> <?php } if(substr($_SESSION['perms'],2,1)=="1") {?>
-                                        <button bid="<?php echo $user['id'] ?>" id="rec-<?php if($packdata['recommended']==$user['name']){ ?>disabled<?php } else echo $user['id'] ?>" <?php if($packdata['recommended']==$user['name']){ ?>disabled<?php } ?> onclick="set_recommended(<?php echo $user['id'] ?>)" class="btn btn-success">Set recommended </button><?php } ?>
+                                        <?php if (substr($_SESSION['perms'],1,1)=="1") { ?> <button onclick="edit(<?php echo $user['id'] ?>)" class="btn btn-primary">Edit</button>
+                                        <button onclick="remove_box(<?php echo $user['id'] ?>,'<?php echo $user['name'] ?>')" data-toggle="modal" data-target="#removeModal" class="btn btn-danger">Remove</button> <?php
+                                        } if (substr($_SESSION['perms'],2,1)=="1") {?>
+                                        <button bid="<?php echo $user['id'] ?>" id="rec-<?php if ($packdata['recommended']==$user['name']){ ?>disabled<?php } else echo $user['id'] ?>" <?php if ($packdata['recommended']==$user['name']){ ?>disabled<?php } ?> onclick="set_recommended(<?php echo $user['id'] ?>)" class="btn btn-success">Set recommended </button><?php
+                                        } ?>
                                     </div>
                                 </td>
                                 <td>
@@ -1622,17 +1626,17 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                     response = JSON.parse(this.response);
                                     $("#cog-"+id).hide();
                                     $("#b-"+id).hide();
-                                    if($("#b-"+id).attr("rec")=="true") {
+                                    if ($("#b-"+id).attr("rec")=="true") {
                                         $("#rec-v-li").hide();
                                         $("#rec-mc-li").hide();
                                     }
                                     console.log(response);
-                                    if(response['exists']==true) {
+                                    if (response['exists']==true) {
                                         $("#latest-v-li").show();
                                         $("#latest-mc-li").show();
                                         $("#latest-name").text(response['name']);
                                         $("#latest-mc").text(response['mc']);
-                                        if(response['name']==null) {
+                                        if (response['name']==null) {
                                             $("#latest-v-li").hide();
                                             $("#latest-mc-li").hide();
                                         }
@@ -1675,18 +1679,18 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
             <?php
             }
         }
-        else if(uri('/build')) {
+        elseif (uri('/build')) {
             $bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
-            if($bres) {
+            if ($bres) {
                 $user = mysqli_fetch_array($bres);
             }
             $modslist = explode(',', $user['mods']);
-            if($modslist[0]==""){
+            if ($modslist[0]==""){
                 unset($modslist[0]);
             }
-            if(isset($_POST['java'])) {
-                if($_POST['forgec']!=="none"||count($modslist)==0){
-                    if($_POST['forgec']=="wipe"||count($modslist)==0) {
+            if (isset($_POST['java'])) {
+                if ($_POST['forgec']!=="none"||empty($modslist)) {
+                    if ($_POST['forgec']=="wipe"||empty($modslist)) {
                         mysqli_query($conn, "UPDATE `builds` SET `mods` = '".mysqli_real_escape_string($conn,$_POST['versions'])."' WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
                     } else {
                         $modslist2 = $modslist;
@@ -1697,7 +1701,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     }
                 }
                 $ispublic = 0;
-                if($_POST['ispublic']=="on") {
+                if ($_POST['ispublic']=="on") {
                     $ispublic = 1;
                 }
                 $minecraft = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_POST['versions'])));
@@ -1708,11 +1712,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
             }
 
             $bres = mysqli_query($conn, "SELECT * FROM `builds` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
-            if($bres) {
+            if ($bres) {
                 $user = mysqli_fetch_array($bres);
             }
             $modslist= explode(',', $user['mods']);
-            if($modslist[0]==""){
+            if ($modslist[0]==""){
                 unset($modslist[0]);
             }
             $pack = mysqli_query($conn, "SELECT * FROM `modpacks` WHERE `id` = ".$user['modpack']);
@@ -1723,17 +1727,17 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 <li class="nav-item">
                     <a class="nav-link" href="./modpack?id=<?php echo $mpack['id'] ?>"><i class="fas fa-arrow-left fa-lg"></i> <?php echo $mpack['display_name'] ?></a>
                 </li>
-                <li <?php if($mpack['latest']!==$user['name']){ echo "style='display:none'"; } ?> id="latest-v-li" class="nav-item">
+                <li <?php if ($mpack['latest']!==$user['name']){ echo "style='display:none'"; } ?> id="latest-v-li" class="nav-item">
                     <span class="navbar-text"><i style="color:#2E74B2" class="fas fa-exclamation"></i> Latest</span>
                 </li>
                 <div style="width:30px"></div>
-                <li <?php if($mpack['recommended']!==$user['name']){ echo "style='display:none'"; } ?> id="rec-v-li" class="nav-item">
+                <li <?php if ($mpack['recommended']!==$user['name']){ echo "style='display:none'"; } ?> id="rec-v-li" class="nav-item">
                     <span class="navbar-text"><i style="color:#329C4E" class="fas fa-check"></i> Recommended</span>
                 </li>
                 <div style="width:30px"></div>
             </ul>
             <div class="main">
-                <?php if(substr($_SESSION['perms'],1,1)=="1") { ?>
+                <?php if (substr($_SESSION['perms'],1,1)=="1") { ?>
                 <div class="card">
                     <h2>Build <?php echo $user['name'] ?></h2>
                     <hr>
@@ -1743,9 +1747,9 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             <?php
 
                             $vres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'forge'");
-                            if(mysqli_num_rows($vres)!==0) {
+                            if (mysqli_num_rows($vres)!==0) {
                                 while($version = mysqli_fetch_array($vres)) {
-                                    ?><option <?php if($modslist[0]==$version['id']){ echo "selected"; } ?> value="<?php echo $version['id']?>"><?php echo $version['mcversion'] ?> - Forge <?php echo $version['version'] ?></option><?php
+                                    ?><option <?php if ($modslist[0]==$version['id']){ echo "selected"; } ?> value="<?php echo $version['id']?>"><?php echo $version['mcversion'] ?> - Forge <?php echo $version['version'] ?></option><?php
                                 }
                                 echo "</select>";
                             } else {
@@ -1774,19 +1778,19 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                         <br />
                         <label for="java">Select java version</label>
                         <select name="java" class="form-control">
-                            <option <?php if($user['java']=="17"){ echo "selected"; } ?> value="17">17</option>
-                            <option <?php if($user['java']=="16"){ echo "selected"; } ?> value="16">16</option>
-                            <option <?php if($user['java']=="13"){ echo "selected"; } ?> value="13">13</option>
-                            <option <?php if($user['java']=="11"){ echo "selected"; } ?> value="11">11</option>
-                            <option <?php if($user['java']=="1.8"){ echo "selected"; } ?> value="1.8">1.8</option>
-                            <option <?php if($user['java']=="1.7"){ echo "selected"; } ?> value="1.7">1.7</option>
-                            <option <?php if($user['java']=="1.6"){ echo "selected"; } ?> value="1.6">1.6</option>
+                            <option <?php if ($user['java']=="17"){ echo "selected"; } ?> value="17">17</option>
+                            <option <?php if ($user['java']=="16"){ echo "selected"; } ?> value="16">16</option>
+                            <option <?php if ($user['java']=="13"){ echo "selected"; } ?> value="13">13</option>
+                            <option <?php if ($user['java']=="11"){ echo "selected"; } ?> value="11">11</option>
+                            <option <?php if ($user['java']=="1.8"){ echo "selected"; } ?> value="1.8">1.8</option>
+                            <option <?php if ($user['java']=="1.7"){ echo "selected"; } ?> value="1.7">1.7</option>
+                            <option <?php if ($user['java']=="1.6"){ echo "selected"; } ?> value="1.6">1.6</option>
                         </select> <br />
                         <label for="memory">Memory (RAM in MB)</label>
                         <input class="form-control" type="number" id="memory" name="memory" value="<?php echo $user['memory'] ?>" min="1024" max="65536" placeholder="2048" step="512">
                         <br />
                         <div class="custom-control custom-checkbox">
-                            <input <?php if($user['public']==1){echo "checked";} ?> type="checkbox" name="ispublic" class="custom-control-input" id="public">
+                            <input <?php if ($user['public']==1){echo "checked";} ?> type="checkbox" name="ispublic" class="custom-control-input" id="public">
                             <label class="custom-control-label" for="public">Public Build</label>
                         </div><br />
                         <div style='display:none' id="wipewarn" class='text-danger'>Build will be wiped.</div>
@@ -1810,14 +1814,14 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                       </div>
                     </div>
                 </div>
-                <?php if($user['public']==false){
+                <?php if (!$user['public']) {
                     $clients = mysqli_query($conn, "SELECT * FROM `clients`");
                     ?>
                 <div class="card">
                     <h2>Allowed clients</h2>
                     <form method="GET" action="./functions/change-clients-build.php">
                     <input hidden name="id" value="<?php echo $_GET['id'] ?>">
-                    <?php if(mysqli_num_rows($clients)<1) {
+                    <?php if (mysqli_num_rows($clients)<1) {
                         ?>
                         <span class="text-danger">There are no clients in the databse. <a href="./clients">You can add them here</a></span>
                         <br />
@@ -1828,17 +1832,17 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     while ($client = mysqli_fetch_array($clients)) {
                         ?>
                         <div class="custom-control custom-checkbox">
-                            <input <?php if(in_array($client['id'],$clientlist)){echo "checked";} ?> type="checkbox" name="client[]" value="<?php echo $client['id'] ?>" class="custom-control-input" id="client-<?php echo $client['id'] ?>">
+                            <input <?php if (in_array($client['id'],$clientlist)){echo "checked";} ?> type="checkbox" name="client[]" value="<?php echo $client['id'] ?>" class="custom-control-input" id="client-<?php echo $client['id'] ?>">
                             <label class="custom-control-label" for="client-<?php echo $client['id'] ?>"><?php echo $client['name']." (".$client['UUID'].")" ?></label>
                         </div><br />
                         <?php
                     }
                     ?>
-                    <?php if(mysqli_num_rows($clients)>0) { ?> <input class="btn btn-primary" type="submit" name="submit" value="Save"> <?php } ?>
+                    <?php if (mysqli_num_rows($clients)>0) { ?> <input class="btn btn-primary" type="submit" name="submit" value="Save"> <?php } ?>
                 </form>
                 </div>
             <?php } ?>
-                <?php } if(count($modslist)!==0) { ?>
+                <?php } if (!empty($modslist)) { ?>
                     <div class="card">
                         <h2>Mods in Build <?php echo $user['name'] ?></h2>
                         <script type="text/javascript">
@@ -1849,11 +1853,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                 request.send();
                             }
                             function changeversion(id, mod, name, compatible) {
-                                if(!compatible) {
+                                if (!compatible) {
                                     $("#mod-"+name).removeClass("table-warning");
                                     $("#warn-incompatible-"+name).hide();
                                     /*$("#bmversions-"+name).children().each(function(){
-                                        if(this.value == mod) {
+                                        if (this.value == mod) {
                                             this.remove();
                                         }
                                     });*/
@@ -1883,11 +1887,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                 <?php
                                 $modsluglist = Array();
                                 foreach($modslist as $bmod) {
-                                    if($bmod) {
+                                    if ($bmod) {
                                         $modq = mysqli_query($conn,"SELECT * FROM `mods` WHERE `id` = ".$bmod);
                                         $moda = mysqli_fetch_array($modq);
                                         array_push($modsluglist, $moda['name']);
-                                        if($_SESSION['showall']==true) {
+                                        if ($_SESSION['showall']) {
                                             $modvq = mysqli_query($conn,"SELECT `version`,`id` FROM `mods` WHERE `name` = '".$moda['name']."'");
                                         } else {
                                             $modvq = mysqli_query($conn,"SELECT `version`,`id` FROM `mods` WHERE `name` = '".$moda['name']."' AND (`mcversion` = '".$user['minecraft']."' OR `id` = ".$bmod.")");
@@ -1970,7 +1974,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 
                                         ?>
 
-                                    <tr <?php if($versionMismatch){echo 'class="table-warning"';} ?> id="mod-<?php echo $moda['name'] ?>">
+                                    <tr <?php if ($versionMismatch){echo 'class="table-warning"';} ?> id="mod-<?php echo $moda['name'] ?>">
                                         <td scope="row"><?php
                                             echo $moda['pretty_name'];
 
@@ -1981,12 +1985,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
 
                                         ?></td>
                                         <td>
-                                            <?php if($moda['type'] == "forge" || $moda['type'] == "other") {
+                                            <?php if ($moda['type'] == "forge" || $moda['type'] == "other") {
                                                 echo $moda['version'];
                                             } else { ?>
-                                                <select class="form-control" onchange="changeversion(this.value,<?php echo $moda['id'] ?>,'<?php echo $moda['name'] ?>',<?php if($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'false';} else { echo 'true'; } ?>);" name="bmversions" id="bmversions-<?php echo $moda['name'] ?>"><?php
+                                                <select class="form-control" onchange="changeversion(this.value,<?php echo $moda['id'] ?>,'<?php echo $moda['name'] ?>',<?php if ($moda['mcversion']!==$user['minecraft'] && $moda['type']=="mod" ){echo 'false';} else { echo 'true'; } ?>);" name="bmversions" id="bmversions-<?php echo $moda['name'] ?>"><?php
                                                 while ($mv = mysqli_fetch_array($modvq)) {
-                                                    if($mv['id'] == $moda['id']) {
+                                                    if ($mv['id'] == $moda['id']) {
                                                         echo "<option selected value='".$mv['id']."'>".$mv['version']."</option>";
                                                     } else {
                                                         echo "<option value='".$mv['id']."'>".$mv['version']."</option>";
@@ -1998,12 +2002,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                         </td>
                                         <td>
                                             <?php
-                                            if(substr($_SESSION['perms'],1,1)=="1") {
-                                                if($moda['name'] !== "forge"){
-                                                    ?>
-                                                    <button onclick="remove_mod(<?php echo $bmod ?>,'<?php echo $moda['name'] ?>')" class="btn btn-danger"><i class="fas fa-times"></i></button>
-                                                    <?php
-                                                }
+                                            if (substr($_SESSION['perms'], 1, 1)=="1" && $moda['name'] !== "forge") {
+                                                ?>
+                                                <button onclick="remove_mod(<?php echo $bmod ?>,'<?php echo $moda['name'] ?>')" class="btn btn-danger">
+                                                    <em class="fas fa-times"></em>
+                                                </button>
+                                                <?php
                                             }
                                             ?>
                                         </td>
@@ -2017,16 +2021,16 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             </tbody>
                         </table>
                     </div>
-                    <?php if(substr($_SESSION['perms'],1,1)=="1") { ?>
+                    <?php if (substr($_SESSION['perms'],1,1)=="1") { ?>
                     <div class="card">
-                        <h2>Mods <?php if($_SESSION['showall']!=true){ ?> for Minecraft <?php echo $user['minecraft'];} ?></h2>
+                        <h2>Mods <?php if (!$_SESSION['showall']){ ?> for Minecraft <?php echo $user['minecraft'];} ?></h2>
                         <hr>
                         <button onclick="window.location.href = window.location.href" class="btn btn-primary">Refresh</button>
                         <br />
                         <input id="search" type="text" placeholder="Search..." class="form-control">
                         <br />
                         <div class="custom-control custom-checkbox">
-                            <input <?php if($_SESSION['showall']==true){echo "checked";} ?> type="checkbox" name="showall" class="custom-control-input" id="showall">
+                            <input <?php if ($_SESSION['showall']){echo "checked";} ?> type="checkbox" name="showall" class="custom-control-input" id="showall">
                             <label class="custom-control-label" for="showall">Show all</label>
                         </div>
                         <script type="text/javascript">
@@ -2038,7 +2042,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                             window.location.reload();
                                         }
                                     };
-                                    if( $('#showall').is(':checked') ) {
+                                    if ( $('#showall').is(':checked') ) {
                                         request.open("GET", "./functions/change_show_all.php?showall=true");
                                     } else {
                                         request.open("GET", "./functions/change_show_all.php?showall=false");
@@ -2058,13 +2062,13 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             </thead>
                             <tbody>
                             <?php
-                            if($_SESSION['showall'] == true) {
+                            if ($_SESSION['showall']) {
                                 $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'mod'");
                             } else {
                                 $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'mod' AND `mcversion` = '".$user['minecraft']."'");
                             }
 
-                            if(mysqli_num_rows($mres)!==0) {
+                            if (mysqli_num_rows($mres)!==0) {
                                 ?>
                                 <script type="text/javascript">
                                     $("#search").on('keyup',function(){
@@ -2111,7 +2115,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                         var request = new XMLHttpRequest();
                                         request.onreadystatechange = function() {
                                             if (this.readyState == 4 && this.status == 200) {
-                                                if(this.responseText=="Insufficient permission!") {
+                                                if (this.responseText=="Insufficient permission!") {
                                                     $("#cog-"+name).hide();
                                                     $("#times-"+name).show();
                                                 } else {
@@ -2129,22 +2133,22 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                     }
                                 </script>
                                 <?php
-                                if($mres){
-                                    $modsi = Array();
-                                    $modslugs = Array();
+                                if ($mres){
+                                    $modsi = array();
+                                    $modslugs = array();
                                     while($mod = mysqli_fetch_array($mres)){
-                                        if($_SESSION['showall'] == true) {
+                                        if ($_SESSION['showall']) {
                                             $modversionsq = mysqli_query($conn, "SELECT `id`,`version` FROM `mods` WHERE `type` = 'mod' AND `name` = '".$mod['name']."' ORDER BY `version` DESC");
                                         } else {
                                             $modversionsq = mysqli_query($conn, "SELECT `id`,`version` FROM `mods` WHERE `type` = 'mod' AND `name` = '".$mod['name']."' AND `mcversion` = '".$user['minecraft']."' ORDER BY `version` DESC");
                                         }
 
-                                        $modversions = Array();
-                                        if(!in_array($mod['name'], $modsluglist)) {
+                                        $modversions = array();
+                                        if (!in_array($mod['name'], $modsluglist)) {
                                             while($modversionsa = mysqli_fetch_array($modversionsq)) {
                                                 $modversions[$modversionsa['id']] = $modversionsa['version'];
                                             }
-                                            $modarray = Array(
+                                            $modarray = array(
                                                 "id" => $mod['id'],
                                                 "name" => $mod['name'],
                                                 "pretty_name" => $mod['pretty_name'],
@@ -2153,7 +2157,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                                 "mcversion" => $mod['mcversion']
                                             );
 
-                                            if(!in_array($mod['name'], $modslugs)) {
+                                            if (!in_array($mod['name'], $modslugs)) {
                                                 array_push($modslugs, $mod['name']);
                                                 array_push($modsi, $modarray);
                                             }
@@ -2199,7 +2203,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             <tbody>
                             <?php
                             $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'other'");
-                            if(mysqli_num_rows($mres)!==0) {
+                            if (mysqli_num_rows($mres)!==0) {
                                 ?>
                                 <script type="text/javascript">
                                     function add_o(id) {
@@ -2218,7 +2222,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                 </script>
                                 <?php
                                 while($mod = mysqli_fetch_array($mres)) {
-                                    if(!in_array($mod['id'], $modslist)) {
+                                    if (!in_array($mod['id'], $modslist)) {
                                         ?>
                                         <tr>
                                             <td scope="row"><?php echo $mod['pretty_name'] ?></td>
@@ -2234,12 +2238,13 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             </tbody>
                         </table>
                     </div>
-                <?php }} else echo "<div class='card'><h3 class='text-info'>Select minecraft version and save before editing mods.</h3></div>"; ?>
+                <?php }
+                } else echo "<div class='card'><h3 class='text-info'>Select minecraft version and save before editing mods.</h3></div>"; ?>
             </div>
 
         <?php
         }
-        else if(uri('/lib-mods')) {
+        elseif (uri('/lib-mods')) {
         ?>
         <script>document.title = 'Solder.cf - Mod Library - <?php echo addslashes($_SESSION['name']) ?>';</script>
         <div class="main">
@@ -2266,7 +2271,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             <center>
                                 <div>
                                     <?php
-                                    if(substr($_SESSION['perms'],3,1)=="1") {
+                                    if (substr($_SESSION['perms'],3,1)=="1") {
                                         echo "
                                         Drag n' Drop .jar files here.
                                         <br />
@@ -2281,12 +2286,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                     } ?>
                                 </div>
                             </center>
-                            <input <?php if(substr($_SESSION['perms'],3,1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple/>
+                            <input <?php if (substr($_SESSION['perms'],3,1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple/>
                         </div>
                     </form>
                 </div>
             </div>
-             <?php if(substr($_SESSION['perms'],3,1)=="1") { ?><p class="ml-3"><a href="./add-mods"><i class="fas fa-plus-circle"></i> Add remote mods</a></p><?php } ?>
+             <?php if (substr($_SESSION['perms'],3,1)=="1") { ?><p class="ml-3"><a href="./add-mods"><i class="fas fa-plus-circle"></i> Add remote mods</a></p><?php } ?>
             <div style="display: none" id="u-mods" class="card">
                 <h2>New Mods</h2>
                 <table class="table">
@@ -2318,23 +2323,28 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     <tbody id="table-mods">
                         <?php
                         $mods = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'mod' ORDER BY `id` DESC");
-                        if($mods){
-                            $modsi = Array();
-                            $modslugs = Array();
-                            while($mod = mysqli_fetch_array($mods)){
-                                $modversionsq = mysqli_query($conn, "SELECT `version`,`author` FROM `mods` WHERE `type` = 'mod' AND `name` = '".$mod['name']."' ORDER BY `version` DESC");
-                                $modversions = Array();
-                                $modauthors = Array();
+                        if ($mods){
+                            $modsi = array();
+                            $modslugs = array();
+                            while ($mod = mysqli_fetch_array($mods)) {
+                                $modversionsq = mysqli_query(
+                                        $conn,
+                                        "SELECT `version`,`author` FROM `mods` 
+                                                WHERE `type` = 'mod' AND `name` = '".$mod['name']."' 
+                                                ORDER BY `version` DESC"
+                                );
+                                $modversions = array();
+                                $modauthors = array();
 
-                                while($modversionsa = mysqli_fetch_array($modversionsq)) {
+                                while ($modversionsa = mysqli_fetch_array($modversionsq)) {
                                     array_push($modversions, $modversionsa['version']);
                                     foreach (explode(", ", $modversionsa['author']) as $a) {
-                                        if(!in_array($a, $modauthors)) {
+                                        if (!in_array($a, $modauthors)) {
                                             array_push($modauthors, $a);
                                         }
                                     }
                                 }
-                                $modarray = Array(
+                                $modarray = array(
                                     "id" => $mod['id'],
                                     "name" => $mod['name'],
                                     "pretty_name" => $mod['pretty_name'],
@@ -2343,7 +2353,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                     "mcversion" => $mod['mcversion']
                                 );
 
-                                if(!in_array($mod['name'], $modslugs)) {
+                                if (!in_array($mod['name'], $modslugs)) {
                                     array_push($modslugs, $mod['name']);
                                     array_push($modsi, $modarray);
                                 }
@@ -2352,10 +2362,10 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             ?>
                                 <tr id="mod-row-<?php echo $mod['name'] ?>">
                                     <td scope="row"><?php echo $mod['pretty_name'] ?></td>
-                                    <td><?php if(implode(", ", $mod['author'])!=="") { echo implode(", ", $mod['author']); } else { echo "<span class='text-info'>Unknown</span>"; } ?></td>
+                                    <td><?php if (implode(", ", $mod['author'])!=="") { echo implode(", ", $mod['author']); } else { echo "<span class='text-info'>Unknown</span>"; } ?></td>
                                     <td><?php echo count($mod['versions']); ?></td>
                                     <td>
-                                        <?php if(substr($_SESSION['perms'],4,1)=="1") { ?>
+                                        <?php if (substr($_SESSION['perms'], 4, 1)=="1") { ?>
                                         <div class="btn-group btn-group-sm" role="group" aria-label="Actions">
                                             <button onclick="window.location='./mod?id=<?php echo $mod['name'] ?>'" class="btn btn-primary">Edit</button>
                                             <button onclick="remove_box('<?php echo $mod['name'] ?>')" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
@@ -2515,19 +2525,18 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
             });
         </script>
         <?php
-        }
-        else if(uri('/add-mods')) {
+        } elseif (uri('/add-mods')) {
         ?>
         <div class="main">
             <?php
-            $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
-            if($mres) {
+            $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
+            if ($mres) {
                 $mod = mysqli_fetch_array($mres);
             }
             ?>
             <script>document.title = 'Solder.cf - Add Mod - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <div class="card">
-                <button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
+                <button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><em class="fas fa-arrow-left"></em> Back</button><br />
                 <h3>Add Mod</h3>
                 <form method="POST" action="./functions/add-modv.php">
 
@@ -2545,7 +2554,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     <br />
                     <div class="input-group">
                         <input required class="form-control" type="url" name="url" placeholder="File URL (this must be a .zip file with the right structure)">
-                        <div class="input-group-append" style="cursor:pointer"><span class="input-group-text" data-toggle="popover" title="Solder .zip structure" data-content='The .zip file must include a "mods" folder, within which you place the .jar or .zip original mod file. For example, if you are including the bibliocraft mod, you must place the bibliocraft.jar (the name of the file is irrelevant) inside a "mods" directory. Then you must zip the mods directory and upload this .zip file to a server. Paste your direct link to this file here.'><i class="fas fa-question-circle"></i></span></div>
+                        <div class="input-group-append" style="cursor:pointer"><span class="input-group-text" data-toggle="popover" title="Solder .zip structure" data-content='The .zip file must include a "mods" folder, within which you place the .jar or .zip original mod file. For example, if you are including the bibliocraft mod, you must place the bibliocraft.jar (the name of the file is irrelevant) inside a "mods" directory. Then you must zip the mods directory and upload this .zip file to a server. Paste your direct link to this file here.'><em class="fas fa-question-circle"></em></span></div>
                     </div>
                     <br />
                     <input required class="form-control" type="text" name="md5" placeholder="File md5 Hash"><br />
@@ -2583,8 +2592,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
             });
         </script>
         <?php
-        }
-        else if(uri('/lib-forges')) {
+        } elseif (uri('/lib-forges')) {
         ?>
         <script>document.title = 'Solder.cf - Forge Versions - <?php echo addslashes($_SESSION['name']) ?>';</script>
         <div class="main">
@@ -2624,11 +2632,11 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
               </div>
             </div>
         <h2>Forge Versions in Database</h2>
-        <?php if(isset($_GET['errfilesize'])) {
+        <?php if (isset($_GET['errfilesize'])) {
             echo '<span class="text-danger">File is too big! Check your post_max_size (current value '.ini_get('post_max_size').') and upload_max_filesize (current value '.ini_get('upload_max_filesize').') values in '.php_ini_loaded_file().'</span>';
         } ?>
 
-        <?php if(isset($_GET['succ'])) {
+        <?php if (isset($_GET['succ'])) {
             echo '<span class="text-success">File has been uploaded.</span>';
         } ?>
 
@@ -2644,14 +2652,14 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     <tbody id="forge-available">
                         <?php
                         $mods = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'forge' ORDER BY `id` DESC");
-                        if($mods){
-                            while($mod = mysqli_fetch_array($mods)){
+                        if ($mods){
+                            while ($mod = mysqli_fetch_array($mods)){
                             ?>
                             <tr id="mod-row-<?php echo $mod['id'] ?>">
                                 <td scope="row"><?php echo $mod['mcversion'] ?></td>
                                 <td><?php echo $mod['version'] ?></td>
-                                <td> <?php if(substr($_SESSION['perms'],5,1)=="1") { ?><button  onclick="remove_box(<?php echo $mod['id'].",'".$mod['pretty_name']." ".$mod['version']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger btn-sm">Remove</button><?php } ?></td>
-                                <td><i style="display: none" class="fas fa-cog fa-spin fa-sm"></i></td>
+                                <td> <?php if (substr($_SESSION['perms'], 5, 1)=="1") { ?><button  onclick="remove_box(<?php echo $mod['id'].",'".$mod['pretty_name']." ".$mod['version']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger btn-sm">Remove</button><?php } ?></td>
+                                <td><em style="display: none" class="fas fa-cog fa-spin fa-sm"></em></td>
                             </tr>
                             <?php
                             }
@@ -2672,12 +2680,12 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                         chf.open('GET', "./functions/chf.php?link="+link);
                         chf.onreadystatechange = function() {
                             if (chf.readyState == 4) {
-                                if(chf.status == 200) {
+                                if (chf.status == 200) {
                                     fiq++;
-                                    if(chf.response == "OK") {
+                                    if (chf.response == "OK") {
                                         $("#fetched-mods").show();
                                         $("#forge-table").append('<tr id="forge-'+id+'"><td scope="row">'+mc+'</td><td>'+name+'</td><td><a href="'+link+'">'+link+'</a></td><td><button id="button-add-'+id+'" onclick="add(\''+name+'\',\''+link+'\',\''+mc+'\',\''+id+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><i id="cog-'+id+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></i><i id="check-'+id+'" style="display:none" class="text-success fas fa-check fa-2x"></i><i id="times-'+id+'" style="display:none" class="text-danger fas fa-times fa-2x"></i></td></tr>');
-                                        if(fiq==nof) {
+                                        if (fiq==nof) {
                                             $("#fetch").hide();
                                             $("#save").show();
                                         }
@@ -2715,7 +2723,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                 if (request.status == 200) {
                                     response = JSON.parse(this.response);
                                     $("#cog-"+id).hide();
-                                    if(response['status']=="succ") {
+                                    if (response['status']=="succ") {
                                         $("#check-"+id).show();
                                     } else {
                                         $("#times-"+id).show();
@@ -2744,7 +2752,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     </tbody>
                 </table>
             </div>
-            <?php if(substr($_SESSION['perms'],5,1)=="1") { ?>
+            <?php if (substr($_SESSION['perms'], 5, 1)=="1") { ?>
             <div class="card">
                 <h2>Upload custom Forge version</h2>
                 <hr>
@@ -2770,8 +2778,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
             });
         </script>
         <?php
-        }
-        else if(uri('/lib-other')) {
+        } elseif (uri('/lib-other')) {
         ?>
         <script>document.title = 'Solder.cf - Other Files - <?php echo addslashes($_SESSION['name']) ?>';</script>
         <div class="main">
@@ -2798,7 +2805,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                             <center>
                                 <div>
                                     <?php
-                                        if(substr($_SESSION['perms'],3,1)=="1") {
+                                        if (substr($_SESSION['perms'], 3, 1)=="1") {
                                             echo "
                                             Drag n' Drop .zip files here.
                                             <br />
@@ -2813,7 +2820,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                                         } ?>
                                     </div>
                                 </center>
-                                <input <?php if(substr($_SESSION['perms'],3,1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple accept=".zip" />
+                                <input <?php if (substr($_SESSION['perms'], 3, 1)!=="1") { echo "disabled"; } ?> type="file" name="fiels" multiple accept=".zip" />
                             </div>
                     </form>
                 </div>
@@ -2846,15 +2853,15 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                     <tbody id="table-mods">
                         <?php
                         $mods = mysqli_query($conn, "SELECT * FROM `mods` WHERE `type` = 'other' ORDER BY `id` DESC");
-                        if($mods){
-                            while($mod = mysqli_fetch_array($mods)){
+                        if ($mods){
+                            while ($mod = mysqli_fetch_array($mods)) {
                             ?>
                                 <tr id="mod-row-<?php echo $mod['id'] ?>">
                                     <td scope="row"><?php echo $mod['pretty_name'] ?></td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group" aria-label="Actions">
                                             <button onclick="window.location = './file?id=<?php echo $mod['id'] ?>'" data-toggle="modal" data-target="#infoMod" class="btn btn-primary">Info</button>
-                                             <?php if(substr($_SESSION['perms'],3,1)=="1") { ?><button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button><?php } ?>
+                                             <?php if (substr($_SESSION['perms'], 3, 1)=="1") { ?><button onclick="remove_box(<?php echo $mod['id'].",'".$mod['name']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button><?php } ?>
                                             <button onclick="window.location = '<?php echo $mod['url'] ?>'" class="btn btn-secondary">Download</button>
                                         </div>
                                     </td>
@@ -2992,31 +2999,26 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
             });
         </script>
         <?php
-        }
-        else if(uri("/file")) {
-            function formatSizeUnits($bytes) {
+        } elseif (uri("/file")) {
+            function formatSizeUnits($bytes)
+            {
                 if ($bytes >= 1073741824) {
                 $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-                }
-                elseif ($bytes >= 1048576) {
+                } elseif ($bytes >= 1048576) {
                 $bytes = number_format($bytes / 1048576, 2) . ' MB';
-                }
-                elseif ($bytes >= 1024) {
+                } elseif ($bytes >= 1024) {
                 $bytes = number_format($bytes / 1024, 2) . ' KB';
-                }
-                elseif ($bytes > 1) {
+                } elseif ($bytes > 1) {
                 $bytes = $bytes . ' bytes';
-                }
-                elseif ($bytes == 1) {
+                } elseif ($bytes == 1) {
                 $bytes = $bytes . ' byte';
-                }
-                else {
+                } else {
                 $bytes = '0 bytes';
             }
 
             return $bytes;
             }
-            $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
+            $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = '".mysqli_real_escape_string($conn, $_GET['id'])."'");
             $file = mysqli_fetch_array($mres);
             ?>
             <script>
@@ -3051,16 +3053,16 @@ function structurize(paths) {
         var rest = path.slice(1);
         var item = null;
         for(var j = 0, m = items.length; j < m; j++) {
-            if(items[j].name === name) {
+            if (items[j].name === name) {
                 item = items[j];
                 break;
             }
         }
-        if(item === null) {
+        if (item === null) {
             item = {name: name, children: []};
             items.push(item);
         }
-        if(rest.length > 0) {
+        if (rest.length > 0) {
             item.children.push(rest);
         }
     }
@@ -3088,7 +3090,9 @@ function stringify(items) {
             </script>
             <div class="main">
                 <div class="card">
-                    <button onclick="window.location = './lib-other'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
+                    <button onclick="window.location = './lib-other'" style="width: fit-content;" class="btn btn-primary">
+                        <em class="fas fa-arrow-left"></em> Back
+                    </button><br />
                     <h2><?php echo $file['filename'] ?></h2>
                     <hr>
                     <p>MD5: <?php echo $file['md5'] ?><br >
@@ -3096,16 +3100,15 @@ function stringify(items) {
                     <h3>Files:</h3>
                     <pre id="files_ul">
                     </pre>
-                    <h4 id="loadingfiles"><i class="fas fa-cog fa-spin"></i> Loading...</h4>
+                    <h4 id="loadingfiles"><em class="fas fa-cog fa-spin"></em> Loading...</h4>
                 </div>
             </div>
             <?php
-        }
-        else if(uri("/mod")) {
+        } elseif (uri("/mod")) {
         ?>
         <div class="main">
             <?php
-            $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = '".mysqli_real_escape_string($conn,$_GET['id'])."'");
+            $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = '".mysqli_real_escape_string($conn, $_GET['id'])."'");
             ?>
             <script>document.title = 'Solder.cf - Mod - <?php echo addslashes($_GET['id']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
             function remove_box(id,version,name) {
@@ -3117,7 +3120,7 @@ function stringify(items) {
                     var request = new XMLHttpRequest();
                     request.onreadystatechange = function() {
                         $("#mod-row-"+id).remove();
-                        if($("#table-mods tr").length==0) {
+                        if ($("#table-mods tr").length==0) {
                             window.location = "./lib-mods";
                         }
                     }
@@ -3126,7 +3129,9 @@ function stringify(items) {
                 }
             </script>
             <div class="card">
-                <button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
+                <button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary">
+                    <em class="fas fa-arrow-left"></em> Back
+                </button><br />
                 <h2>Versions</h2>
                 <table class="table sortable table-striped">
                     <thead>
@@ -3139,7 +3144,7 @@ function stringify(items) {
                     </thead>
                     <tbody id="table-mods">
                     <?php
-                    while($mod = mysqli_fetch_array($mres)) {
+                    while ($mod = mysqli_fetch_array($mres)) {
                         $modpn = $mod['pretty_name'];
                         $modd = $mod['description'];
                         ?>
@@ -3149,10 +3154,11 @@ function stringify(items) {
                             <td><?php echo $mod['filename'] ?></td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-                                    <button onclick="window.location = './modv?id=<?php echo $mod['id'] ?>'" class="btn btn-primary">Edit</button>
+                                    <button onclick="window.location = './modv?id=<?php echo $mod['id'] ?>'"
+                                            class="btn btn-primary">Edit</button>
                                     <button onclick="remove_box(<?php echo $mod['id'].",'".$mod['version']."','".$mod['filename']."'" ?>)" data-toggle="modal" data-target="#removeMod" class="btn btn-danger">Remove</button>
-                                    <button onclick="window.location = '<?php echo $mod['url']; ?>'" class="btn btn-secondary"><i class="fas fa-file-download"></i> .zip</button>
-                                    <?php if(!empty($mod['filename'])) { ?><button onclick="window.location = './functions/mod_extract.php?id=<?php echo $mod['id']; ?>'" class="btn btn-secondary"><i class="fas fa-file-download"></i> .jar</button><?php } ?>
+                                    <button onclick="window.location = '<?php echo $mod['url']; ?>'" class="btn btn-secondary"><em class="fas fa-file-download"></em> .zip</button>
+                                    <?php if (!empty($mod['filename'])) { ?><button onclick="window.location = './functions/mod_extract.php?id=<?php echo $mod['id']; ?>'" class="btn btn-secondary"><em class="fas fa-file-download"></em> .jar</button><?php } ?>
                                 </div>
                             </td>
                         </tr>
@@ -3219,19 +3225,20 @@ function stringify(items) {
             });
         </script>
         <?php
-        }
-        else if(uri("/modv")) {
+        } elseif (uri("/modv")) {
         ?>
         <div class="main">
             <?php
-            $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
-            if($mres) {
+            $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id']));
+            if ($mres) {
                 $mod = mysqli_fetch_array($mres);
             }
             ?>
             <script>document.title = 'Solder.cf - Mod - <?php echo addslashes($mod['pretty_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <div class="card">
-                <button onclick="window.location = './mod?id=<?php echo $mod['name'] ?>'" style="width: fit-content;" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back</button><br />
+                <button onclick="window.location = './mod?id=<?php echo $mod['name'] ?>'" style="width: fit-content;" class="btn btn-primary">
+                    <em class="fas fa-arrow-left"></em> Back
+                </button><br />
                 <h3>Edit <?php echo $mod['pretty_name']." ".$mod['version']; ?></h3>
                 <form method="POST" action="./functions/edit-modv.php?id=<?php echo $_GET['id'] ?>">
 
@@ -3275,7 +3282,7 @@ function stringify(items) {
                                 <button class="btn btn-primary" type="button" id="donlink-save" onclick="donlinksave()">Set for all versions</button>
                             </div>
                         </div><br />
-                        <input class="form-control" type="url" name="url" <?php if(!empty($mod['url'])) { echo 'placeholder="File URL" value="'.$mod['url'].'" required'; } else { echo 'disabled placeholder="File URL (This is a local mod)"'; } ?>><br />
+                        <input class="form-control" type="url" name="url" <?php if (!empty($mod['url'])) { echo 'placeholder="File URL" value="'.$mod['url'].'" required'; } else { echo 'disabled placeholder="File URL (This is a local mod)"'; } ?>><br />
                         <input required class="form-control" type="text" name="md5" placeholder="File md5 Hash" value="<?php echo $mod['md5'] ?>"><br />
                         <input required class="form-control" required type="text" name="mcversion" placeholder="Minecraft Version" value="<?php echo $mod['mcversion'] ?>"><br />
                         <input type="submit" name="submit" value="Save" class="btn btn-success">
@@ -3303,7 +3310,7 @@ function stringify(items) {
                 request.open('POST', './functions/authorsave.php');
                 request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 request.onreadystatechange = function() {
-                    if(request.readyState == 4) {
+                    if (request.readyState == 4) {
                         $("#author-save").html("<i class='fas fa-check text-success'></i>");
                     }
                 }
@@ -3316,7 +3323,7 @@ function stringify(items) {
                 request.open('POST', './functions/linksave.php');
                 request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 request.onreadystatechange = function() {
-                    if(request.readyState == 4) {
+                    if (request.readyState == 4) {
                         $("#link-save").html("<i class='fas fa-check text-success'></i>");
                     }
                 }
@@ -3330,7 +3337,7 @@ function stringify(items) {
                 request.open('POST', './functions/donlinksave.php');
                 request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 request.onreadystatechange = function() {
-                    if(request.readyState == 4) {
+                    if (request.readyState == 4) {
                         $("#donlink-save").html("<i class='fas fa-check text-success'></i>");
                     }
                 }
@@ -3339,8 +3346,7 @@ function stringify(items) {
             }
         </script>
         <?php
-        }
-        else if(uri("/about")) {
+        } elseif (uri("/about")) {
             ?>
             <script>document.title = 'Solder.cf - About - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <div class="main">
@@ -3350,15 +3356,31 @@ function stringify(items) {
                     </center>
                     <hr>
                     <blockquote class="blockquote">
-                        TechnicSolder is an API that sits between a modpack repository and the TechnicLauncher. It allows you to easily manage multiple modpacks in one single location.
+                        TechnicSolder is an API that sits between a modpack repository and the TechnicLauncher. It
+                        allows you to easily manage multiple modpacks in one single location.
                         <br><br>
-                        Using Solder also means your packs will download each mod individually. This means the launcher can check MD5's against each version of a mod and if it hasn't changed, use the cached version of the mod instead. What does this mean? Small incremental updates to your modpack doesn't mean redownloading the whole thing every time!
+                        Using Solder also means your packs will download each mod individually. This means the launcher
+                        can check MD5's against each version of a mod and if it hasn't changed, use the cached version
+                        of the mod instead. What does this mean? Small incremental updates to your modpack doesn't mean
+                        redownloading the whole thing every time!
                         <br><br>
-                        Solder also interfaces with the Technic Platform using an API key you can generate through your account. When Solder has this key it can directly interact with your Platform account. When creating new modpacks you will be able to import any packs you have registered in your Solder install. It will also create detailed mod lists on your Platform page!
-                        <footer class="blockquote-footer"><a href="https://github.com/TechnicPack/TechnicSolder">Technic</a></footer>
+                        Solder also interfaces with the Technic Platform using an API key you can generate through your
+                        account. When Solder has this key it can directly interact with your Platform account. When
+                        creating new modpacks you will be able to import any packs you have registered in your Solder
+                        install. It will also create detailed mod lists on your Platform page!
+                        <footer class="blockquote-footer">
+                            <a href="https://github.com/TechnicPack/TechnicSolder">Technic</a>
+                        </footer>
                     </blockquote>
                     <hr>
-                    <p>TechnicSolder was originaly developed by <a href="https://github.com/TechnicPack">Technic</a> using the Laravel Framework. However, the application is difficult to install and use. <a href="https://github.com/TheGameSpider/TechnicSolder">Technic Solder - Solder.cf</a> by <a href="https://github.com/TheGameSpider">TheGameSpider</a> runs on pure PHP with zip and MySQL extensions and it's very easy to use. To install, you just need to install zip and MySQL and extract Solder to your root folder. And the usage is even easier! Just Drag n' Drop your mods.</p>
+                    <p>
+                        TechnicSolder was originaly developed by <a href="https://github.com/TechnicPack">Technic</a>
+                        using the Laravel Framework. However, the application is difficult to install and use.
+                        <a href="https://github.com/TheGameSpider/TechnicSolder">Technic Solder - Solder.cf</a> by
+                        <a href="https://github.com/TheGameSpider">TheGameSpider</a> runs on pure PHP with zip and MySQL
+                        extensions and it's very easy to use. To install, you just need to install zip and MySQL and
+                        extract Solder to your root folder. And the usage is even easier! Just Drag n' Drop your mods.
+                    </p>
                     <p>Read the licence before redistributing.</p>
                     <div class="card text-white bg-info mb3" style="padding:0">
                         <div class="card-header">License</div>
@@ -3375,17 +3397,17 @@ function stringify(items) {
             </script>
             <?php
         }
-        else if(uri("/update")) {
-            $version = json_decode(file_get_contents("./api/version.json"),true);
-            if($version['stream']=="Dev"||$settings['dev_builds']=="on") {
-                if($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true)) {
+        elseif (uri("/update")) {
+            $version = json_decode(file_get_contents("./api/version.json"), true);
+            if ($version['stream']=="Dev"||$settings['dev_builds']=="on") {
+                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"), true)) {
                     $checked = true;
                 } else {
                     $checked = false;
                     $newversion = $version;
                 }
             } else {
-                if($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true)) {
+                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"), true)) {
                         $checked = true;
                 } else {
                     $newversion = $version;
@@ -3398,13 +3420,13 @@ function stringify(items) {
                 <div class="card">
                     <h2>Solder<span class="text-muted">.cf</span> Updater</h2>
                     <br />
-                    <div class="alert <?php if($version['version']==$newversion['version'] && $checked) { echo "alert-success";} else { if($checked) {echo "alert-info";} else {echo "alert-warning";} } ?>" role="alert">
-                        <h4 class="alert-heading"><?php if($checked){if($version['version']==$newversion['version']){echo "No updates";} else { echo "New update available - ".$newversion['version']; }} else {echo "Cannot check for updates!";} ?></h4>
+                    <div class="alert <?php if ($version['version']==$newversion['version'] && $checked) { echo "alert-success";} else { if ($checked) {echo "alert-info";} else {echo "alert-warning";} } ?>" role="alert">
+                        <h4 class="alert-heading"><?php if ($checked) {if ($version['version']==$newversion['version']) {echo "No updates";} else { echo "New update available - ".$newversion['version']; }} else {echo "Cannot check for updates!";} ?></h4>
                         <hr>
-                        <p class="mb-0"><?php if($version['version']==$newversion['version']){ echo $version['changelog']; } else { echo $newversion['changelog']; } ?></p>
+                        <p class="mb-0"><?php if ($version['version']==$newversion['version']) { echo $version['changelog']; } else { echo $newversion['changelog']; } ?></p>
                     </div>
 
-                    <?php if($version['version']!==$newversion['version']) { ?>
+                    <?php if ($version['version']!==$newversion['version']) { ?>
                         <div class="card text-white bg-info mb3" style="padding: 0px">
                             <div class="card-header">How to update?</div>
                             <div class="card-body">
@@ -3412,11 +3434,15 @@ function stringify(items) {
                                     1. Open SSH client and connect to <?php echo $_SERVER['HTTP_HOST'] ?>. <br />
                                     2. login with your credentials <br />
                                     3. write: <br />
-                                    <i>cd <?php echo dirname(dirname(get_included_files()[0])); ?> </i><br />
-                                    <i>git clone <?php if($newversion['stream']=="Dev"||$settings['dev_builds']=="on") { echo "--single-branch --branch Dev"; } ?> https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate </i> <br />
-                                    <i>cp -a SolderUpdate/. TechnicSolder/</i> <br>
-                                    <i>rm -rf SolderUpdate</i> <br>
-                                    <i>chown -R www-data TechnicSolder</i>
+                                    <em>cd <?php echo dirname(dirname(get_included_files()[0])); ?> </em><br />
+                                    <em>git clone
+                                        <?php if ($newversion['stream']=="Dev"||$settings['dev_builds']=="on") {
+                                            echo "--single-branch --branch Dev";
+                                        } ?>
+                                        https://github.com/TheGameSpider/TechnicSolder.git SolderUpdate </em> <br />
+                                    <em>cp -a SolderUpdate/. TechnicSolder/</em> <br>
+                                    <em>rm -rf SolderUpdate</em> <br>
+                                    <em>chown -R www-data TechnicSolder</em>
                                 </p>
                             </div>
                         </div>
@@ -3429,8 +3455,7 @@ function stringify(items) {
                 });
             </script>
         <?php
-        }
-        else if(uri("/user")) {
+        } elseif (uri("/user")) {
             ?>
             <div class="main">
                 <div class="card">
@@ -3470,7 +3495,7 @@ function stringify(items) {
                     <hr />
                     <h2>User Picture</h2>
                     <img class="img-thumbnail" style="width: 64px;height: 64px" src="data:image/png;base64,<?php
-                    $sql = mysqli_query($conn,"SELECT `icon` FROM `users` WHERE `name` = '".$_SESSION['user']."'");
+                    $sql = mysqli_query($conn, "SELECT `icon` FROM `users` WHERE `name` = '".$_SESSION['user']."'");
                     $icon = mysqli_fetch_array($sql);
                     echo $icon['icon'];
                      ?>">
@@ -3493,10 +3518,10 @@ function stringify(items) {
             </div>
             <script type="text/javascript">
                 $("#pass1").on("keyup", function() {
-                    if($("#pass1").val()!=="") {
+                    if ($("#pass1").val()!=="") {
                         $("#pass1").addClass("is-valid");
                         $("#pass1").removeClass("is-invalid");
-                        if($("#pass1").val()!==""&&$("#pass2").val()!==""&&$("#pass1").val()==$("#pass2").val()) {
+                        if ($("#pass1").val()!==""&&$("#pass2").val()!==""&&$("#pass1").val()==$("#pass2").val()) {
                             $("#save-button").attr("disabled", false);
                         }
                     } else {
@@ -3506,10 +3531,10 @@ function stringify(items) {
                     }
                 });
                 $("#pass2").on("keyup", function() {
-                    if($("#pass2").val()!==""&$("#pass2").val()==$("#pass1").val()) {
+                    if ($("#pass2").val()!==""&$("#pass2").val()==$("#pass1").val()) {
                         $("#pass2").addClass("is-valid");
                         $("#pass2").removeClass("is-invalid");
-                        if($("#pass1").val()!==""&&$("#pass2").val()!==""&&$("#pass1").val()==$("#pass2").val()) {
+                        if ($("#pass1").val()!==""&&$("#pass2").val()!==""&&$("#pass1").val()==$("#pass2").val()) {
                             $("#save-button").attr("disabled", false);
                         }
                     } else {
@@ -3525,7 +3550,7 @@ function stringify(items) {
                     formData.set('newIcon', icon.files[0]);
                     request.open('POST', './functions/new_icon.php');
                     request.onreadystatechange = function() {
-                        if(request.readyState == 4) {
+                        if (request.readyState == 4) {
                             console.log(this.responseText);
                             setTimeout(function(){ window.location.reload(); }, 500);
                         }
@@ -3539,37 +3564,37 @@ function stringify(items) {
                 var perm5 = $("#perms").val().substr(4,1);
                 var perm6 = $("#perms").val().substr(5,1);
                 var perm7 = $("#perms").val().substr(6,1);
-                if(perm1==1) {
+                if (perm1==1) {
                     $('#perm1').prop('checked', true);
                 } else {
                     $('#perm1').prop('checked', false);
                 }
-                if(perm2==1) {
+                if (perm2==1) {
                     $('#perm2').prop('checked', true);
                 } else {
                     $('#perm2').prop('checked', false);
                 }
-                if(perm3==1) {
+                if (perm3==1) {
                     $('#perm3').prop('checked', true);
                 } else {
                     $('#perm3').prop('checked', false);
                 }
-                if(perm4==1) {
+                if (perm4==1) {
                     $('#perm4').prop('checked', true);
                 } else {
                     $('#perm4').prop('checked', false);
                 }
-                if(perm5==1) {
+                if (perm5==1) {
                     $('#perm5').prop('checked', true);
                 } else {
                     $('#perm5').prop('checked', false);
                 }
-                if(perm6==1) {
+                if (perm6==1) {
                     $('#perm6').prop('checked', true);
                 } else {
                     $('#perm6').prop('checked', false);
                 }
-                if(perm7==1) {
+                if (perm7==1) {
                     $('#perm7').prop('checked', true);
                 } else {
                     $('#perm7').prop('checked', false);
@@ -3582,8 +3607,7 @@ function stringify(items) {
                 });
             </script>
             <?php
-        }
-        else if(uri("/admin")) {
+        } elseif (uri("/admin")) {
             ?>
             <div class="main">
                 <div class="card">
@@ -3597,14 +3621,14 @@ function stringify(items) {
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <td style="width:35%" scope="col">Name</td>
-                            <td style="width:35%" scope="col">Email</td>
-                            <td style="width:30%" scope="col"></td>
+                            <th style="width:35%" scope="col">Name</th>
+                            <th style="width:35%" scope="col">Email</th>
+                            <th style="width:30%" scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $users = mysqli_query($conn,"SELECT * FROM `users`");
+                        $users = mysqli_query($conn, "SELECT * FROM `users`");
                         while ($user = mysqli_fetch_array($users)) {
                             ?>
                             <tr>
@@ -3621,7 +3645,8 @@ function stringify(items) {
                     </tbody>
                     </table>
                 </div>
-                <div class="modal fade" id="removeUser" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+                <div class="modal fade" id="removeUser" tabindex="-1" role="dialog" aria-labelledby="rm"
+                     aria-hidden="true">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -3635,12 +3660,15 @@ function stringify(items) {
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-                        <button id="remove-button" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
+                        <button id="remove-button" type="button" class="btn btn-danger" data-dismiss="modal"
+                                Delete
+                          </button>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="modal fade" id="newUser" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+                <div class="modal fade" id="newUser" tabindex="-1" role="dialog" aria-labelledby="rm"
+                     aria-hidden="true">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -3664,7 +3692,8 @@ function stringify(items) {
                     </div>
                   </div>
                 </div>
-                <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+                <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="rm"
+                     aria-hidden="true">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -3682,7 +3711,9 @@ function stringify(items) {
 
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="perm1">
-                                    <label class="custom-control-label" for="perm1">Create, delete and edit modpacks</label>
+                                    <label class="custom-control-label" for="perm1">
+                                        Create, delete and edit modpacks
+                                    </label>
                             </div>
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="perm2">
@@ -3702,7 +3733,9 @@ function stringify(items) {
                             </div>
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="perm6">
-                                <label class="custom-control-label" for="perm6">Download and remove forge versions.</label>
+                                <label class="custom-control-label" for="perm6">
+                                    Download and remove forge versions.
+                                </label>
                             </div>
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="perm7">
@@ -3723,7 +3756,7 @@ function stringify(items) {
                         request.open('POST', './functions/remove_user.php');
                         request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                         request.onreadystatechange = function() {
-                            if(request.readyState == 4) {
+                            if (request.readyState == 4) {
                                 console.log(request.responseText);
                                 $("#info").html(request.responseText + "<br />");
                                 setTimeout(function(){ window.location.reload(); }, 500);
@@ -3741,7 +3774,7 @@ function stringify(items) {
                         $("#save-button-2").attr("disabled", true);
                         $("#mail2").val(mail);
                         $("#name2").val(name);
-                        if(perms.match("^[01]+$")) {
+                        if (perms.match("^[01]+$")) {
                             $("#perms").val(perms);
                         } else {
                             $("#perms").val("0000000");
@@ -3753,37 +3786,37 @@ function stringify(items) {
                         var perm5 = $("#perms").val().substr(4,1);
                         var perm6 = $("#perms").val().substr(5,1);
                         var perm7 = $("#perms").val().substr(6,1);
-                        if(perm1==1) {
+                        if (perm1==1) {
                             $('#perm1').prop('checked', true);
                         } else {
                             $('#perm1').prop('checked', false);
                         }
-                        if(perm2==1) {
+                        if (perm2==1) {
                             $('#perm2').prop('checked', true);
                         } else {
                             $('#perm2').prop('checked', false);
                         }
-                        if(perm3==1) {
+                        if (perm3==1) {
                             $('#perm3').prop('checked', true);
                         } else {
                             $('#perm3').prop('checked', false);
                         }
-                        if(perm4==1) {
+                        if (perm4==1) {
                             $('#perm4').prop('checked', true);
                         } else {
                             $('#perm4').prop('checked', false);
                         }
-                        if(perm5==1) {
+                        if (perm5==1) {
                             $('#perm5').prop('checked', true);
                         } else {
                             $('#perm5').prop('checked', false);
                         }
-                        if(perm6==1) {
+                        if (perm6==1) {
                             $('#perm6').prop('checked', true);
                         } else {
                             $('#perm6').prop('checked', false);
                         }
-                        if(perm7==1) {
+                        if (perm7==1) {
                             $('#perm7').prop('checked', true);
                         } else {
                             $('#perm7').prop('checked', false);
@@ -3794,7 +3827,7 @@ function stringify(items) {
                         request.open('POST', './functions/edit_user.php');
                         request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                         request.onreadystatechange = function() {
-                            if(request.readyState == 4) {
+                            if (request.readyState == 4) {
                                 console.log(request.responseText);
                                 $("#info").html(request.responseText + "<br />");
                                 setTimeout(function(){ window.location.reload(); }, 500);
@@ -3812,72 +3845,72 @@ function stringify(items) {
                       return s;
                     }
                     $("#perm1").change(function(){
-                        if($("#perm1").is(":checked")) {
+                        if ($("#perm1").is(":checked")) {
                             $("#perms").val((parseInt($("#perms").val())+1000000).pad(7));
                         } else {
                             $("#perms").val((parseInt($("#perms").val())-1000000).pad(7));
                         }
-                        if($("#name2").val()!=="") {
+                        if ($("#name2").val()!=="") {
                             $("#save-button-2").attr("disabled", false);
                         }
                     });
                     $("#perm2").change(function(){
-                        if($("#perm2").is(":checked")) {
+                        if ($("#perm2").is(":checked")) {
                             $("#perms").val((parseInt($("#perms").val())+100000).pad(7));
                         } else {
                             $("#perms").val((parseInt($("#perms").val())-100000).pad(7));
                         }
-                        if($("#name2").val()!=="") {
+                        if ($("#name2").val()!=="") {
                             $("#save-button-2").attr("disabled", false);
                         }
                     });
                     $("#perm3").change(function(){
-                        if($("#perm3").is(":checked")) {
+                        if ($("#perm3").is(":checked")) {
                             $("#perms").val((parseInt($("#perms").val())+10000).pad(7));
                         } else {
                             $("#perms").val((parseInt($("#perms").val())-10000).pad(7));
                         }
-                        if($("#name2").val()!=="") {
+                        if ($("#name2").val()!=="") {
                             $("#save-button-2").attr("disabled", false);
                         }
                     });
                     $("#perm4").change(function(){
-                        if($("#perm4").is(":checked")) {
+                        if ($("#perm4").is(":checked")) {
                             $("#perms").val((parseInt($("#perms").val())+1000).pad(7));
                         } else {
                             $("#perms").val((parseInt($("#perms").val())-1000).pad(7));
                         }
-                        if($("#name2").val()!=="") {
+                        if ($("#name2").val()!=="") {
                             $("#save-button-2").attr("disabled", false);
                         }
                     });
                     $("#perm5").change(function(){
-                        if($("#perm5").is(":checked")) {
+                        if ($("#perm5").is(":checked")) {
                             $("#perms").val((parseInt($("#perms").val())+100).pad(7));
                         } else {
                             $("#perms").val((parseInt($("#perms").val())-100).pad(7));
                         }
-                        if($("#name2").val()!=="") {
+                        if ($("#name2").val()!=="") {
                             $("#save-button-2").attr("disabled", false);
                         }
                     });
                     $("#perm6").change(function(){
-                        if($("#perm6").is(":checked")) {
+                        if ($("#perm6").is(":checked")) {
                             $("#perms").val((parseInt($("#perms").val())+10).pad(7));
                         } else {
                             $("#perms").val((parseInt($("#perms").val())-10).pad(7));
                         }
-                        if($("#name2").val()!=="") {
+                        if ($("#name2").val()!=="") {
                             $("#save-button-2").attr("disabled", false);
                         }
                     });
                     $("#perm7").change(function(){
-                        if($("#perm7").is(":checked")) {
+                        if ($("#perm7").is(":checked")) {
                             $("#perms").val((parseInt($("#perms").val())+1).pad(7));
                         } else {
                             $("#perms").val((parseInt($("#perms").val())-1).pad(7));
                         }
-                        if($("#name2").val()!=="") {
+                        if ($("#name2").val()!=="") {
                             $("#save-button-2").attr("disabled", false);
                         }
                     });
@@ -3889,7 +3922,7 @@ function stringify(items) {
                         request.open('POST', './functions/new_user.php');
                         request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                         request.onreadystatechange = function() {
-                            if(request.readyState == 4) {
+                            if (request.readyState == 4) {
                                 console.log(request.responseText);
                                 $("#info").html(request.responseText + "<br />");
                                 setTimeout(function(){ window.location.reload(); }, 500);
@@ -3901,10 +3934,10 @@ function stringify(items) {
                 </script>
                 <script type="text/javascript">
                     $("#name2").on("keyup", function() {
-                        if($("#name2").val()!=="") {
+                        if ($("#name2").val()!=="") {
                             $("#name2").addClass("is-valid");
                             $("#name2").removeClass("is-invalid");
-                            if($("#name2").val()!=="") {
+                            if ($("#name2").val()!=="") {
                                 $("#save-button-2").attr("disabled", false);
                             }
                         } else {
@@ -3916,10 +3949,10 @@ function stringify(items) {
                 </script>
                 <script type="text/javascript">
                     $("#email").on("keyup", function() {
-                        if($("#email").val()!=="") {
+                        if ($("#email").val()!=="") {
                             $("#email").addClass("is-valid");
                             $("#email").removeClass("is-invalid");
-                            if($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
+                            if ($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
                                 $("#save-button").attr("disabled", false);
                             }
                         } else {
@@ -3929,10 +3962,10 @@ function stringify(items) {
                         }
                     });
                     $("#name").on("keyup", function() {
-                        if($("#name").val()!=="") {
+                        if ($("#name").val()!=="") {
                             $("#name").addClass("is-valid");
                             $("#name").removeClass("is-invalid");
-                            if($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
+                            if ($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
                                 $("#save-button").attr("disabled", false);
                             }
                         } else {
@@ -3942,10 +3975,10 @@ function stringify(items) {
                         }
                     });
                     $("#pass1").on("keyup", function() {
-                        if($("#pass1").val()!=="") {
+                        if ($("#pass1").val()!=="") {
                             $("#pass1").addClass("is-valid");
                             $("#pass1").removeClass("is-invalid");
-                            if($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
+                            if ($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
                                 $("#save-button").attr("disabled", false);
                             }
                         } else {
@@ -3955,10 +3988,10 @@ function stringify(items) {
                         }
                     });
                     $("#pass2").on("keyup", function() {
-                        if($("#pass2").val()!==""&$("#pass2").val()==$("#pass1").val()) {
+                        if ($("#pass2").val()!==""&$("#pass2").val()==$("#pass1").val()) {
                             $("#pass2").addClass("is-valid");
                             $("#pass2").removeClass("is-invalid");
-                            if($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
+                            if ($("#email").val()!==""&$("#name").val()!==""&$("#pass1").val()!==""&$("#pass2").val()!==""&$("#pass1").val()==$("#pass2").val()) {
                                 $("#save-button").attr("disabled", false);
                             }
                         } else {
@@ -3977,20 +4010,20 @@ function stringify(items) {
                 });
             </script>
             <?php
-        }
-        else if(uri('/settings')) {
+        } elseif (uri('/settings')) {
 
-            if(isset($_POST['submit'])) {
+            if (isset($_POST['submit'])) {
                 $cf = '<?php return array( ';
 
                 foreach ($_POST as $key => $value) {
                     $cf .= '"'.$key.'" => "'.$value.'"';
-                    if($key !== "submit") {
+                    if ($key !== "submit") {
                         $cf .= ",";
                     }
                 }
-                if($cf." );" !== "<?php return array(  );")
-                file_put_contents("./functions/settings.php", $cf." );");
+                if ($cf." );" !== "<?php return array(  );") {
+                    file_put_contents("./functions/settings.php", $cf . " );");
+                }
                 ?>
                 <?php
             }
@@ -4003,15 +4036,17 @@ function stringify(items) {
                 <hr>
                 <form method="POST">
                     <div class="custom-control custom-switch">
-                        <input <?php if($settings['dev_builds']=="on"){echo "checked";} if(json_decode($filecontents,true)['stream']=="Dev") {echo "checked disabled";} ?> type="checkbox" class="custom-control-input" name="dev_builds" id="dev_builds">
+                        <input <?php if ($settings['dev_builds']=="on") {echo "checked";} if (json_decode($filecontents, true)['stream']=="Dev") {echo "checked disabled";} ?> type="checkbox" class="custom-control-input" name="dev_builds" id="dev_builds">
                         <label class="custom-control-label" for="dev_builds">Subscribe to dev builds</label>
                     </div>
                     <div class="custom-control custom-switch">
-                        <input <?php if($settings['use_verifier']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_verifier" id="use_verifier">
-                        <label class="custom-control-label" for="use_verifier">Enable Solder Verifier - uses cookies</label>
+                        <input <?php if ($settings['use_verifier']=="on") {echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_verifier" id="use_verifier">
+                        <label class="custom-control-label" for="use_verifier">
+                            Enable Solder Verifier - uses cookies
+                        </label>
                     </div>
                     <div class="custom-control custom-switch">
-                        <input <?php if($settings['use_tawkto']=="on"){echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_tawkto" id="use_tawkto">
+                        <input <?php if ($settings['use_tawkto']=="on") {echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_tawkto" id="use_tawkto">
                         <label class="custom-control-label" for="use_tawkto">Enable Tawk.to - uses cookies</label>
                     </div>
                     <br>
@@ -4026,8 +4061,7 @@ function stringify(items) {
                     $("#nav-settings").trigger('click');
                 });
             </script>
-        <?php }
-        else if(uri('/clients')) {
+        <?php } elseif (uri('/clients')) {
         ?>
         <script>document.title = 'Solder.cf - Clients - <?php echo addslashes($_SESSION['name']) ?>';</script>
         <div class="main">
@@ -4078,7 +4112,7 @@ function stringify(items) {
                     </thead>
                     <tbody>
                         <?php
-                        $users = mysqli_query($conn,"SELECT * FROM `clients`");
+                        $users = mysqli_query($conn, "SELECT * FROM `clients`");
                         while ($user = mysqli_fetch_array($users)) {
                             ?>
                             <tr id="mod-row-<?php echo $user['id'] ?>">
@@ -4092,7 +4126,8 @@ function stringify(items) {
                         ?>
                     </tbody>
                 </table>
-                <div class="modal fade" id="removeMod" tabindex="-1" role="dialog" aria-labelledby="rm" aria-hidden="true">
+                <div class="modal fade" id="removeMod" tabindex="-1" role="dialog" aria-labelledby="rm"
+                     aria-hidden="true">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -4106,7 +4141,9 @@ function stringify(items) {
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-                        <button id="remove-button" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
+                        <button id="remove-button" type="button" class="btn btn-danger" data-dismiss="modal">
+                            Delete
+                        </button>
                       </div>
                     </div>
                   </div>

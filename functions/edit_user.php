@@ -1,6 +1,7 @@
 <?php
 session_start();
 $config = require("./config.php");
+global $conn;
 require("dbconnect.php");
 if (empty($_POST['name'])) {
     die("Email not specified.");
@@ -17,9 +18,14 @@ if (!$_SESSION['user']||$_SESSION['user']=="") {
 if ($_SESSION['user']!==$config['mail']) {
     die("insufficient permission!");
 }
-$sql = mysqli_query($conn,"UPDATE `users` SET `display_name` = '".$_POST['display_name']."', `perms` = '".$_POST['perms']."' WHERE `name` = '".$_POST['name']."'");
+$sql = mysqli_query(
+    $conn,
+    "UPDATE `users`
+    SET `display_name` = '".$_POST['display_name']."', `perms` = '".$_POST['perms']."'
+    WHERE `name` = '".$_POST['name']."'"
+);
 if ($sql) {
     echo '<span class="text-success">Saved.</span>';
 } else {
-    die('<span class="text-danger">An error has occured</span>');
+    die('<span class="text-danger">An error has occurred</span>');
 }

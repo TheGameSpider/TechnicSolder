@@ -132,13 +132,13 @@ function p5($inputArray) {
                     $continuousCount=1;
                     $continuousKey=$counter2;
                     unset ($inputArray[$keySet[$counter]][$blockKeySet[$counter2]]);
-                } else if ($continuousCount==1) { // multi-line end
+                } elseif ($continuousCount==1) { // multi-line end
                     //echo "END: ".$row."\n";
                     $continuousCount=0;
                     $inputArray[$keySet[$counter]][$blockKeySet[$continuousKey]]=$continuous;
                     unset ($inputArray[$keySet[$counter]][$blockKeySet[$counter2]]);
                 }
-            } else if ($continuousCount == 1) { // append multi-line
+            } elseif ($continuousCount == 1) { // append multi-line
                 $continuous=$continuous.$row."\n";
                 unset ($inputArray[$keySet[$counter]][$blockKeySet[$counter2]]);
                 //echo "APPEND: ".$continuous."\n";

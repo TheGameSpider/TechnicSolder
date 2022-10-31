@@ -4,7 +4,7 @@ session_start();
 $config = require("config.php");
 global $conn;
 require("dbconnect.php");
-if (substr($_SESSION['perms'],5,1)!=="1") {
+if (substr($_SESSION['perms'], 5, 1)!=="1") {
     echo '{"status":"error","message":"Insufficient permission!"}';
     exit();
 }
@@ -22,7 +22,7 @@ if (!file_exists("../forges/modpack-".$version)) {
 }
 if (file_put_contents("../forges/modpack-".$version."/modpack.jar", file_get_contents($link))) {
     $zip = new ZipArchive();
-    if ($zip->open("../forges/forge-".$version.".zip", ZIPARCHIVE::CREATE) !== TRUE) {
+    if ($zip->open("../forges/forge-".$version.".zip", ZIPARCHIVE::CREATE) !== true) {
         echo '{"status":"error","message":"Could not open archive"}';
         exit();
     }

@@ -2,16 +2,16 @@
 session_start();
 $config = require("./config.php");
 require("dbconnect.php");
-if(empty($_GET['name'])) {
+if (empty($_GET['name'])) {
     die("Name not specified.");
 }
-if(empty($_GET['uuid'])) {
+if (empty($_GET['uuid'])) {
     die("UUID not specified.");
 }
-if(!$_SESSION['user']||$_SESSION['user']=="") {
+if (!$_SESSION['user']||$_SESSION['user']=="") {
     die("Unauthorized request or login session has expired!");
 }
-if(substr($_SESSION['perms'],6,1)!=="1") {
+if (substr($_SESSION['perms'],6,1)!=="1") {
     echo 'Insufficient permission!';
     exit();
 }

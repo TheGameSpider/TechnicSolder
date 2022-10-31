@@ -4,7 +4,7 @@ session_start();
 $config = include("./functions/config.php");
 $settings = include("./functions/settings.php");
 if (!isset($_GET['reconfig'])) {
-    if ($config['configured']==true) {
+    if ($config['configured']) {
         header("Location: ".$config['dir']."login");
         exit();
     }
@@ -12,37 +12,50 @@ if (!isset($_GET['reconfig'])) {
     if (!isset($_SESSION['user'])) {
         die("You need to be logged in!");
     }
-    if($_SESSION['user']!==$config['mail']) {
+    if ($_SESSION['user']!==$config['mail']) {
         die("insufficient permission!");
     }
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <?php if($_SESSION['dark']=="on") {
+        <title>Configure Solder</title>
+        <?php if ($_SESSION['dark']=="on") {
             echo '<link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css">';
         } else {
-            echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">';
+            echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">';
         } ?>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-        <script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>
-        <style type="text/css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+                integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+                integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+                crossorigin="anonymous"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"
+                integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy"
+                crossorigin="anonymous"></script>
+        <style>
             .card {
                  padding: 2em;
                  margin: 2em 0;
             }
         </style>
     </head>
-    <body style="<?php if($_SESSION['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
+    <body style="<?php if ($_SESSION['dark']=="on") {
+        echo "background-color: #202429";
+    } else {
+        echo "background-color: #f0f4f9";
+    } ?>">
         <div class="container">
             <div class="card">
                 <?php
-                if(isset($_GET['reconfig'])) {
+                if (isset($_GET['reconfig'])) {
                     echo "<a href='./dashboard'><button class='btn btn-secondary'>Cancel</button></a>";
                 }
-                if(isset($_POST['host'])) {
+                if (isset($_POST['host'])) {
                     $cf = '<?php return array( "configured" => true, ';
                     // OLD HASHING METHOD (INSECURE)
                     // $_POST['pass'] = hash("sha256",$_POST['pass']."Solder.cf");
@@ -50,12 +63,13 @@ if (!isset($_GET['reconfig'])) {
                     $_POST['encrypted'] = true;
                     foreach ($_POST as $key => $value) {
                         $cf .= "'".$key."' => '".$value."'";
-                        if($key !== "encrypted") {
+                        if ($key !== "encrypted") {
                             $cf .= ",";
                         }
                     }
-                    if($cf." );" !== "<?php return array(  );")
+                    if ($cf." );" !== "<?php return array(  );") {
                     file_put_contents("./functions/config.php", $cf." );");
+                    }
                     require("./functions/dbconnect.php");
                     $sql = "
                     CREATE TABLE modpacks (
@@ -140,31 +154,53 @@ if (!isset($_GET['reconfig'])) {
                 <form method="POST">
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input required type="text" class="form-control" name="author" id="name" aria-describedby="nameHelp" placeholder="Your Name">
-                        <small id="nameHelp" class="form-text text-muted">Author of custom files you add to your modpack.</small>
+                        <input required type="text" class="form-control" name="author" id="name"
+                               aria-describedby="nameHelp" placeholder="Your Name">
+                        <small id="nameHelp" class="form-text text-muted">
+                            Author of custom files you add to your modpack.
+                        </small>
                     </div>
                     <div class="form-group">
                         <label for="email">Login Credentials</label>
-                        <input required type="text" class="form-control" name="mail" aria-describedby="emailHelp" placeholder="Your Email"><br />
-                        <input required type="password" class="form-control" id="pass" name="pass" placeholder="Your new password"><br />
-                        <input required type="password" class="form-control" id="pass2" placeholder="Confirm your password">
-                        <small id="emailHelp" class="form-text text-muted">You will use these to login to Technic Solder.</small>
+                        <input required type="text" class="form-control" name="mail" aria-describedby="emailHelp"
+                               placeholder="Your Email"><br />
+                        <input required type="password" class="form-control" id="pass" name="pass"
+                               placeholder="Your new password"><br />
+                        <input required type="password" class="form-control" id="pass2"
+                               placeholder="Confirm your password">
+                        <small id="emailHelp" class="form-text text-muted">
+                            You will use these to log in to Technic Solder.
+                        </small>
                     </div>
                     <div class="form-group">
                         <label for="email">Database</label>
-                        <small class="form-text text-muted">If you already have installed the original version of solder, do not use the same database. You can migrate your data later. It's recommended to use an empty database.</small>
-                        <input required name="db-host" type="text" class="form-control" id="db-host" placeholder="Database IP" value="127.0.0.1"><br />
-                        <input required name="db-user" type="text" class="form-control" id="db-user" placeholder="Database username"><br />
-                        <input required name="db-name" type="text" class="form-control" id="db-name" placeholder="Database name"><br />
-                        <input name="db-pass" type="password" class="form-control" id="db-pass" placeholder="Database password">
-                        <small id="errtext" class="form-text text-muted">Five tables will be created: users, clients, modpacks, builds, mods</small>
+                        <small class="form-text text-muted">
+                            If you already have installed the original version of solder, do not use the same database.
+                            You can migrate your data later. It's recommended to use an empty database.
+                        </small>
+                        <input required name="db-host" type="text" class="form-control" id="db-host"
+                               placeholder="Database IP" value="127.0.0.1"><br />
+                        <input required name="db-user" type="text" class="form-control" id="db-user"
+                               placeholder="Database username"><br />
+                        <input required name="db-name" type="text" class="form-control" id="db-name"
+                               placeholder="Database name"><br />
+                        <input name="db-pass" type="password" class="form-control" id="db-pass"
+                               placeholder="Database password">
+                        <small id="errtext" class="form-text text-muted">
+                            Five tables will be created: users, clients, modpacks, builds, mods
+                        </small>
                     </div>
                     <div class="form-group">
                         <label for="email">Installation details</label>
-                        <input required name="host" type="text" class="form-control" placeholder="Webserver public IP or domain name. (does NOT start with http[s]://)"><br />
-                        <input class="form-control" type="text" name="dir" placeholder="Install Directory" value="/" id="dir" required><br />
+                        <input required name="host" type="text" class="form-control"
+                               placeholder="Webserver public IP or domain name. (does NOT start with http[s]://)"><br />
+                        <input class="form-control" type="text" name="dir"
+                               placeholder="Install Directory" value="/" id="dir" required><br />
                         <input required name="api_key" type="text" class="form-control" placeholder="API Key">
-                        <small class="form-text text-muted">You can find you API Key in your profile at <a target="_blank" href="https://technicpack.net">technicpack.net</a></small>
+                        <small class="form-text text-muted">
+                            You can find you API Key in your profile at
+                            <a target="_blank" href="https://technicpack.net">technicpack.net</a>
+                        </small>
                     </div>
                     <button id="save" type="submit" class="btn btn-success btn-block btn-lg">Save</button>
                 </form>
@@ -173,14 +209,14 @@ if (!isset($_GET['reconfig'])) {
                         var loc = window.location.pathname;
                         var dir = loc.substring(0, loc.lastIndexOf('/'));
                         $("#dir").val(dir + "/");
-                        if($("#dir").val()=="//") {
+                        if ($("#dir").val()=="//") {
                             $("#dir").val("/");
                         }
 
                     });
                     $("#pass2").on("keyup", function() {
                         console.log($("#pass2").val()+"=="+$("#pass").val())
-                        if($("#pass2").val()==$("#pass").val()) {
+                        if ($("#pass2").val()==$("#pass").val()) {
                             $("#pass2").addClass("is-valid");
                             $("#pass2").removeClass("is-invalid");
                             $("#save").attr("disabled", false);
@@ -191,13 +227,14 @@ if (!isset($_GET['reconfig'])) {
                         }
                     });
                     $("#db-pass").on("keyup", function() {
-                        var http = new XMLHttpRequest();
-                        var params = 'db-pass='+ $("#db-pass").val() +'&db-name='+ $("#db-name").val() +'&db-user='+ $("#db-user").val() +'&db-host='+ $("#db-host").val() ;
+                        let http = new XMLHttpRequest();
+                        let params = 'db-pass='+ $("#db-pass").val() +'&db-name='+ $("#db-name").val() +'&db-user='+
+                            $("#db-user").val() +'&db-host='+ $("#db-host").val();
                         http.open('POST', './functions/conntest.php');
                         http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                         http.onreadystatechange = function() {
-                            if(http.readyState == 4 && http.status == 200) {
-                                if(http.responseText == "error") {
+                            if (http.readyState == 4 && http.status == 200) {
+                                if (http.responseText == "error") {
                                     $("#errtext").text("Can't connect to database");
                                     $("#errtext").removeClass("text-muted text-success");
                                     $("#errtext").addClass("text-danger");

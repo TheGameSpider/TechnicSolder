@@ -5,11 +5,11 @@ require("dbconnect.php");
 if (!$_SESSION['user']||$_SESSION['user']=="") {
     die("Unauthorized request or login session has expired.");
 }
-if($_SESSION['user']!==$config['mail']) {
+if ($_SESSION['user']!==$config['mail']) {
     die("insufficient permission!");
 }
 //$sql = mysqli_query($conn,"UPDATE `users` SET `display_name` = '".$_POST['display_name']."', `perms` = '".$_POST['perms']."' WHERE `name` = '".$_POST['name']."'");
-if(!isset($config['encrypted'])||$config['encrypted']==false) {
+if (!isset($config['encrypted'])||$config['encrypted']==false) {
     $users = mysqli_query($conn,"SELECT * FROM `users`");
     while ($user = mysqli_fetch_array($users)) {
         // OLD HASHING METHOD (INSECURE)

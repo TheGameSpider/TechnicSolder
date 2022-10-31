@@ -8,23 +8,23 @@ if (!$_SESSION['user']||$_SESSION['user']=="") {
 if (empty($_POST['db-pass'])) {
     die("error");
 }
-if(empty($_POST['db-name'])) {
+if (empty($_POST['db-name'])) {
     die("error");
 }
-if(empty($_POST['db-user'])) {
+if (empty($_POST['db-user'])) {
     die("error");
 }
-if(empty($_POST['db-host'])) {
+if (empty($_POST['db-host'])) {
     die("error");
 }
-if(empty($_POST['solder-orig'])) {
+if (empty($_POST['solder-orig'])) {
     die("error");
 }
-if(!$_SESSION['user']||$_SESSION['user']=="") {
+if (!$_SESSION['user']||$_SESSION['user']=="") {
     die("error");
 }
 $conn2 = mysqli_connect($_POST['db-host'],$_POST['db-user'],$_POST['db-pass'],$_POST['db-name']);
-if(!$conn2) {
+if (!$conn2) {
     die("error");
 }
 mysqli_query($conn, "TRUNCATE `modpacks`");
@@ -36,7 +36,7 @@ $res = mysqli_query($conn2, "SELECT `name`,`slug`,`status`,`latest_build_id`,`re
 while($row = mysqli_fetch_array($res)) {
     $latest = mysqli_fetch_array(mysqli_query($conn2,"select `version` FROM `builds` WHERE `id` = ".$row['latest_build_id']))['version'];
     $recommended = mysqli_fetch_array(mysqli_query($conn2,"select `version` FROM `builds` WHERE `id` = ".$row['recommended_build_id']))['version'];
-    if($row['status'] == "public") {
+    if ($row['status'] == "public") {
         $public = 1;
     } else {
         $public = 0;
@@ -46,7 +46,7 @@ while($row = mysqli_fetch_array($res)) {
 // ----- BUILDS ----- \\
 $res = mysqli_query($conn2, "SELECT `modpack_id`,`version`,`minecraft_version`,`status`,`java_version`,`required_memory` FROM `builds`");
 while($row = mysqli_fetch_array($res)) {
-    if($row['status'] == "public") {
+    if ($row['status'] == "public") {
         $public = 1;
     } else {
         $public = 0;
@@ -74,7 +74,7 @@ while($row = mysqli_fetch_array($res)) {
     $mres = mysqli_query($conn, "SELECT `mods` FROM `builds` WHERE `id` = ".$row['build_id']);
     $ma = mysqli_fetch_array($mres);
     $ml = explode(',', $ma['mods']);
-    if(count($ml)>0) {
+    if (count($ml)>0) {
         array_push($mods, implode(',',$ml));
     }
     array_push($mods, $row['release_id']);

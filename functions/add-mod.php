@@ -10,7 +10,7 @@ if (empty($_GET['bid'])) {
 if (!$_SESSION['user']||$_SESSION['user']=="") {
     die("Unauthorized request or login session has expired!");
 }
-if (substr($_SESSION['perms'],1,1)!=="1") {
+if (substr($_SESSION['perms'], 1, 1)!=="1") {
     die("Insufficient permission!");
 }
 $modsq = mysqli_query($conn, "SELECT `mods` FROM `builds` WHERE `id` = ".$_GET['bid']);
