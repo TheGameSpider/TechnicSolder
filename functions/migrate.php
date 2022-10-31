@@ -5,19 +5,19 @@ require("dbconnect.php");
 if (!$_SESSION['user']||$_SESSION['user']=="") {
     die("Unauthorized request or login session has expired!");
 }
-if (empty($_POST['db-pass'])){
+if (empty($_POST['db-pass'])) {
     die("error");
 }
-if(empty($_POST['db-name'])){
+if(empty($_POST['db-name'])) {
     die("error");
 }
-if(empty($_POST['db-user'])){
+if(empty($_POST['db-user'])) {
     die("error");
 }
-if(empty($_POST['db-host'])){
+if(empty($_POST['db-host'])) {
     die("error");
 }
-if(empty($_POST['solder-orig'])){
+if(empty($_POST['solder-orig'])) {
     die("error");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {

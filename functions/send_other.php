@@ -33,7 +33,7 @@ if(file_exists("../others/".$fileName)) {
     echo '{"status":"error","message":"File already exists!"}';
     exit();
 }
-if(move_uploaded_file($fileTmpLoc, "../others/".$fileName)){
+if(move_uploaded_file($fileTmpLoc, "../others/".$fileName)) {
     $pretty_name = mysqli_real_escape_string($conn, $fileName);
     $name = slugify($pretty_name);
     $author = $config['author'];

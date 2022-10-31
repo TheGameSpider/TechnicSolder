@@ -25,7 +25,7 @@ if (file_put_contents("../forges/modpack-".$version."/version.json", file_get_co
     }
     $path = "../forges/modpack-".$version."/version.json";
     $zip->addEmptyDir('bin');
-    if (is_file($path)){
+    if (is_file($path)) {
         $zip->addFile($path, "bin/version.json") or die ('{"status":"error","message":"Could not add file to archive"}');
     }
     $zip->close();

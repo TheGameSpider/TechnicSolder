@@ -2,10 +2,10 @@
 session_start();
 $config = require("./config.php");
 require("dbconnect.php");
-if(empty($_GET['name'])){
+if(empty($_GET['name'])) {
     die("Name not specified.");
 }
-if(empty($_GET['uuid'])){
+if(empty($_GET['uuid'])) {
     die("UUID not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {

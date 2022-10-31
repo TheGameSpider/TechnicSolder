@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 session_start();
 require("dbconnect.php");
-if (empty($_GET['id']) || empty($_GET['pack'])){
+if (empty($_GET['id']) || empty($_GET['pack'])) {
     die("Build not specified.");
 }
 if (!$_SESSION['user']||$_SESSION['user']=="") {

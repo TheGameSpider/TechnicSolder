@@ -15,29 +15,29 @@ $SOLDER_BUILD='999';
 if(strpos($url, '?') !== false) {
     $url = substr($url, 0, strpos($url, "?"));
 }
-if(isset($_GET['dark'])){
+if(isset($_GET['dark'])) {
     $_SESSION['dark'] = "on";
 }
-if(isset($_GET['light'])){
+if(isset($_GET['light'])) {
     $_SESSION['dark'] = "off";
 }
 if(substr($url,-1)=="/") {
-    if($_SERVER['QUERY_STRING']!==""){
+    if($_SERVER['QUERY_STRING']!=="") {
         header("Location: " . rtrim($url,'/') . "?" . $_SERVER['QUERY_STRING']);
     } else {
         header("Location: " . rtrim($url,'/'));
     }
 }
-if(isset($_GET['logout'])){
-    if($_GET['logout']==true){
+if(isset($_GET['logout'])) {
+    if($_GET['logout']==true) {
         session_destroy();
         header("Location: ".$config['dir']."login");
         exit();
     }
 }
-if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== ""){
+if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== "" && $_POST['password'] !== "") {
     if(!isset($config['encrypted'])||$config['encrypted']==false) {
-        if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']){
+        if($_POST['email']==$config['mail'] && $_POST['password']==$config['pass']) {
             $_SESSION['user'] = $_POST['email'];
             $_SESSION['name'] = $config['author'];
             $_SESSION['perms'] = "1111111";
@@ -56,7 +56,7 @@ if(isset($_POST['email']) && isset($_POST['password']) && $_POST['email'] !== ""
     } else {
         if ($_POST['email']==$config['mail'] && password_verify($_POST['password'], $config['pass'])) {
         // OLD PASSWORD AUTH METHOD (INSECURE):
-        //if($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']){
+        //if($_POST['email']==$config['mail'] && hash("sha256",$_POST['password']."Solder.cf")==$config['pass']) {
             $_SESSION['user'] = $_POST['email'];
             $_SESSION['name'] = $config['author'];
             $_SESSION['perms'] = "1111111";
@@ -204,7 +204,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 border-radius: 5px;
                 width: 100%;
                 height: 15em;
-                background-color: <?php if($_SESSION['dark']=="on"){echo "#333";}else{echo "#ddd";} ?>;
+                background-color: <?php if($_SESSION['dark']=="on") {echo "#333";}else{echo "#ddd";} ?>;
 
                 transition: 0.2s;
             }
@@ -224,7 +224,7 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
                 left: calc( 50% - 10em );
             }
             .upload-mods:hover{
-                background-color: <?php if($_SESSION['dark']=="on"){echo "#444";}else{echo "#ccc";} ?>;
+                background-color: <?php if($_SESSION['dark']=="on") {echo "#444";}else{echo "#ccc";} ?>;
             }
             .sidenav {
                 width:20em;
@@ -323,14 +323,14 @@ if(!isset($_SESSION['user'])&&!uri("/login")) {
     </head>
     <body style="<?php if($_SESSION['dark']=="on") { echo "background-color: #202429";} else { echo "background-color: #f0f4f9";} ?>">
     <?php
-        if(uri("login")){
+        if(uri("login")) {
         ?>
         <div class="container">
             <div id="logindiv">
                 <img style="margin:auto;display:block" alt="Technic logo" height="80" src="./resources/wrenchIcon.svg">
                 <legend style="text-align:center;margin:1em 0px">Technic Solder</legend>
                 <form method="POST" action="dashboard">
-                    <?php if(isset($_GET['ic'])){ ?>
+                    <?php if(isset($_GET['ic'])) { ?>
                         <div class="alert alert-danger">
                             Invalid Username/Password
                         </div>

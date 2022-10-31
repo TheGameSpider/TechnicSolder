@@ -169,7 +169,7 @@ if (!isset($_GET['reconfig'])) {
                     <button id="save" type="submit" class="btn btn-success btn-block btn-lg">Save</button>
                 </form>
                 <script type="text/javascript">
-                    $(document).ready(function(){
+                    $(document).ready(function() {
                         var loc = window.location.pathname;
                         var dir = loc.substring(0, loc.lastIndexOf('/'));
                         $("#dir").val(dir + "/");

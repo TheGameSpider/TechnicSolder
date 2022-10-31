@@ -2,13 +2,13 @@
 session_start();
 $config = require("./config.php");
 require("dbconnect.php");
-if (empty($_GET['id'])){
+if (empty($_GET['id'])) {
     die("Modpack not specified.");
 }
-if (empty($_GET['build'])){
+if (empty($_GET['build'])) {
     die("Build not specified.");
 }
-if (empty($_GET['newname'])){
+if (empty($_GET['newname'])) {
     die("New name not specified.");
 }
 if (!$_SESSION['user']||$_SESSION['user']=="") {

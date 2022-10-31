@@ -47,7 +47,7 @@ if (move_uploaded_file($fileTmpLoc, "../forges/modpack-".$version."/modpack.jar"
     }
     $path = "../forges/modpack-".$version."/modpack.jar";
     $zip->addEmptyDir('bin');
-    if (is_file($path)){
+    if (is_file($path)) {
         $zip->addFile($path, "bin/modpack.jar") or die ('{"status":"error","message":"Could not add file to archive"}');
     }
     $zip->close();

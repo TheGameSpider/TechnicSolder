@@ -92,7 +92,7 @@ function processFile($zipExists, $md5) {
             exit();
         }
         $zip->addEmptyDir('mods');
-        if(is_file($fileJarInFolderLocation)){
+        if(is_file($fileJarInFolderLocation)) {
             $zip->addFile($fileJarInFolderLocation, "mods/".$fileName) or die ('{"status":"error","message":"Could not add file $key"}');
         }
         $zip->close();
@@ -181,7 +181,7 @@ function processFile($zipExists, $md5) {
     }
 }
 
-if(move_uploaded_file($fileJarInTmpLocation, $fileJarInFolderLocation)){
+if(move_uploaded_file($fileJarInTmpLocation, $fileJarInFolderLocation)) {
     $fileInfo = pathinfo($fileJarInFolderLocation);
     if(file_exists($fileZipLocation)) {
         $md5_1 = md5_file($fileJarInFolderLocation);
@@ -191,7 +191,7 @@ if(move_uploaded_file($fileJarInTmpLocation, $fileJarInFolderLocation)){
             //exit();
         } else {
             $fq = mysqli_query($conn, "SELECT `id` FROM `mods` WHERE `filename` = '".$fileNameZip."'");
-            if(mysqli_num_rows($fq)==1){
+            if(mysqli_num_rows($fq)==1) {
                 echo '{"status":"info","message":"This mod is already in the database.","modid":'.mysqli_fetch_array($fq)['id'].'}';
             } else {
                 processFile(true, $md5_1); // use existing zip

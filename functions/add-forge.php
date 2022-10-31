@@ -28,7 +28,7 @@ if (file_put_contents("../forges/modpack-".$version."/modpack.jar", file_get_con
     }
     $path = "../forges/modpack-".$version."/modpack.jar";
     $zip->addEmptyDir('bin');
-    if (is_file($path)){
+    if (is_file($path)) {
         $zip->addFile($path, "bin/modpack.jar") or die ('{"status":"error","message":"Could not add file to archive"}');
     }
     $zip->close();

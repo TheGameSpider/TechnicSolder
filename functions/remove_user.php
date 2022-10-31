@@ -2,7 +2,7 @@
 session_start();
 $config = require("./config.php");
 require("dbconnect.php");
-if(empty($_POST['id'])){
+if(empty($_POST['id'])) {
     die("id not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {

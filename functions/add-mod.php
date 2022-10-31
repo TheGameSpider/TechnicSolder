@@ -1,10 +1,10 @@
 <?php
 session_start();
 require("dbconnect.php");
-if (empty($_GET['id'])){
+if (empty($_GET['id'])) {
     die("Mod not specified.");
 }
-if (empty($_GET['bid'])){
+if (empty($_GET['bid'])) {
     die("Build not specified.");
 }
 if (!$_SESSION['user']||$_SESSION['user']=="") {

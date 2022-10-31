@@ -1,22 +1,22 @@
 <?php
 session_start();
 require("dbconnect.php");
-if (empty($_POST['pretty_name'])){
+if (empty($_POST['pretty_name'])) {
     die("Name not specified.");
 }
-if (empty($_POST['name'])){
+if (empty($_POST['name'])) {
     die("Slug not specified.");
 }
-if (empty($_POST['version'])){
+if (empty($_POST['version'])) {
     die("Version not specified.");
 }
-if (empty($_POST['url'])){
+if (empty($_POST['url'])) {
     die("URL not specified.");
 }
-if (empty($_POST['md5'])){
+if (empty($_POST['md5'])) {
     die("Md5 not specified.");
 }
-if (empty($_POST['mcversion'])){
+if (empty($_POST['mcversion'])) {
     die("Minecraft version not specified.");
 }
 if (!$_SESSION['user']||$_SESSION['user']=="") {

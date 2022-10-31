@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 session_start();
 require("dbconnect.php");
-if (empty($_GET['id'])){
+if (empty($_GET['id'])) {
     die("Id not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {

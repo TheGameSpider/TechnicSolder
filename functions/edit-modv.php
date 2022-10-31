@@ -9,7 +9,7 @@ if (substr($_SESSION['perms'],4,1)!=="1") {
     echo 'Insufficient permission!';
     exit();
 }
-if (empty($_GET['id'])){
+if (empty($_GET['id'])) {
     die("Mod not specified.");
 }
 $result = mysqli_query($conn, "SELECT * FROM `mods` WHERE `id` = ".$_GET['id']);

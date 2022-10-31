@@ -2,13 +2,13 @@
 session_start();
 $config = require("./config.php");
 require("dbconnect.php");
-if(empty($_POST['name'])){
+if(empty($_POST['name'])) {
     die("Email not specified.");
 }
-if(empty($_POST['display_name'])){
+if(empty($_POST['display_name'])) {
     die("Name not specified.");
 }
-if(empty($_POST['pass'])){
+if(empty($_POST['pass'])) {
     die("password not specified.");
 }
 if(!$_SESSION['user']||$_SESSION['user']=="") {
