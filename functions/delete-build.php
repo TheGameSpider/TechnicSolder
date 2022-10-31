@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-require_once("dbconnect.php");
+require("dbconnect.php");
 if (empty($_GET['id']) || empty($_GET['pack'])){
     die("Build not specified.");
 }

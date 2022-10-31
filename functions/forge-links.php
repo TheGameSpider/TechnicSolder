@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once("dbconnect.php");
+require("dbconnect.php");
 $forge_data = file_get_contents("https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json"); // can't find normal promotions.json
 $forge_link = "https://maven.minecraftforge.net/net/minecraftforge/forge"; // /1.16.5-36.1.16/forge-1.16.5-36.1.16-installer.jar
 $versions = [];

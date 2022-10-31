@@ -1,9 +1,9 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-$config = require_once("config.php");
+$config = require("config.php");
 global $conn;
-require_once("dbconnect.php");
+require("dbconnect.php");
 if (substr($_SESSION['perms'],5,1)!=="1") {
     echo '{"status":"error","message":"Insufficient permission!"}';
     exit();

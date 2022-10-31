@@ -1,7 +1,7 @@
 <?php
 session_start();
-$config = require_once("./config.php");
-require_once("dbconnect.php");
+$config = require("./config.php");
+require("dbconnect.php");
 if(empty($_POST['name'])){
     die("Email not specified.");
 }

@@ -56,7 +56,7 @@ if (!isset($_GET['reconfig'])) {
                     }
                     if($cf." );" !== "<?php return array(  );")
                     file_put_contents("./functions/config.php", $cf." );");
-                    require_once("./functions/dbconnect.php");
+                    require("./functions/dbconnect.php");
                     $sql = "
                     CREATE TABLE modpacks (
                     id int(64) AUTO_INCREMENT PRIMARY KEY,

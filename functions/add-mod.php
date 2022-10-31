@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("dbconnect.php");
+require("dbconnect.php");
 if (empty($_GET['id'])){
     die("Mod not specified.");
 }

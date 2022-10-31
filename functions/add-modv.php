@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("dbconnect.php");
+require("dbconnect.php");
 if (empty($_POST['pretty_name'])){
     die("Name not specified.");
 }

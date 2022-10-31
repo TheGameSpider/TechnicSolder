@@ -12,8 +12,8 @@ if (substr($url,-1)=="/" & substr($url,-4)!=="api/") {
 		header("Location: " . rtrim($url,'/'));
 	}
 }
-$config = require_once("../functions/config.php");
-$dbcon = require_once("../functions/dbconnect.php");
+$config = require("../functions/config.php");
+$dbcon = require("../functions/dbconnect.php");
 function uri($url, $uri) {
     $length = strlen($uri);
     if ($length == 0) {

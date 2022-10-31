@@ -6,8 +6,8 @@ if (!$_SESSION['user']||$_SESSION['user']=="") {
 if (!$_GET['id']) {
     die('ID not provided');
 }
-$config = require_once("config.php");
-require_once("dbconnect.php");
+$config = require("config.php");
+require("dbconnect.php");
 $q = mysqli_query($conn, "SELECT `filename` FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
 $fileName = mysqli_fetch_array($q)['filename'];
 $fileInfo = pathinfo("../mods/".$fileName);

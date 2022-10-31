@@ -8,8 +8,8 @@ if(substr($_SESSION['perms'],3,1)!=="1") {
     echo '{"status":"error","message":"Insufficient permission!"}';
     exit();
 }
-$config = require_once("config.php");
-require_once("dbconnect.php");
+$config = require("config.php");
+require("dbconnect.php");
 $fileName = $_FILES["fiels"]["name"];
 $fileJarInTmpLocation = $_FILES["fiels"]["tmp_name"];
 if (!$fileJarInTmpLocation) {
