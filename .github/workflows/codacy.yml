@@ -19,6 +19,9 @@ on:
     paths-ignore:
       - 'docs/**'
       - 'resources/**'
+      - 'resources/bootstrap/**'
+      - 'resources/default/**'
+      - 'resources/js/**'
       - '.github/**'
   pull_request:
     # The branches below must be a subset of the branches above
