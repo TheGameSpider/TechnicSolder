@@ -3,7 +3,7 @@ session_start();
 $config = require("./config.php");
 require("dbconnect.php");
 if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("Unauthorized request or login session has expired!");
+    die("Unauthorized request or login session has expired!");
 }
 mysqli_query($conn, "ALTER TABLE `builds` ADD COLUMN `public` TINYINT(1);");
 mysqli_query($conn, "ALTER TABLE `builds` ADD COLUMN `clients` LONGTEXT;");

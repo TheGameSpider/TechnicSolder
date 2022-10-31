@@ -5,7 +5,7 @@ define('DBPASS', $_POST['db-pass']);
 define('DBNAME', $_POST['db-name']);
 $conn = mysqli_connect(DBHOST,DBUSER,DBPASS,DBNAME);
 if(!$conn) {
-	die('error');
+    die('error');
 } else {
-	die('success');
+    die('success');
 }

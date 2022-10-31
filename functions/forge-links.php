@@ -8,26 +8,26 @@ $forges = [];
 $id = 0;
 foreach(json_decode($forge_data, true)['promos'] as $gameVersion => $forgeVersion) { // key, value
     $id++;
-	if(strpos($gameVersion, "latest")) {
-		$gameVersion = str_replace("-latest", "", $gameVersion);
-		// 1.13 "1.13.2-25.0.219" and later don't have a universal.jar
-		if (version_compare($gameVersion, '1.13', '>=')) {
-			$suffixExt = 'installer.jar';
-		} else {
-			$suffixExt = 'universal.jar';
-		}
-		$versions[$forgeVersion] = $forge_link.'/'.$gameVersion.'-'.$forgeVersion.'/forge-'.$gameVersion.'-'.$forgeVersion.'-'.$suffixExt;
-		
-		$modsq = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = 'forge' AND `version` = '".$forgeVersion."'");
-		if(mysqli_num_rows($modsq)==0) {
-			$forges[$gameVersion] = array(
-				"id" => $id,
-				"mc" => $gameVersion,
-				"name" => $forgeVersion,
-				"link" => $versions[$forgeVersion]
-			);
-		}
-	}
+    if(strpos($gameVersion, "latest")) {
+        $gameVersion = str_replace("-latest", "", $gameVersion);
+        // 1.13 "1.13.2-25.0.219" and later don't have a universal.jar
+        if (version_compare($gameVersion, '1.13', '>=')) {
+            $suffixExt = 'installer.jar';
+        } else {
+            $suffixExt = 'universal.jar';
+        }
+        $versions[$forgeVersion] = $forge_link.'/'.$gameVersion.'-'.$forgeVersion.'/forge-'.$gameVersion.'-'.$forgeVersion.'-'.$suffixExt;
+
+        $modsq = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = 'forge' AND `version` = '".$forgeVersion."'");
+        if(mysqli_num_rows($modsq)==0) {
+            $forges[$gameVersion] = array(
+                "id" => $id,
+                "mc" => $gameVersion,
+                "name" => $forgeVersion,
+                "link" => $versions[$forgeVersion]
+            );
+        }
+    }
 }
 //$forges['1.7.10'] = array(
 //    "id" => 99,
