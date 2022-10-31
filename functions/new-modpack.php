@@ -1,7 +1,7 @@
 <?php
 session_start();
-$config = require("config.php");
-require("dbconnect.php");
+$config = require_once("config.php");
+require_once("dbconnect.php");
 if(!$_SESSION['user']||$_SESSION['user']=="") {
     die("Unauthorized request or login session has expired!");
 }

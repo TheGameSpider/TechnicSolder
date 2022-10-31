@@ -1,9 +1,9 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-$config = require("config.php");
-require("dbconnect.php");
-if(substr($_SESSION['perms'],5,1)!=="1") {
+$config = require_once("config.php");
+require_once("dbconnect.php");
+if (substr($_SESSION['perms'],5,1)!=="1") {
     echo '{"status":"error","message":"Insufficient permission!"}';
     echo $_SESSION['perms'];
     exit();
@@ -29,17 +29,17 @@ function slugify($text) {
 }
 $version = slugify($_POST['version']);
 $mcversion = $_POST['mcversion'];
-if($mcversion == "1.7.10-1.7.10") {
+if ($mcversion == "1.7.10-1.7.10") {
     $mcversion = "1.7.10";
 }
-if(!file_exists("../forges/modpack-".$version)) {
+if (!file_exists("../forges/modpack-".$version)) {
     mkdir("../forges/modpack-".$version);
 } else {
     echo '{"status":"error","message":"Folder modpack-'.$version.' already exists!"}';
     exit();
 }
 
-if(move_uploaded_file($fileTmpLoc, "../forges/modpack-".$version."/modpack.jar")) {
+if (move_uploaded_file($fileTmpLoc, "../forges/modpack-".$version."/modpack.jar")) {
     $zip = new ZipArchive();
     if ($zip->open("../forges/forge-".$version.".zip", ZIPARCHIVE::CREATE) !== TRUE) {
         echo '{"status":"error","message":"Could not open archive"}';
@@ -47,7 +47,7 @@ if(move_uploaded_file($fileTmpLoc, "../forges/modpack-".$version."/modpack.jar")
     }
     $path = "../forges/modpack-".$version."/modpack.jar";
     $zip->addEmptyDir('bin');
-    if(is_file($path)){
+    if (is_file($path)){
         $zip->addFile($path, "bin/modpack.jar") or die ('{"status":"error","message":"Could not add file to archive"}');
     }
     $zip->close();
@@ -56,7 +56,7 @@ if(move_uploaded_file($fileTmpLoc, "../forges/modpack-".$version."/modpack.jar")
     $md5 = md5_file("../forges/forge-".$version.".zip");
     $url = "http://".$config['host'].$config['dir']."forges/forge-".$version.".zip";
     $res = mysqli_query($conn, "INSERT INTO `mods` (`name`,`pretty_name`,`md5`,`url`,`link`,`author`,`description`,`version`,`mcversion`,`filename`,`type`) VALUES ('forge','Minecraft Forge (Custom)','".$md5."','".$url."','https://minecraftforge.net','LexManos','Minecraft Forge is a common open source API allowing a broad range of mods to work cooperatively together. Is allows many mods to be created without them editing the main Minecraft Code','".$version."','".$mcversion."','forge-".$version.".zip','forge')");
-    if($res) {
+    if ($res) {
         echo '{"status":"succ","message":"Mod has been saved."}';
         header("Location: ../lib-forges?succ");
         exit();

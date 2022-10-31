@@ -3,13 +3,13 @@ error_reporting(E_ALL & ~E_NOTICE);
 session_start();
 $config = include("./functions/config.php");
 $settings = include("./functions/settings.php");
-if(!isset($_GET['reconfig'])) {
-    if($config['configured']==true) {
+if (!isset($_GET['reconfig'])) {
+    if ($config['configured']==true) {
         header("Location: ".$config['dir']."login");
         exit();
     }
 } else {
-    if(!isset($_SESSION['user'])) {
+    if (!isset($_SESSION['user'])) {
         die("You need to be logged in!");
     }
     if($_SESSION['user']!==$config['mail']) {
@@ -56,7 +56,7 @@ if(!isset($_GET['reconfig'])) {
                     }
                     if($cf." );" !== "<?php return array(  );")
                     file_put_contents("./functions/config.php", $cf." );");
-                    require("./functions/dbconnect.php");
+                    require_once("./functions/dbconnect.php");
                     $sql = "
                     CREATE TABLE modpacks (
                     id int(64) AUTO_INCREMENT PRIMARY KEY,

@@ -1,14 +1,14 @@
 <?php
 session_start();
-$config = require("./config.php");
-require("dbconnect.php");
-if(!$_SESSION['user']||$_SESSION['user']=="") {
+$config = require_once("./config.php");
+require_once("dbconnect.php");
+if (!$_SESSION['user']||$_SESSION['user']=="") {
     die("Unauthorized request or login session has expired.");
 }
-if(empty($_POST['pass'])) {
+if (empty($_POST['pass'])) {
     die("Password not specified.");
 }
-if(!isset($config['encrypted'])||$config['encrypted']==false) {
+if (!isset($config['encrypted'])||$config['encrypted']==false) {
     $pass = $_POST['pass'];
 } else {
     $pass = hash("sha256",$_POST['pass']."Solder.cf");

@@ -1,15 +1,15 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-if(!$_SESSION['user']||$_SESSION['user']=="") {
+if (!$_SESSION['user']||$_SESSION['user']=="") {
     die('{"status":"error","message":"Login session has expired"}');
 }
 if(substr($_SESSION['perms'],3,1)!=="1") {
     echo '{"status":"error","message":"Insufficient permission!"}';
     exit();
 }
-$config = require("config.php");
-require("dbconnect.php");
+$config = require_once("config.php");
+require_once("dbconnect.php");
 $fileName = $_FILES["fiels"]["name"];
 $fileJarInTmpLocation = $_FILES["fiels"]["tmp_name"];
 if (!$fileJarInTmpLocation) {

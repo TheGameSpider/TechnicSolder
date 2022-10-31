@@ -4,7 +4,7 @@ define('DBUSER', $_POST['db-user']);
 define('DBPASS', $_POST['db-pass']);
 define('DBNAME', $_POST['db-name']);
 $conn = mysqli_connect(DBHOST,DBUSER,DBPASS,DBNAME);
-if(!$conn) {
+if (!$conn) {
     die('error');
 } else {
     die('success');

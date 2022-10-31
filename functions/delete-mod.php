@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-require("dbconnect.php");
+require_once("dbconnect.php");
 if(empty($_GET['id'])){
     die("Id not specified.");
 }

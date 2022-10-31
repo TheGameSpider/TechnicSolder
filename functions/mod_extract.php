@@ -1,13 +1,13 @@
 <?php
 session_start();
-if(!$_SESSION['user']||$_SESSION['user']=="") {
+if (!$_SESSION['user']||$_SESSION['user']=="") {
     die('Unathorized request or login session has expired!');
 }
-if(!$_GET['id']) {
+if (!$_GET['id']) {
     die('ID not provided');
 }
-$config = require("config.php");
-require("dbconnect.php");
+$config = require_once("config.php");
+require_once("dbconnect.php");
 $q = mysqli_query($conn, "SELECT `filename` FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
 $fileName = mysqli_fetch_array($q)['filename'];
 $fileInfo = pathinfo("../mods/".$fileName);

@@ -1,23 +1,23 @@
 <?php
 session_start();
-$config = require("./config.php");
-require("dbconnect.php");
-if(empty($_GET['id'])){
+$config = require_once("./config.php");
+require_once("dbconnect.php");
+if (empty($_GET['id'])){
     die("Modpack not specified.");
 }
-if(empty($_GET['build'])){
+if (empty($_GET['build'])){
     die("Build not specified.");
 }
-if(empty($_GET['newname'])){
+if (empty($_GET['newname'])){
     die("New name not specified.");
 }
-if(!$_SESSION['user']||$_SESSION['user']=="") {
+if (!$_SESSION['user']||$_SESSION['user']=="") {
     die("Unauthorized request or login session has expired!");
 }
 $sql = mysqli_query($conn, "SELECT `name` FROM `builds` WHERE `id` = " .mysqli_real_escape_string($conn, $_GET['build']));
 $name = mysqli_fetch_array($sql);
 echo $name['name'];
-if(substr($_SESSION['perms'],1,1)!=="1") {
+if (substr($_SESSION['perms'],1,1)!=="1") {
     echo 'Insufficient permission!';
     exit();
 }

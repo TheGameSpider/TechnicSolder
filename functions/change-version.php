@@ -1,7 +1,7 @@
 <?php
 session_start();
-require("dbconnect.php");
-if(empty($_GET['id'])){
+require_once("dbconnect.php");
+if (empty($_GET['id'])){
     die("New mod not specified.");
 }
 if(empty($_GET['mod'])){

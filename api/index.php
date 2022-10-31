@@ -5,15 +5,15 @@ $url = $_SERVER['REQUEST_URI'];
 if (strpos($url, '?') !== false) {
     $url = substr($url, 0, strpos($url, "?"));
 }
-if(substr($url,-1)=="/" & substr($url,-4)!=="api/") {
-	if($_SERVER['QUERY_STRING']!==""){
+if (substr($url,-1)=="/" & substr($url,-4)!=="api/") {
+	if ($_SERVER['QUERY_STRING']!==""){
 		header("Location: " . rtrim($url,'/') . "?" . $_SERVER['QUERY_STRING']);
 	} else {
 		header("Location: " . rtrim($url,'/'));
 	}
 }
-$config = require("../functions/config.php");
-$dbcon = require("../functions/dbconnect.php");
+$config = require_once("../functions/config.php");
+$dbcon = require_once("../functions/dbconnect.php");
 function uri($url, $uri) {
     $length = strlen($uri);
     if ($length == 0) {
@@ -21,16 +21,16 @@ function uri($url, $uri) {
     }
     return (substr($url, -$length) === $uri);
 }
-if(uri($url,"api/")){
+if (uri($url,"api/")){
 	print '{"api":"Solder.cf","version":"v1.3.3","stream":"Release"}';
 	exit();
 } 
-if(uri($url,"api/verify")){
+if (uri($url,"api/verify")){
 	print '{"error":"No API key provided."}';
 	exit();
 }
-if(uri($url,"api/verify/".substr($url, strrpos($url, '/') + 1))){
-	if(substr($url, strrpos($url, '/') + 1)==$config['api_key']){
+if (uri($url,"api/verify/".substr($url, strrpos($url, '/') + 1))){
+	if (substr($url, strrpos($url, '/') + 1)==$config['api_key']){
 		print '{"valid":"Key validated.","name":"API KEY","created_at":"A long time ago"}';
 		exit();
 	}

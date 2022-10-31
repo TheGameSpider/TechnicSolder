@@ -1,5 +1,5 @@
 <?php
-$conf = require("config.php");
+$conf = require_once("config.php");
 define('DBHOST', $conf['db-host']);
 define('DBUSER', $conf['db-user']);
 define('DBPASS', $conf['db-pass']);

@@ -1,8 +1,8 @@
 <?php
 session_start();
-$config = require("./config.php");
-require("dbconnect.php");
-if(!$_SESSION['user']||$_SESSION['user']=="") {
+$config = require_once("./config.php");
+require_once("dbconnect.php");
+if (!$_SESSION['user']||$_SESSION['user']=="") {
     die("Unauthorized request or login session has expired.");
 }
 $icon = $_FILES["newIcon"]["tmp_name"];

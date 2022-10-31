@@ -1,15 +1,15 @@
 <?php
 session_start();
-$config = require("config.php");
-require("dbconnect.php");
-if(!$_SESSION['user']||$_SESSION['user']=="") {
+$config = require_once("config.php");
+require_once("dbconnect.php");
+if (!$_SESSION['user']||$_SESSION['user']=="") {
     die("Unauthorized request or login session has expired!");
 }
-if(substr($_SESSION['perms'],0,1)!=="1") {
+if (substr($_SESSION['perms'],0,1)!=="1") {
     echo 'You do not have permission to create modpacks!';
     exit();
 }
-if(substr($_SESSION['perms'],1,1)!=="1") {
+if (substr($_SESSION['perms'],1,1)!=="1") {
     echo 'You do not have permission to create builds!';
     exit();
 }
