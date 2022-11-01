@@ -527,15 +527,14 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                 <?php
                 $version = json_decode(file_get_contents("./api/version.json"),true);
                 if ($version['stream']=="Dev"||$settings['dev_builds']=="on") {
-                    // TODO: Change back to TGS before merging
-                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/ZandercraftGames/TechnicSolder/Dev/api/version.json"),true)) {
+                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true)) {
                         $checked = true;
                     } else {
                         $checked = false;
                         $newversion = $version;
                     }
                 } else {
-                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/ZandercraftGames/TechnicSolder/master/api/version.json"),true)) {
+                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true)) {
                         $checked = true;
                     } else {
                         $checked = false;
@@ -3471,15 +3470,14 @@ function stringify(items) {
         elseif (uri("/update")) {
             $version = json_decode(file_get_contents("./api/version.json"), true);
             if ($version['stream']=="Dev"||$settings['dev_builds']=="on") {
-                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/ZandercraftGames/TechnicSolder/Dev/api/version.json"), true)) {
+                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"), true)) {
                     $checked = true;
                 } else {
                     $checked = false;
                     $newversion = $version;
                 }
             } else {
-                // TODO: Update back to TGS before merge
-                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/ZandercraftGames/TechnicSolder/master/api/version.json"), true)) {
+                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"), true)) {
                         $checked = true;
                 } else {
                     $newversion = $version;
