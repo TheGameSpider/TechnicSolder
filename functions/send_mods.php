@@ -43,7 +43,7 @@ if (!file_exists("../mods/mods-".$fileNameShort)) {
     echo '{"status":"error","message":"Folder mods-'.$fileNameShort.' already exists!"}';
     exit();
 }
-function processFile($zipExists, $md5) { 
+function processFile($zipExists, $md5) {
     global $fileName;
     global $fileNameZip;
     global $fileNameShort;
@@ -56,13 +56,25 @@ function processFile($zipExists, $md5) {
     $mcmod=array();
     $result = @file_get_contents("zip://".realpath($fileJarInFolderLocation)."#META-INF/mods.toml");
     if (!$result) {
-        # fail 1.14+ mod check
+        # fail 1.14+ or fabric mod check
         $result = file_get_contents("zip://".realpath($fileJarInFolderLocation)."#mcmod.info");
         if (!$result) {
             # fail legacy mod check
             $warn['b'] = true;
             $warn['level'] = "warn";
             $warn['message'] = "File does not contain mod info. Manual configuration required.";
+        } elseif (file_get_contents("zip://".realpath("../mods/mods-".$fileName."/".$fileName)."#fabric.mod.json")) {
+            # is a fabric mod
+            $result = file_get_contents("zip://" . realpath("../mods/mods-" . $fileName . "/" . $fileName) . "#fabric.mod.json");
+            $q = json_decode(preg_replace('/\r|\n/', '', trim($result)), true);
+            $mcmod = $q;
+            $mcmod["modid"] = $mcmod["id"];
+            $mcmod["url"] = $mcmod["contact"]["sources"];
+            if (!$mcmod['modid'] || !$mcmod['name'] || !$mcmod['description'] || !$mcmod['version'] || !$mcmod['mcversion'] || !$mcmod['url'] || !$mcmod['authorList']) {
+                $warn['b'] = true;
+                $warn['level'] = "info";
+                $warn['message'] = "There is some information missing in fabric.mod.json.";
+            }
         } else {
             # is legacy mod
             $legacy=true;

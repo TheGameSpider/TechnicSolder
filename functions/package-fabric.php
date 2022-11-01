@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 session_start();
 $config = require("config.php");
 require("dbconnect.php");
-if (substr($_SESSION['perms'],5,1)!=="1") {
+if (substr($_SESSION['perms'], 5, 1)!=="1") {
     echo '{"status":"error","message":"Insufficient permission!"}';
     exit();
 }
@@ -17,7 +17,7 @@ if (!file_exists("../forges/modpack-".$version)) {
     echo '{"status":"error","message":"Folder modpack-'.$version.' already exists!"}';
     exit();
 }
-if (file_put_contents("../forges/modpack-".$version."/version.json", file_get_contents("https://fabricmc.net/download/technic/?yarn=".$mcversion."&loader=".urlencode($version)))) {
+if (file_put_contents("../forges/modpack-".$version."/version.json", file_get_contents("https://meta.fabricmc.net/v2/versions/loader/".$mcversion."/".urlencode($version)."/profile/json"))) {
     $zip = new ZipArchive();
     if ($zip->open("../forges/fabric-".$version.".zip", ZIPARCHIVE::CREATE) !== TRUE) {
         echo '{"status":"error","message":"Could not open archive"}';

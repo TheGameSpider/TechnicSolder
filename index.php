@@ -361,7 +361,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
         <!--End of Tawk.to Script-->
     <?php } ?>
         <nav class="navbar <?php if ($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else { echo "navbar-light bg-white sticky-top";}?>">
-            <span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if ($_SESSION['dark']=="on") {echo "W";}?>.svg"><em id="menuopen" class="fas fa-bars menu-bars"></em> Technic Solder <span class="navbar-text"><a class="text-muted" target="_blank" href="https://solder.cf">Solder.cf</a> <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
+            <span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if ($_SESSION['dark']=="on") {echo "W";}?>.svg"><em id="menuopen" class="fas fa-bars menu-bars"></em> Technic Solder <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
             <span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <?php if ($_SESSION['user']!==$config['mail']) { ?>
                 <img class="img-thumbnail" style="width: 40px;height: 40px" src="data:image/png;base64,<?php
@@ -1159,7 +1159,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
             $modpack = mysqli_fetch_array($mpres);
 
             ?>
-            <script>document.title = 'Solder.cf - Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
+            <script>document.title = 'Modpack - <?php echo addslashes($modpack['display_name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <ul class="nav justify-content-end info-versions">
                 <li class="nav-item">
                     <a class="nav-link" href="./dashboard"><em class="fas fa-arrow-left fa-lg"></em> <?php echo $modpack['display_name'] ?></a>
@@ -1726,7 +1726,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
             $pack = mysqli_query($conn, "SELECT * FROM `modpacks` WHERE `id` = ".$user['modpack']);
             $mpack = mysqli_fetch_array($pack);
             ?>
-            <script>document.title = 'Solder.cf - <?php echo addslashes($mpack['display_name'])." ".addslashes($user['name'])  ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
+            <script>document.title = '<?php echo addslashes($mpack['display_name'])." ".addslashes($user['name'])  ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <ul class="nav justify-content-end info-versions">
                 <li class="nav-item">
                     <a class="nav-link" href="./modpack?id=<?php echo $mpack['id'] ?>"><em class="fas fa-arrow-left fa-lg"></em> <?php echo $mpack['display_name'] ?></a>
@@ -2250,7 +2250,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
         }
         elseif (uri('/lib-mods')) {
         ?>
-        <script>document.title = 'Solder.cf - Mod Library - <?php echo addslashes($_SESSION['name']) ?>';</script>
+        <script>document.title = 'Mod Library - <?php echo addslashes($_SESSION['name']) ?>';</script>
         <div class="main">
         <script type="text/javascript">
                 function remove_box(name) {
@@ -2538,7 +2538,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                 $mod = mysqli_fetch_array($mres);
             }
             ?>
-            <script>document.title = 'Solder.cf - Add Mod - <?php echo addslashes($_SESSION['name']) ?>';</script>
+            <script>document.title = 'Add Mod - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <div class="card">
                 <button onclick="window.location = './lib-mods'" style="width: fit-content;" class="btn btn-primary"><em class="fas fa-arrow-left"></em> Back</button><br />
                 <h3>Add Mod</h3>
@@ -2598,7 +2598,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
         <?php
         } elseif (uri('/lib-forges')) {
         ?>
-        <script>document.title = 'Solder.cf - Forge Versions - <?php echo addslashes($_SESSION['name']) ?>';</script>
+        <script>document.title = 'Forge Versions - <?php echo addslashes($_SESSION['name']) ?>';</script>
         <div class="main">
             <script type="text/javascript">
                 function remove_box(id,name) {
@@ -2672,9 +2672,24 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                     </tbody>
                 </table>
             </div>
-            <button id="fetch" onclick="fetch()" class="btn btn-primary btn-block">Fetch Forge Versions from minecraftforge.net</button>
-            <button style="display: none" id="save" onclick="window.location.reload()" class="btn btn-success btn-block">Save Forge Vesions and Refresh</button>
+            <div class="btn-group btn-group-justified btn-block">
+                <button id="fetch-forge" onclick="fetch()" class="btn btn-primary">Fetch Forge Versions</button>
+                <button disabled id="save" onclick="window.location.reload()" style="display:none;" class="btn btn-success">(Forge) Save and Refresh</button>
+                <button id="fetch-fabric" onclick="fetchfabric()" class="btn btn-warning">Fetch Fabric Versions</button>
+            </div>
+<!--            <button id="fetch" onclick="fetch()" class="btn btn-primary btn-block">Fetch Forge Versions from minecraftforge.net</button>-->
+<!--            <button style="display: none" id="save" onclick="window.location.reload()" class="btn btn-success btn-block">Save Forge Vesions and Refresh</button>-->
             <span id="info" class="text-danger"></span>
+            <div class="card" id="fabrics" style="display:none;">
+                <h2>(α) Fabric Installer</h2>
+                <form>
+                    <label for="lod">Loader Version</label>
+                    <select id="lod"></select><br>
+                    <label for="ver">Game Version</label>
+                    <select id="ver"></select><br>
+                    <button id="sub-button" type="button" onclick="download()" class="btn btn-primary">Install</button>
+                </form>
+            </div>
             <div class="card" id="fetched-mods" style="display: none">
                 <script type="text/javascript">
                     var nof = 0;
@@ -2690,7 +2705,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                                         $("#fetched-mods").show();
                                         $("#forge-table").append('<tr id="forge-'+id+'"><td scope="row">'+mc+'</td><td>'+name+'</td><td><a href="'+link+'">'+link+'</a></td><td><button id="button-add-'+id+'" onclick="add(\''+name+'\',\''+link+'\',\''+mc+'\',\''+id+'\')" class="btn btn-primary btn-sm">Add to Database</button></td><td><em id="cog-'+id+'" style="display:none" class="fas fa-spin fa-cog fa-2x"></em><em id="check-'+id+'" style="display:none" class="text-success fas fa-check fa-2x"></em><em id="times-'+id+'" style="display:none" class="text-danger fas fa-times fa-2x"></em></td></tr>');
                                         if (fiq==nof) {
-                                            $("#fetch").hide();
+                                            $("#fetch-forge").hide();
                                             $("#save").show();
                                         }
                                     }
@@ -2699,9 +2714,75 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                         }
                         chf.send();
                     }
-                    function fetch() {
-                        $("#fetch").attr("disabled",true);
-                        $("#fetch").html("Fetching...<em class='fas fa-cog fa-spin fa-sm'></em>");
+                    // Fabric Download
+                    let download = () => {
+                        $("#sub-button").attr("disabled","true")
+                        $("#sub-button")[0].innerHTML = "<i class='fas fa-cog fa-spin'></i>"
+                        let packager = new XMLHttpRequest();
+                        packager.open('GET', './functions/package-fabric.php?version='+encodeURIComponent($("#ver").children("option:selected").val())+"&loader="+encodeURIComponent($("#lod").children("option:selected").val()))
+                        packager.onreadystatechange = () => {
+                            if (packager.readyState === 4) {
+                                if (packager.status === 200) {
+                                    retur = JSON.parse(packager.response)
+                                    if (retur["status"] === "succ") {
+                                        $("#sub-button")[0].classList.remove("btn-primary")
+                                        $("#sub-button")[0].classList.add("btn-success")
+                                        $("#sub-button")[0].innerHTML = "<i class='fas fa-check'></i> Please reload the page."
+                                    }
+                                }
+                            }
+                        }
+                        packager.send()
+                    }
+                    // Fetch Fabric Versions
+                    let fetchfabric = () => {
+                        $("#fetch-fabric").attr("disabled",true)
+                        $("#fetch-forge").attr("disabled",true)
+                        $("#fetch-fabric").html("Fetching...<i class='fas fa-cog fa-spin fa-sm'></i>")
+                        let versions = new XMLHttpRequest()
+                        let loaders = new XMLHttpRequest()
+                        versions.open('GET','https://meta.fabricmc.net/v2/versions/game')
+                        loaders.open('GET','https://meta.fabricmc.net/v2/versions/loader')
+                        versions.onreadystatechange = () => {
+                            if (versions.readyState === 4) {
+                                if (versions.status === 200) {
+                                    response = JSON.parse(versions.response)
+                                    for (key in response) {
+                                        if (response[key]["stable"]) {
+                                            ver = document.createElement("option")
+                                            ver.text = response[key]["version"]
+                                            ver.value = response[key]["version"]
+                                            $("#ver")[0].add(ver)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        loaders.onreadystatechange = () => {
+                            if (loaders.readyState === 4) {
+                                if (loaders.status === 200) {
+                                    response = JSON.parse(loaders.response)
+                                    for (key in response) {
+                                        if (response[key]["stable"]) {
+                                            ver = document.createElement("option")
+                                            ver.text = response[key]["version"]
+                                            ver.value = response[key]["version"]
+                                            $("#lod")[0].add(ver)
+                                        }
+                                    }
+                                    $("#fetch-fabric").html("Fetch Fabric Versions")
+                                    $("#fabrics")[0].style.display = "flex";
+                                }
+                            }
+                        }
+                        loaders.send()
+                        versions.send()
+                    }
+                    // Fetch versions
+                    let fetch = ()=> {
+                        $("#fetch-forge").attr("disabled", true);
+                        $("#fetch-fabric").attr("disabled", true);
+                        $("#fetch-forge").html("Fetching...<i class='fas fa-cog fa-spin fa-sm'></i>");
                         var request = new XMLHttpRequest();
                         request.open('GET', './functions/forge-links.php');
                         request.onreadystatechange = function() {
@@ -2784,7 +2865,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
         <?php
         } elseif (uri('/lib-other')) {
         ?>
-        <script>document.title = 'Solder.cf - Other Files - <?php echo addslashes($_SESSION['name']) ?>';</script>
+        <script>document.title = 'Other Files - <?php echo addslashes($_SESSION['name']) ?>';</script>
         <div class="main">
         <script type="text/javascript">
                 function remove_box(id,name) {
@@ -3026,7 +3107,7 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
             $file = mysqli_fetch_array($mres);
             ?>
             <script>
-                document.title = 'Solder.cf - File - <?php echo addslashes($file['name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
+                document.title = 'File - <?php echo addslashes($file['name']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
                 $(document).ready(function(){
                     $("#nav-mods").trigger('click');
 
@@ -3114,7 +3195,7 @@ function stringify(items) {
             <?php
             $mres = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = '".mysqli_real_escape_string($conn, $_GET['id'])."'");
             ?>
-            <script>document.title = 'Solder.cf - Mod - <?php echo addslashes($_GET['id']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
+            <script>document.title = 'Mod - <?php echo addslashes($_GET['id']) ?> - <?php echo addslashes($_SESSION['name']) ?>';
             function remove_box(id,version,name) {
                     $("#mod-name-title").text(name+" "+version);
                     $("#mod-name").text(name+" "+version);
@@ -3352,7 +3433,7 @@ function stringify(items) {
         <?php
         } elseif (uri("/about")) {
             ?>
-            <script>document.title = 'Solder.cf - About - <?php echo addslashes($_SESSION['name']) ?>';</script>
+            <script>document.title = 'About - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <div class="main">
                 <div class="card">
                     <center>
@@ -3419,7 +3500,7 @@ function stringify(items) {
                 }
             }
         ?>
-        <script>document.title = 'Solder.cf - Update Checker - <?php echo $version['version'] ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
+        <script>document.title = 'Update Checker - <?php echo $version['version'] ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <div class="main">
                 <div class="card">
                     <h2>Solder<span class="text-muted">.cf</span> Updater</h2>
@@ -3604,7 +3685,7 @@ function stringify(items) {
                     $('#perm7').prop('checked', false);
                 }
             </script>
-            <script>document.title = 'Solder.cf - My Account - <?php echo addslashes($_SESSION['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
+            <script>document.title = 'My Account - <?php echo addslashes($_SESSION['name']) ?> - <?php echo addslashes($config['author']) ?>';</script>
             <script type="text/javascript">
                 $(document).ready(function(){
                     $("#nav-settings").trigger('click');
@@ -4007,7 +4088,7 @@ function stringify(items) {
 
                 </script>
             </div>
-            <script>document.title = 'Solder.cf - Admin - <?php echo addslashes($config['author']) ?>';</script>
+            <script>document.title = 'Admin - <?php echo addslashes($config['author']) ?>';</script>
             <script type="text/javascript">
                 $(document).ready(function(){
                     $("#nav-settings").trigger('click');
@@ -4067,7 +4148,7 @@ function stringify(items) {
             </script>
         <?php } elseif (uri('/clients')) {
         ?>
-        <script>document.title = 'Solder.cf - Clients - <?php echo addslashes($_SESSION['name']) ?>';</script>
+        <script>document.title = 'Clients - <?php echo addslashes($_SESSION['name']) ?>';</script>
         <div class="main">
             <div class="card">
                 <h1>Clients</h1>
@@ -4176,7 +4257,7 @@ function stringify(items) {
             </script>
         <?php } else {
             ?>
-        <script>document.title = 'Solder.cf - 404';</script>
+        <script>document.title = '404 - Not Found';</script>
         <div style="margin-top: 15%" class="main">
 
                 <center><h1>Error 404 :(</h1></center>
