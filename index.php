@@ -3485,14 +3485,15 @@ function stringify(items) {
         elseif (uri("/update")) {
             $version = json_decode(file_get_contents("./api/version.json"), true);
             if ($version['stream']=="Dev"||$settings['dev_builds']=="on") {
-                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"), true)) {
+                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/ZandercraftGames/TechnicSolder/Dev/api/version.json"), true)) {
                     $checked = true;
                 } else {
                     $checked = false;
                     $newversion = $version;
                 }
             } else {
-                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"), true)) {
+                // TODO: Update back to TGS before merge
+                if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/ZandercraftGames/TechnicSolder/master/api/version.json"), true)) {
                         $checked = true;
                 } else {
                     $newversion = $version;
@@ -3503,7 +3504,7 @@ function stringify(items) {
         <script>document.title = 'Update Checker - <?php echo $version['version'] ?> - <?php echo addslashes($_SESSION['name']) ?>';</script>
             <div class="main">
                 <div class="card">
-                    <h2>Solder<span class="text-muted">.cf</span> Updater</h2>
+                    <h2>Solder Updater</h2>
                     <br />
                     <div class="alert <?php if ($version['version']==$newversion['version'] && $checked) { echo "alert-success";} else { if ($checked) {echo "alert-info";} else {echo "alert-warning";} } ?>" role="alert">
                         <h4 class="alert-heading"><?php if ($checked) {if ($version['version']==$newversion['version']) {echo "No updates";} else { echo "New update available - ".$newversion['version']; }} else {echo "Cannot check for updates!";} ?></h4>
