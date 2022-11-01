@@ -345,21 +345,6 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
         } else {
             $filecontents = file_get_contents('./api/version.json');
         ?>
-        <?php if ($settings['use_tawkto']=="on") { ?>
-        <!--Start of Tawk.to Script-->
-        <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-        (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/5ba262e0c666d426648ae9ee/default';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-        })();
-        </script>
-        <!--End of Tawk.to Script-->
-    <?php } ?>
         <nav class="navbar <?php if ($_SESSION['dark']=="on") { echo "navbar-dark bg-dark sticky-top";}else { echo "navbar-light bg-white sticky-top";}?>">
             <span class="navbar-brand"  href="#"><img id="techniclogo" alt="Technic logo" class="d-inline-block align-top" height="46px" src="./resources/wrenchIcon<?php if ($_SESSION['dark']=="on") {echo "W";}?>.svg"><em id="menuopen" class="fas fa-bars menu-bars"></em> Technic Solder <span id="solderinfo"><?php echo(json_decode($filecontents,true))['version']; ?></span></span></span>
             <span style="cursor: pointer;" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -542,14 +527,15 @@ if (!isset($_SESSION['user'])&&!uri("/login")) {
                 <?php
                 $version = json_decode(file_get_contents("./api/version.json"),true);
                 if ($version['stream']=="Dev"||$settings['dev_builds']=="on") {
-                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/Dev/api/version.json"),true)) {
+                    // TODO: Change back to TGS before merging
+                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/ZandercraftGames/TechnicSolder/Dev/api/version.json"),true)) {
                         $checked = true;
                     } else {
                         $checked = false;
                         $newversion = $version;
                     }
                 } else {
-                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/TheGameSpider/TechnicSolder/master/api/version.json"),true)) {
+                    if ($newversion = json_decode(file_get_contents("https://raw.githubusercontent.com/ZandercraftGames/TechnicSolder/master/api/version.json"),true)) {
                         $checked = true;
                     } else {
                         $checked = false;
@@ -4130,10 +4116,6 @@ function stringify(items) {
                         <label class="custom-control-label" for="use_verifier">
                             Enable Solder Verifier - uses cookies
                         </label>
-                    </div>
-                    <div class="custom-control custom-switch">
-                        <input <?php if ($settings['use_tawkto']=="on") {echo "checked";} ?> type="checkbox" class="custom-control-input" name="use_tawkto" id="use_tawkto">
-                        <label class="custom-control-label" for="use_tawkto">Enable Tawk.to - uses cookies</label>
                     </div>
                     <br>
                     <em>It might take a few moments to take effect.</em>
