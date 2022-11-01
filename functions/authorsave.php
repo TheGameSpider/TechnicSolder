@@ -1,16 +1,22 @@
 <?php
 session_start();
 $config = require("./config.php");
+global $conn;
 require("dbconnect.php");
-if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die("Unauthorized request or login session has expired!");
+if (!$_SESSION['user']||$_SESSION['user']=="") {
+    die("Unauthorized request or login session has expired!");
 }
-if(substr($_SESSION['perms'],4,1)!=="1") {
-	echo 'Insufficient permission!';
-	exit();
+if (substr($_SESSION['perms'], 4, 1)!=="1") {
+    echo 'Insufficient permission!';
+    exit();
 }
-if(empty($_POST['id'])){
-	die("Mod not specified.");
+if (empty($_POST['id'])) {
+    die("Mod not specified.");
 }
-mysqli_query($conn, "UPDATE `mods` SET `author` = '".mysqli_real_escape_string($conn, $_POST['value'])."' WHERE `name` = '".mysqli_real_escape_string($conn, $_POST['id'])."'");
+mysqli_query(
+    $conn,
+    "UPDATE `mods`
+    SET `author` = '".mysqli_real_escape_string($conn, $_POST['value'])."'
+    WHERE `name` = '".mysqli_real_escape_string($conn, $_POST['id'])."'"
+);
 exit();

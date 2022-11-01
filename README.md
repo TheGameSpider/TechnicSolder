@@ -29,7 +29,7 @@ sudo su -
 This command installs what's known as a LAMP Stack, which includes Apache2, MariaDB, and PHP. Very useful!
 ```bash
 apt update
-apt -y install apache2 php libapache2-mod-php mariadb-server php-mysql php-dev zlib1g-dev libzip4 libzip-dev php-zip
+apt -y install apache2 php7.2 libapache2-mod-php mariadb-server php7.2-mysql php7.2-dev zlib1g-dev libzip4 libzip-dev php7.2-zip
 ```
 The above command can take a while to complete. Once done, restart apache.<br />
 
@@ -58,64 +58,80 @@ You probably want to remove this file after this test because it could actually 
 ```bash
 rm /var/www/html/index.php
 ```
-**5. Enable RewriteEngine**<br />
+**5. Enable RewriteEngine and Configure Apache**<br />
 ```bash
 a2enmod rewrite
-nano /etc/apache2/sites-enabled/000-default.conf
+cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/TechnicSolder.conf
+a2ensite TechnicSolder
+nano /etc/apache2/sites-enabled/TechnicSolder.conf
 ```
+
+Add the following above the `DocumentRoot` line:
+```
+ServerName <yourSolderDomainHere>
+```
+
+Change the `DocumentRoot` line to:
+```
+DocumentRoot /var/www/TechnicSolder
+```
+
 Add this before `</VirtualHost>` close tag:
 ```
     DirectoryIndex index.php index.html
-    <Directory /var/www/html>
+    <Directory /var/www/TechnicSolder>
         Options Indexes FollowSymLinks MultiViews
         AllowOverride All
         Require all granted
     </Directory>
 ```
-Save and close the file
+Save and close the file and restart Apache:
+```
+service apache2 restart
+```
 ## Cloning TechnicSolder repository
 **6. Clone TechnicSolder repository** 
 ```bash
 cd /var/www/
 git clone https://github.com/TheGameSpider/TechnicSolder.git TechnicSolder
 ```
-Installation is complete. Now you need to confige TechnicSolder before using it.
-# If you are using nginx:
-*there is an example for nginx configuration"*
-```nginx
-	location / {
-        try_files   $uri $uri/ /index.php?$query_string;
-        }
-
-	location /api/ {
-        try_files   $uri $uri/ /api/index.php?$query_string;
-        }
-
-    location ~* \.php$ {
-            fastcgi_pass                    unix:/run/php/php7.2-fpm.sock;
-            fastcgi_index                   index.php;
-            fastcgi_split_path_info         ^(.+\.php)(.*)$;
-            include                         fcgi.conf;
-            fastcgi_param PATH_INFO         $fastcgi_path_info;
-            fastcgi_param SCRIPT_FILENAME   $document_root$fastcgi_script_name;
-    }
-
-    location ~ /\.ht {
-            deny all;
-    }
-
-    location ~ .*/\. {
-            return 403;
-    }
-
-    error_page 403 /403.html;
-    
-    location ~* \.(?:ico|css|js|jpe?g|JPG|png|svg|woff)$ {
-            expires 365d;
-	}
-```
+Installation is complete. Now you need to configure TechnicSolder before using it.
+> **If you are using nginx:**  
+> *here is an example for nginx configuration*
+> ```nginx
+> 	location / {
+>         try_files   $uri $uri/ /index.php?$query_string;
+>         }
+>
+> 	location /api/ {
+>         try_files   $uri $uri/ /api/index.php?$query_string;
+>         }
+>
+>     location ~* \.php$ {
+>             fastcgi_pass                    unix:/run/php/php7.2-fpm.sock;
+>             fastcgi_index                   index.php;
+>             fastcgi_split_path_info         ^(.+\.php)(.*)$;
+>             include                         fcgi.conf;
+>             fastcgi_param PATH_INFO         $fastcgi_path_info;
+>             fastcgi_param SCRIPT_FILENAME   $document_root$fastcgi_script_name;
+>     }
+>
+>     location ~ /\.ht {
+>             deny all;
+>     }
+>
+>     location ~ .*/\. {
+>             return 403;
+>     }
+>
+>     error_page 403 /403.html;
+>     
+>     location ~* \.(?:ico|css|js|jpe?g|JPG|png|svg|woff)$ {
+>             expires 365d;
+> 	}
+> ```
 # Configuration
-**configure MySQL**
+**Configure MySQL**
 ```bash
 mysql
 ```
@@ -134,7 +150,7 @@ Create database solder and grant user *solder* access to it.
 CREATE DATABASE solder;
 GRANT ALL ON solder.* TO 'solder'@'localhost';
 FLUSH PRIVILEGES;
-exit
+EXIT;
 ```
 
 **Configure TechnicSolder** <br />

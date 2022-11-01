@@ -1,10 +1,10 @@
 <?php
 session_start();
-if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die('Unathorized request or login session has expired!');
+if (!$_SESSION['user']||$_SESSION['user']=="") {
+    die('Unathorized request or login session has expired!');
 }
-if(!$_GET['id']) {
-	die('ID not provided');
+if (!$_GET['id']) {
+    die('ID not provided');
 }
 $config = require("config.php");
 require("dbconnect.php");
