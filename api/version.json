@@ -1,5 +1,5 @@
 {
-	"version": "v1.3.4",
+	"version": "v1.3.5a1",
 	"stream": "Dev",
 	"warns": "<div class='card alert-warning'><p><b>Warning!</b> You shouldn't upload Optifine or Journey Map. If you want to use Journey Map, you should add it to the app as a remote mod. If you need more information, check <a href='https://journeymap.info/Technic'>https://journeymap.info/Technic</a> or <a href='https://tawk.to/chat/5ba3d4c8c666d426648af4bc/default' target='_blank'>contact a human</a>.</p></div>",
 	"ltcl": "Add Fabric Support + Huge Code Cleanup (Vulnerabilities Fixed).",
