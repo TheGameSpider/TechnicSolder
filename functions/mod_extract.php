@@ -7,8 +7,12 @@ if (!$_GET['id']) {
     die('ID not provided');
 }
 $config = require("config.php");
+global $conn;
 require("dbconnect.php");
-$q = mysqli_query($conn, "SELECT `filename` FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+$q = mysqli_query(
+    $conn,
+    "SELECT `filename` FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id'])
+);
 $fileName = mysqli_fetch_array($q)['filename'];
 $fileInfo = pathinfo("../mods/".$fileName);
 $exisingzip = new ZipArchive();
