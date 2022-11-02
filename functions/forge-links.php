@@ -16,7 +16,8 @@ foreach (json_decode($forge_data, true)['promos'] as $gameVersion => $forgeVersi
         } else {
             $suffixExt = 'universal.jar';
         }
-        $versions[$forgeVersion] = $forge_link.'/'.$gameVersion.'-'.$forgeVersion.'/forge-'.$gameVersion.'-'.$forgeVersion.'-'.$suffixExt;
+        $versions[$forgeVersion] = $forge_link.'/'.$gameVersion.'-'.$forgeVersion.'/forge-'.$gameVersion.'-'
+            .$forgeVersion.'-'.$suffixExt;
 
         $modsq = mysqli_query($conn, "SELECT * FROM `mods` WHERE `name` = 'forge' AND `version` = '".$forgeVersion."'");
         if (mysqli_num_rows($modsq)==0) {

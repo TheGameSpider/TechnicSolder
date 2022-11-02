@@ -159,7 +159,7 @@
             let parentRow = $this.parent('tr');
             let index = parentRow.children().index($this);
 
-            while(true) {
+            while (true) {
                 let nextRow = parentRow.next('tr');
                 if (!nextRow.is('tr'))
                     break;

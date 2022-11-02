@@ -33,7 +33,7 @@ mysqli_query($conn, "TRUNCATE `clients`");
 mysqli_query($conn, "TRUNCATE `mods`");
 // ----- MODPACKS ----- \\
 $res = mysqli_query($conn2, "SELECT `name`,`slug`,`status`,`latest_build_id`,`recommended_build_id` FROM `modpacks`");
-while($row = mysqli_fetch_array($res)) {
+while ($row = mysqli_fetch_array($res)) {
     $latest = mysqli_fetch_array(mysqli_query($conn2,"select `version` FROM `builds` WHERE `id` = ".$row['latest_build_id']))['version'];
     $recommended = mysqli_fetch_array(mysqli_query($conn2,"select `version` FROM `builds` WHERE `id` = ".$row['recommended_build_id']))['version'];
     if ($row['status'] == "public") {
@@ -45,7 +45,7 @@ while($row = mysqli_fetch_array($res)) {
 }
 // ----- BUILDS ----- \\
 $res = mysqli_query($conn2, "SELECT `modpack_id`,`version`,`minecraft_version`,`status`,`java_version`,`required_memory` FROM `builds`");
-while($row = mysqli_fetch_array($res)) {
+while ($row = mysqli_fetch_array($res)) {
     if ($row['status'] == "public") {
         $public = 1;
     } else {
@@ -55,12 +55,12 @@ while($row = mysqli_fetch_array($res)) {
 }
 // ----- CLIENTS ----- \\
 $res = mysqli_query($conn2, "SELECT `title`,`token` FROM `clients`");
-while($row = mysqli_fetch_array($res)) {
+while ($row = mysqli_fetch_array($res)) {
     mysqli_query($conn,"INSERT INTO `clients` (`name`,`UUID`) VALUES ('".$row['title']."','".$row['token']."')");
 }
 // ----- MODS ----- \\
 $res = mysqli_query($conn2, "SELECT * FROM `releases`");
-while($row = mysqli_fetch_array($res)) {
+while ($row = mysqli_fetch_array($res)) {
     $url = "http://".$config['host'].$config['dir']."mods/".end(explode("/",$row['path']));
     $packageres = mysqli_query($conn2, "SELECT * FROM `packages` WHERE `id` = ".$row['package_id']);
     $package = mysqli_fetch_array($packageres);
@@ -69,7 +69,7 @@ while($row = mysqli_fetch_array($res)) {
 }
 // ----- BUILD_RELEASE ----- \\
 $res = mysqli_query($conn2, "SELECT * FROM `build_release`");
-while($row = mysqli_fetch_array($res)) {
+while ($row = mysqli_fetch_array($res)) {
     $mods = [];
     $mres = mysqli_query($conn, "SELECT `mods` FROM `builds` WHERE `id` = ".$row['build_id']);
     $ma = mysqli_fetch_array($mres);
