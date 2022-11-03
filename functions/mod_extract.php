@@ -1,14 +1,18 @@
 <?php
 session_start();
-if(!$_SESSION['user']||$_SESSION['user']=="") {
-	die('Unathorized request or login session has expired!');
+if (!$_SESSION['user']||$_SESSION['user']=="") {
+    die('Unathorized request or login session has expired!');
 }
-if(!$_GET['id']) {
-	die('ID not provided');
+if (!$_GET['id']) {
+    die('ID not provided');
 }
 $config = require("config.php");
+global $conn;
 require("dbconnect.php");
-$q = mysqli_query($conn, "SELECT `filename` FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn,$_GET['id']));
+$q = mysqli_query(
+    $conn,
+    "SELECT `filename` FROM `mods` WHERE `id` = ".mysqli_real_escape_string($conn, $_GET['id'])
+);
 $fileName = mysqli_fetch_array($q)['filename'];
 $fileInfo = pathinfo("../mods/".$fileName);
 $exisingzip = new ZipArchive();

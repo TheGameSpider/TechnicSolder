@@ -1,0 +1,9 @@
+mods/
+forges/
+others/
+test.toml
+functions/config.php
+functions/cache.json
+
+# IntelliJ
+.idea/
